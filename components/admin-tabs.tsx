@@ -1,7 +1,7 @@
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {CanchasTable} from "@/components/canchas-table"
-import {ReservasTable} from "@/components/reservas-table"
-import {ClubesTable} from "@/components/clubes-table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CourtsTable } from "@/components/courts-table";
+import { ReservationsTable } from "@/components/reservations-table";
+import { ClubsTable } from "@/components/clubs-table";
 
 export function AdminTabs() {
   return (
@@ -12,14 +12,14 @@ export function AdminTabs() {
         <TabsTrigger value="clubes">Clubes</TabsTrigger>
       </TabsList>
       <TabsContent value="canchas">
-        <CanchasTable/>
+        <CourtsTable />
       </TabsContent>
       <TabsContent value="reservas">
-        <ReservasTable/>
+        <ReservationsTable />
       </TabsContent>
       <TabsContent value="clubes">
-        <ClubesTable/>
+        <ClubsTable />
       </TabsContent>
     </Tabs>
-  )
+  );
 }

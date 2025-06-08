@@ -1,9 +1,9 @@
-import type React from "react"
+import type React from "react";
 
 interface BadgeProps {
-  children: React.ReactNode
-  variant?: "default" | "secondary" | "destructive" | "outline"
-  className?: string
+  children: React.ReactNode;
+  variant?: "default" | "secondary" | "destructive" | "outline";
+  className?: string;
 }
 
 export function Badge({ children, variant = "default", className = "" }: BadgeProps) {
@@ -12,7 +12,7 @@ export function Badge({ children, variant = "default", className = "" }: BadgePr
     secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100",
     destructive: "bg-red-600 text-white hover:bg-red-700",
     outline: "border border-gray-300 bg-transparent dark:border-gray-600",
-  }
+  };
 
   return (
     <div
@@ -20,5 +20,5 @@ export function Badge({ children, variant = "default", className = "" }: BadgePr
     >
       {children}
     </div>
-  )
+  );
 }

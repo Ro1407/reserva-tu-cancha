@@ -1,16 +1,14 @@
-import Link from "next/link"
-import {Card, CardContent} from "@/components/ui/card"
-
-const sports = [
-  {name: "Fútbol", icon: "⚽", href: "/canchas?deporte=futbol"},
-  {name: "Tenis", icon: "🎾", href: "/canchas?deporte=tenis"},
-  {name: "Pádel", icon: "🏓", href: "/canchas?deporte=padel"},
-  {name: "Básquet", icon: "🏀", href: "/canchas?deporte=basquet"},
-  {name: "Vóley", icon: "🏐", href: "/canchas?deporte=voley"},
-  {name: "Hockey", icon: "🏑", href: "/canchas?deporte=hockey"},
-]
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Sport } from "@/lib/definitions";
+import { sports } from "@/lib/data";
 
 export function SportsSection() {
+  const buildSearchURL: (sport: string) => string = (sport: string): string => {
+    const params = new URLSearchParams({ deporte: sport.toLowerCase() });
+    return `/canchas?${params.toString()}`;
+  };
+
   return (
     <section className="container mx-auto px-4">
       <div className="text-center mb-12">
@@ -18,8 +16,8 @@ export function SportsSection() {
         <p className="text-gray-600 text-lg dark:text-gray-400">Encuentra canchas para tu deporte favorito</p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {sports.map((sport) => (
-          <Link key={sport.name} href={sport.href}>
+        {sports.map((sport: Sport) => (
+          <Link key={sport.name} href={buildSearchURL(sport.name)}>
             <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
               <CardContent className="p-6 text-center">
                 <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{sport.icon}</div>
@@ -30,5 +28,5 @@ export function SportsSection() {
         ))}
       </div>
     </section>
-  )
+  );
 }

@@ -1,28 +1,6 @@
-import {Card, CardContent} from "@/components/ui/card"
-import {Clock, Shield, CreditCard, Users} from "lucide-react"
-
-const benefits = [
-  {
-    icon: Clock,
-    title: "Reserva Instantánea",
-    description: "Reserva tu cancha en segundos, disponible 24/7",
-  },
-  {
-    icon: Shield,
-    title: "Pago Seguro",
-    description: "Transacciones protegidas con la mejor tecnología",
-  },
-  {
-    icon: CreditCard,
-    title: "Precios Transparentes",
-    description: "Sin costos ocultos, precios claros desde el inicio",
-  },
-  {
-    icon: Users,
-    title: "Comunidad Activa",
-    description: "Conecta con otros deportistas y forma equipos",
-  },
-]
+import { Card, CardContent } from "@/components/ui/card";
+import { Benefit } from "@/lib/definitions";
+import { benefits } from "@/lib/data";
 
 export function Benefits() {
   return (
@@ -35,12 +13,11 @@ export function Benefits() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {benefits.map((benefit, index) => (
+          {benefits.map((benefit: Benefit, index: number) => (
             <Card key={index} className="text-center">
               <CardContent className="p-6">
-                <div
-                  className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4 dark:bg-green-900/20">
-                  <benefit.icon className="w-6 h-6 text-green-600"/>
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4 dark:bg-green-900/20">
+                  <benefit.icon className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold mb-2">{benefit.title}</h3>
                 <p className="text-gray-600 text-sm dark:text-gray-400">{benefit.description}</p>
@@ -50,5 +27,5 @@ export function Benefits() {
         </div>
       </div>
     </section>
-  )
+  );
 }

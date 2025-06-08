@@ -1,40 +1,37 @@
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {Calendar} from "@/components/ui/calendar"
-import {Clock, CreditCard} from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Clock, ShoppingCart } from "lucide-react";
+import { Court } from "@/lib/definitions";
 
 const timeSlots = [
-  {time: "08:00", available: true},
-  {time: "09:00", available: true},
-  {time: "10:00", available: false},
-  {time: "11:00", available: true},
-  {time: "12:00", available: true},
-  {time: "13:00", available: false},
-  {time: "14:00", available: true},
-  {time: "15:00", available: true},
-  {time: "16:00", available: true},
-  {time: "17:00", available: false},
-  {time: "18:00", available: true},
-  {time: "19:00", available: true},
-  {time: "20:00", available: true},
-  {time: "21:00", available: true},
-]
+  { time: "08:00", available: true },
+  { time: "09:00", available: true },
+  { time: "10:00", available: false },
+  { time: "11:00", available: true },
+  { time: "12:00", available: true },
+  { time: "13:00", available: false },
+  { time: "14:00", available: true },
+  { time: "15:00", available: true },
+  { time: "16:00", available: true },
+  { time: "17:00", available: false },
+  { time: "18:00", available: true },
+  { time: "19:00", available: true },
+  { time: "20:00", available: true },
+  { time: "21:00", available: true },
+];
 
 interface BookingFormProps {
-  court: {
-    name: string
-    price: number
-  }
+  court: Court;
 }
 
-export function BookingForm({court}: BookingFormProps) {
+export function BookingForm({ court }: BookingFormProps) {
   return (
     <Card className="sticky top-4">
       <CardHeader>
         <CardTitle className="flex items-center">
-          <Clock className="w-5 h-5 mr-2"/>
+          <Clock className="w-5 h-5 mr-2" />
           Reservar Cancha
         </CardTitle>
       </CardHeader>
@@ -42,7 +39,7 @@ export function BookingForm({court}: BookingFormProps) {
         {/* Date Selection */}
         <div>
           <Label className="text-base font-medium mb-3 block">Seleccionar Fecha</Label>
-          <Calendar mode="single" className="rounded-md border border-gray-200 dark:border-gray-800"/>
+          <Calendar mode="single" className="rounded-md border border-gray-200 dark:border-gray-800" />
         </div>
         {/* Time Selection */}
         <div>
@@ -60,13 +57,6 @@ export function BookingForm({court}: BookingFormProps) {
               </Button>
             ))}
           </div>
-        </div>
-        {/* Duration */}
-        <div>
-          <Label htmlFor="duration" className="text-base font-medium mb-3 block">
-            Duración (horas)
-          </Label>
-          <Input id="duration" type="number" min="1" max="4" defaultValue="1" className="w-full"/>
         </div>
         {/* Booking Summary */}
         <div className="border-t border-gray-200 pt-4 dark:border-gray-800">
@@ -96,13 +86,13 @@ export function BookingForm({court}: BookingFormProps) {
         </div>
         {/* Payment Button */}
         <Button className="w-full" size="lg">
-          <CreditCard className="w-4 h-4 mr-2"/>
-          Proceder al Pago
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Agregar al Carrito
         </Button>
         <p className="text-xs text-gray-600 text-center dark:text-gray-400">
           Al confirmar la reserva aceptas nuestros términos y condiciones
         </p>
       </CardContent>
     </Card>
-  )
+  );
 }

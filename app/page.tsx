@@ -1,8 +1,8 @@
-import { Hero } from "@/components/hero"
-import { SearchForm } from "@/components/search-form"
-import { SportsSection } from "@/components/sports-section"
-import { FeaturedClubs } from "@/components/featured-clubs"
-import { Benefits } from "@/components/benefits"
+import { Hero } from "@/components/hero";
+import { SearchForm } from "@/components/search-form";
+import { SportsSection } from "@/components/sports-section";
+import { FeaturedClubs } from "@/components/featured-clubs";
+import { Benefits } from "@/components/benefits";
 
 export default function HomePage() {
   return (
@@ -15,5 +15,5 @@ export default function HomePage() {
       <FeaturedClubs />
       <Benefits />
     </div>
-  )
+  );
 }

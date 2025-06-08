@@ -1,29 +1,19 @@
-import Link from "next/link"
-import {Card, CardContent, CardHeader} from "@/components/ui/card"
-import {Button} from "@/components/ui/button"
-import {Badge} from "@/components/ui/badge"
-import {MapPin, Star} from "lucide-react"
-
-interface Court {
-  id: number
-  name: string
-  location: string
-  price: number
-  image: string
-  sport: string
-  rating: number
-  available: boolean
-}
+import Link from "next/link";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Star } from "lucide-react";
+import { Court } from "@/lib/definitions";
 
 interface CourtCardProps {
-  court: Court
+  court: Court;
 }
 
-export function CourtCard({court}: CourtCardProps) {
+export function CourtCard({ court }: CourtCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="aspect-video bg-gray-100 relative dark:bg-gray-800">
-        <img src={court.image || "/placeholder.svg"} alt={court.name} className="w-full h-full object-cover"/>
+        <img src={court.image || "/placeholder.svg"} alt={court.name} className="w-full h-full object-cover" />
         <Badge className="absolute top-2 left-2" variant={court.available ? "default" : "secondary"}>
           {court.sport}
         </Badge>
@@ -37,12 +27,12 @@ export function CourtCard({court}: CourtCardProps) {
         <div className="flex items-start justify-between">
           <h3 className="font-semibold text-lg leading-tight">{court.name}</h3>
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1"/>
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
             {court.rating}
           </div>
         </div>
         <div className="flex items-center text-gray-600 dark:text-gray-400">
-          <MapPin className="w-4 h-4 mr-1"/>
+          <MapPin className="w-4 h-4 mr-1" />
           {court.location}
         </div>
       </CardHeader>
@@ -60,5 +50,5 @@ export function CourtCard({court}: CourtCardProps) {
         </Link>
       </CardContent>
     </Card>
-  )
+  );
 }

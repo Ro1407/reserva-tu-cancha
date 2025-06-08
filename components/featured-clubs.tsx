@@ -1,33 +1,9 @@
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
-import {Button} from "@/components/ui/button"
-import {MapPin, Star} from "lucide-react"
-
-const clubs = [
-  {
-    id: 1,
-    name: "Club Deportivo Central",
-    location: "Palermo, CABA",
-    rating: 4.8,
-    image: "/placeholder.svg?height=200&width=300",
-    sports: ["Fútbol", "Tenis", "Pádel"],
-  },
-  {
-    id: 2,
-    name: "Complejo Atlético Norte",
-    location: "Belgrano, CABA",
-    rating: 4.6,
-    image: "/placeholder.svg?height=200&width=300",
-    sports: ["Básquet", "Vóley", "Fútbol"],
-  },
-  {
-    id: 3,
-    name: "Centro Deportivo Sur",
-    location: "San Telmo, CABA",
-    rating: 4.7,
-    image: "/placeholder.svg?height=200&width=300",
-    sports: ["Tenis", "Pádel", "Hockey"],
-  },
-]
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { MapPin, Star } from "lucide-react";
+import { Club } from "@/lib/definitions";
+import { clubs } from "@/lib/data";
 
 export function FeaturedClubs() {
   return (
@@ -37,27 +13,27 @@ export function FeaturedClubs() {
         <p className="text-gray-600 text-lg dark:text-gray-400">Los mejores clubes deportivos de la ciudad</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clubs.map((club) => (
+        {clubs.slice(0, 3).map((club: Club) => (
           <Card key={club.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="aspect-video bg-gray-100 dark:bg-gray-800">
-              <img src={club.image || "/placeholder.svg"} alt={club.name} className="w-full h-full object-cover"/>
+              <img src={club.image || "/placeholder.svg"} alt={club.name} className="w-full h-full object-cover" />
             </div>
             <CardHeader>
               <CardTitle className="flex items-start justify-between">
                 <span>{club.name}</span>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1"/>
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
                   {club.rating}
                 </div>
               </CardTitle>
               <div className="flex items-center text-gray-600 dark:text-gray-400">
-                <MapPin className="w-4 h-4 mr-1"/>
+                <MapPin className="w-4 h-4 mr-1" />
                 {club.location}
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2 mb-4">
-                {club.sports.map((sport) => (
+                {club.sports.map((sport: string) => (
                   <span
                     key={sport}
                     className="px-2 py-1 bg-gray-100 text-gray-900 rounded-md text-sm dark:bg-gray-800 dark:text-gray-100"
@@ -66,11 +42,13 @@ export function FeaturedClubs() {
                   </span>
                 ))}
               </div>
-              <Button className="w-full">Ver Canchas</Button>
+              <Button asChild className="w-full">
+                <Link href={`/canchas?club=${club.id}`}>Ver Canchas</Link>
+              </Button>
             </CardContent>
           </Card>
         ))}
       </div>
     </section>
-  )
+  );
 }

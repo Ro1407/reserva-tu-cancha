@@ -1,17 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import {Button} from "@/components/ui/button"
-import {ThemeToggle} from "@/components/theme-toggle"
-import {Menu, X} from "lucide-react"
-import {useState} from "react"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Menu, ShoppingCart, X } from "lucide-react";
+import { useState } from "react";
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav
-      className="border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-gray-800 dark:bg-gray-950/95 dark:supports-[backdrop-filter]:bg-gray-950/60">
+    <nav className="border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-gray-800 dark:bg-gray-950/95 dark:supports-[backdrop-filter]:bg-gray-950/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
@@ -20,6 +19,7 @@ export function Navigation() {
             </div>
             <span className="font-bold text-xl">ReserváTuCancha</span>
           </Link>
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <Link
@@ -40,19 +40,27 @@ export function Navigation() {
             >
               Clubes
             </Link>
-            <ThemeToggle/>
+            <Button variant="ghost" size="icon" className="relative">
+              <ShoppingCart className="w-4 h-4" />
+            </Button>
+            <ThemeToggle />
             <Link href="/login">
               <Button>Iniciar Sesión</Button>
             </Link>
           </div>
+
           {/* Mobile Navigation */}
           <div className="md:hidden flex items-center space-x-2">
-            <ThemeToggle/>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X className="h-5 w-5"/> : <Menu className="h-5 w-5"/>}
+            <ThemeToggle />
+            <Button variant="ghost" size="icon" className="relative">
+              <ShoppingCart className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={(): void => setIsOpen(!isOpen)}>
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
+
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden py-4 space-y-2">
@@ -81,5 +89,5 @@ export function Navigation() {
         )}
       </div>
     </nav>
-  )
+  );
 }

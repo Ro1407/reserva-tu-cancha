@@ -1,4 +1,4 @@
-import { AdminTabs } from "@/components/admin-tabs"
+import { AdminTabs } from "@/components/admin-tabs";
 
 export default function AdminPage() {
   return (
@@ -9,5 +9,5 @@ export default function AdminPage() {
       </div>
       <AdminTabs />
     </div>
-  )
+  );
 }
