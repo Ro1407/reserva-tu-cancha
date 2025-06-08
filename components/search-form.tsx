@@ -44,7 +44,7 @@ export function SearchForm() {
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Fecha</label>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            <Input type="date" value={date} onChange={(e): void => setDate(e.target.value)} />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Horario</label>
@@ -60,12 +60,12 @@ export function SearchForm() {
             </Select>
           </div>
           <div className="flex items-end">
-            <Button asChild className="w-full" size="lg">
-              <Link href={buildSearchURL()} className="inline">
+            <Link href={buildSearchURL()} className="w-full">
+              <Button className="w-full" size="lg">
                 <Search className="w-4 h-4 mr-2" />
                 Buscar
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </CardContent>

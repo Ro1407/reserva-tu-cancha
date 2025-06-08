@@ -42,9 +42,9 @@ export function FeaturedClubs() {
                   </span>
                 ))}
               </div>
-              <Button asChild className="w-full">
-                <Link href={`/canchas?club=${club.id}`}>Ver Canchas</Link>
-              </Button>
+              <Link href={`/canchas?club=${club.id}`}>
+                <Button className="w-full">Ver Canchas</Button>
+              </Link>
             </CardContent>
           </Card>
         ))}

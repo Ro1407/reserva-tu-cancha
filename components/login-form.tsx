@@ -29,7 +29,7 @@ export function LoginForm() {
             </div>
           </div>
           <div className="space-y-4 mt-4 mb-2">
-            <Button asChild className="w-full" size="lg">
+            <Button className="w-full" size="lg">
               <input type="submit" value="Entrar" />
             </Button>
             <div className="text-center">

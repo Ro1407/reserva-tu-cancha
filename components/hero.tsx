@@ -12,12 +12,16 @@ export function Hero() {
           La plataforma más fácil para reservar canchas deportivas en tu ciudad. Encuentra, reserva y juega en minutos.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild size="lg" className="text-lg px-8">
-            <Link href="/canchas">Buscar Canchas</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="text-lg px-8">
-            <Link href="/clubes">Ver Clubes</Link>
-          </Button>
+          <Link href="/canchas">
+            <Button size="lg" className="text-lg px-8">
+              Buscar Canchas
+            </Button>
+          </Link>
+          <Link href="/clubes">
+            <Button size="lg" variant="outline" className="text-lg px-8">
+              Ver Clubes
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
