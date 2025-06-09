@@ -1,4 +1,4 @@
-import { Sport, Reservation, Club, Benefit, Court } from "@/lib/definitions";
+import { Sport, Club, Court, Reservation, Benefit, TimeSlot } from "@/lib/definitions";
 import { Clock, CreditCard, Shield, Users } from "lucide-react";
 
 /**
@@ -224,3 +224,37 @@ export const benefits: Benefit[] = [
     description: "Conecta con otros deportistas y forma equipos",
   },
 ];
+
+export const timeSlots: TimeSlot[] = [
+  { time: "08:00", available: false },
+  { time: "09:00", available: true },
+  { time: "10:00", available: false },
+  { time: "11:00", available: true },
+  { time: "12:00", available: true },
+  { time: "13:00", available: false },
+  { time: "14:00", available: true },
+  { time: "15:00", available: true },
+  { time: "16:00", available: true },
+  { time: "17:00", available: false },
+  { time: "18:00", available: true },
+  { time: "19:00", available: true },
+  { time: "20:00", available: true },
+  { time: "21:00", available: true },
+];
+
+export const monthNames: string[] = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
+
+export const daysOfWeek: string[] = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];

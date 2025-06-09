@@ -1,32 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Clock, ShoppingCart } from "lucide-react";
-import { Court } from "@/lib/definitions";
-
-const timeSlots = [
-  { time: "08:00", available: true },
-  { time: "09:00", available: true },
-  { time: "10:00", available: false },
-  { time: "11:00", available: true },
-  { time: "12:00", available: true },
-  { time: "13:00", available: false },
-  { time: "14:00", available: true },
-  { time: "15:00", available: true },
-  { time: "16:00", available: true },
-  { time: "17:00", available: false },
-  { time: "18:00", available: true },
-  { time: "19:00", available: true },
-  { time: "20:00", available: true },
-  { time: "21:00", available: true },
-];
+import { Court, TimeSlot } from "@/lib/definitions";
+import { getTimeSlots } from "@/lib/actions";
 
 interface BookingFormProps {
   court: Court;
 }
 
 export function BookingForm({ court }: BookingFormProps) {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+
+  useEffect((): void => {
+    getTimeSlots(selectedDate).then((slots: TimeSlot[]): void => {
+      setTimeSlots(slots);
+      setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
+    });
+  }, [selectedDate]);
+
   return (
     <Card className="sticky top-4">
       <CardHeader>
@@ -39,19 +37,20 @@ export function BookingForm({ court }: BookingFormProps) {
         {/* Date Selection */}
         <div>
           <Label className="text-base font-medium mb-3 block">Seleccionar Fecha</Label>
-          <Calendar mode="single" className="rounded-md border border-gray-200 dark:border-gray-800" />
+          <Calendar onSelect={setSelectedDate} className="rounded-md border border-gray-200 dark:border-gray-800" />
         </div>
         {/* Time Selection */}
         <div>
           <Label className="text-base font-medium mb-3 block">Horarios Disponibles</Label>
           <div className="grid grid-cols-3 gap-2">
-            {timeSlots.map((slot) => (
+            {timeSlots.map((slot: TimeSlot) => (
               <Button
                 key={slot.time}
-                variant={slot.available ? "outline" : "secondary"}
+                variant={selectedSlot == slot ? "default" : slot.available ? "outline" : "secondary"}
                 size="sm"
-                disabled={!slot.available}
                 className="text-xs"
+                disabled={!slot.available}
+                onClick={(): void => setSelectedSlot(slot)}
               >
                 {slot.time}
               </Button>
@@ -68,11 +67,11 @@ export function BookingForm({ court }: BookingFormProps) {
             </div>
             <div className="flex justify-between">
               <span>Fecha:</span>
-              <span>Seleccionar fecha</span>
+              <span>{selectedDate.toISOString().split("T")[0] || "Seleccionar fecha"}</span>
             </div>
             <div className="flex justify-between">
               <span>Horario:</span>
-              <span>Seleccionar horario</span>
+              <span>{selectedSlot?.time || "Seleccionar horario"}</span>
             </div>
             <div className="flex justify-between">
               <span>Duración:</span>
@@ -85,7 +84,7 @@ export function BookingForm({ court }: BookingFormProps) {
           </div>
         </div>
         {/* Payment Button */}
-        <Button className="w-full" size="lg">
+        <Button className="w-full" size="lg" disabled={!selectedSlot}>
           <ShoppingCart className="w-4 h-4 mr-2" />
           Agregar al Carrito
         </Button>

@@ -11,7 +11,6 @@ export default async function CourtDetailPage(props: {
 }) {
   const { id } = await props.params;
   const court: Court = courts[Number(id)];
-  console.log("Court Details:", court);
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
