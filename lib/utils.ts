@@ -1,3 +1,8 @@
+/**
+ * Gets the current date in the format YYYY-MM-DD.
+ * @param {Date} date - The date to format.
+ * @return {string} The formatted date string.
+ */
 export const getDaysInMonth: (date: Date) => (Date | null)[] = (date: Date): (Date | null)[] => {
   const year: number = date.getFullYear();
   const month: number = date.getMonth();
@@ -20,6 +25,19 @@ export const getDaysInMonth: (date: Date) => (Date | null)[] = (date: Date): (Da
   return days;
 };
 
+/**
+ * Generates an array of years centered around the current year.
+ * @param currentYear
+ */
+export const getYearRange: (currentYear: number) => number[] = (currentYear: number): number[] => {
+  return Array.from({ length: 12 }, (_: number, i: number): number => currentYear - 6 + i);
+};
+
+/**
+ * Formats a date string into a human-readable format.
+ * @param {string} dateString - The date string to format.
+ * @return {string} The formatted date string.
+ */
 export const formatDate: (dateString: string) => string = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString("es-ES", {

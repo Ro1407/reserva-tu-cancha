@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getDaysInMonth } from "@/lib/utils";
+import { getDaysInMonth, getYearRange } from "@/lib/utils";
 import { daysOfWeek, monthNames } from "@/lib/definitions";
 
 interface CalendarProps {
@@ -14,6 +14,7 @@ interface CalendarProps {
 export function Calendar({ selected, onSelect, className = "" }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(selected || new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(selected || new Date());
+  const [showYearSelector, setShowYearSelector] = useState<boolean>(false);
 
   const handleClick: (date: Date) => void = (date: Date): void => {
     setSelectedDate(date);
@@ -29,7 +30,17 @@ export function Calendar({ selected, onSelect, className = "" }: CalendarProps) 
     });
   };
 
+  const selectYear: (year: number) => void = (year: number): void => {
+    setCurrentDate((prev: Date): Date => {
+      const newDate = new Date(prev);
+      newDate.setFullYear(year);
+      return newDate;
+    });
+    setShowYearSelector(false);
+  };
+
   const days: (Date | null)[] = getDaysInMonth(currentDate);
+  const years: number[] = getYearRange(currentDate.getFullYear());
 
   return (
     <div className={`p-3 ${className}`}>
@@ -38,13 +49,35 @@ export function Calendar({ selected, onSelect, className = "" }: CalendarProps) 
         <button onClick={() => navigateMonth("prev")} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <h2 className="font-semibold">
+        <button
+          onClick={() => setShowYearSelector(!showYearSelector)}
+          className="font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-1 rounded"
+        >
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-        </h2>
+        </button>
         <button onClick={() => navigateMonth("next")} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Year Selector */}
+      {showYearSelector && (
+        <div className="mb-4 p-3 border border-gray-200 rounded-lg dark:border-gray-800">
+          <div className="grid grid-cols-4 gap-2">
+            {years.map((year: number) => (
+              <button
+                key={year}
+                onClick={(): void => selectYear(year)}
+                className={`p-2 text-sm rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                  year === currentDate.getFullYear() ? "bg-green-600 text-white hover:bg-green-700" : ""
+                }`}
+              >
+                {year}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Days of week */}
       <div className="grid grid-cols-7 gap-1 mb-2">
