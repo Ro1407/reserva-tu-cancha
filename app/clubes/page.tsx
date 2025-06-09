@@ -1,5 +1,5 @@
 import { ClubCard } from "@/components/club-card";
-import { Club } from "@/lib/definitions";
+import { Club } from "@/types/club";
 import { clubs } from "@/lib/data";
 
 export default function ClubesPage() {

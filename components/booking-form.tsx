@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Clock, ShoppingCart } from "lucide-react";
-import { CartItem, Court, TimeSlot } from "@/lib/definitions";
+import { Court } from "@/types/court";
+import { CartItem } from "@/types/cart";
+import { TimeSlot } from "@/types/time-slot";
 import { getTimeSlots } from "@/lib/actions";
 
 interface BookingFormProps {

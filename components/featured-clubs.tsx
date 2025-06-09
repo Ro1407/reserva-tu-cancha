@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star } from "lucide-react";
-import { Club } from "@/lib/definitions";
+import { Club } from "@/types/club";
 import { clubs } from "@/lib/data";
 
 export function FeaturedClubs() {

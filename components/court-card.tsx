@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star } from "lucide-react";
-import { Court } from "@/lib/definitions";
+import { Court } from "@/types/court";
 
 interface CourtCardProps {
   court: Court;

@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Benefit } from "@/lib/definitions";
-import { benefits } from "@/lib/data";
+import { Benefit, benefits } from "@/lib/definitions";
 
 export function Benefits() {
   return (

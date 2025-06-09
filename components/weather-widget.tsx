@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Cloud, Sun, Droplets, Wind } from "lucide-react";
-import { WeatherReport } from "@/lib/definitions";
+import { WeatherReport } from "@/types/weather-report";
 
 /* TODO: obtener esto de la API del tiempo */
 const weather: WeatherReport = {

@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Sport } from "@/lib/definitions";
-import { sports } from "@/lib/data";
+import { Sport, sports } from "@/lib/definitions";
 
 export function SearchForm() {
   const [sport, setSport] = useState<string>("");

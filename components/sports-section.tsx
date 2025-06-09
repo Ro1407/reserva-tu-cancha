@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sport } from "@/lib/definitions";
-import { sports } from "@/lib/data";
+import { Sport, sports } from "@/lib/definitions";
 
 export function SportsSection() {
   const buildSearchURL: (sport: string) => string = (sport: string): string => {

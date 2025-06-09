@@ -1,7 +1,7 @@
 "use client";
 
 import { Calendar, Clock, Trash2 } from "lucide-react";
-import { CartItem } from "@/lib/definitions";
+import { CartItem } from "@/types/cart";
 import { formatDate } from "@/lib/utils";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";

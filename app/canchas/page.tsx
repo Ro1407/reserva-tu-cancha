@@ -1,7 +1,7 @@
 import { CourtCard } from "@/components/court-card";
 import { CourtFilters } from "@/components/court-filters";
 import { Pagination } from "@/components/pagination";
-import { Court } from "@/lib/definitions";
+import { Court } from "@/types/court";
 import { courts } from "@/lib/data";
 
 export default function CanchasPage() {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getDaysInMonth } from "@/lib/utils";
-import { daysOfWeek, monthNames } from "@/lib/data";
+import { daysOfWeek, monthNames } from "@/lib/definitions";
 
 interface CalendarProps {
   selected?: Date;

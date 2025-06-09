@@ -1,26 +1,17 @@
-import { Sport, Club, Court, Reservation, Benefit, TimeSlot, Coupon } from "@/lib/definitions";
-import { Clock, CreditCard, Shield, Users } from "lucide-react";
+import { Club } from "@/types/club";
+import { Court } from "@/types/court";
+import { Reservation } from "@/types/reservation";
+import { TimeSlot } from "@/types/time-slot";
 
 /**
  * Data for the application
  * This file contains the data used in the application:
- * @Sports available
  * @Clubs with their details
  * @Courts with their specifications
  * @Reservations made by users
- * @Benefits of using the platform
  *
  * @module lib/data
  */
-
-export const sports: Sport[] = [
-  { name: "Fútbol", icon: "⚽" },
-  { name: "Tenis", icon: "🎾" },
-  { name: "Pádel", icon: "🏓" },
-  { name: "Básquet", icon: "🏀" },
-  { name: "Vóley", icon: "🏐" },
-  { name: "Hockey", icon: "🏑" },
-];
 
 export const clubs: Club[] = [
   {
@@ -202,29 +193,6 @@ export const reservations: Reservation[] = [
   },
 ];
 
-export const benefits: Benefit[] = [
-  {
-    icon: Clock,
-    title: "Reserva Instantánea",
-    description: "Reserva tu cancha en segundos, disponible 24/7",
-  },
-  {
-    icon: Shield,
-    title: "Pago Seguro",
-    description: "Transacciones protegidas con la mejor tecnología",
-  },
-  {
-    icon: CreditCard,
-    title: "Precios Transparentes",
-    description: "Sin costos ocultos, precios claros desde el inicio",
-  },
-  {
-    icon: Users,
-    title: "Comunidad Activa",
-    description: "Conecta con otros deportistas y forma equipos",
-  },
-];
-
 export const timeSlots: TimeSlot[] = [
   { time: "08:00", available: false },
   { time: "09:00", available: true },
@@ -241,26 +209,3 @@ export const timeSlots: TimeSlot[] = [
   { time: "20:00", available: true },
   { time: "21:00", available: true },
 ];
-
-export const monthNames: string[] = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
-];
-
-export const daysOfWeek: string[] = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-
-export const coupons: Coupon = {
-  PRIMERA10: 10,
-  VERANO20: 20,
-  AMIGO15: 15,
-};

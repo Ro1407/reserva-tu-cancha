@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Phone, MapIcon } from "lucide-react";
-import { Court, Club } from "@/lib/definitions";
+import { Club } from "@/types/club";
+import { Court } from "@/types/court";
 import { clubs } from "@/lib/data";
 
 interface CourtDetailsProps {

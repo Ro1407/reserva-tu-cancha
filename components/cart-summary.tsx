@@ -7,7 +7,7 @@ import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { coupons } from "@/lib/data";
+import { Coupon, coupons } from "@/lib/definitions";
 
 export function CartSummary() {
   const { state } = useCart();
@@ -20,8 +20,12 @@ export function CartSummary() {
   const total: number = subtotal - discountAmount;
 
   const applyCoupon: () => void = (): void => {
-    if (coupons[couponCode.toUpperCase()]) {
-      setDiscount(coupons[couponCode.toUpperCase()]);
+    const coupon: Coupon | undefined = coupons.find(
+      (coupon: Coupon): boolean => coupon.code.toUpperCase() === couponCode.toUpperCase(),
+    );
+    if (coupon) {
+      setDiscount(coupon.discount);
+      toast.success(`Cupón aplicado: ${coupon.discount}% de descuento`);
     } else {
       setDiscount(0);
       toast.error("El cupón ingresado no es válido");

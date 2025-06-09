@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Edit, Trash2, Plus } from "lucide-react";
-import { Court } from "@/lib/definitions";
+import { Court } from "@/types/court";
 import { courts } from "@/lib/data";
 
 export function CourtsTable() {

@@ -1,7 +1,7 @@
 import { CourtDetails } from "@/components/court-details";
 import { BookingForm } from "@/components/booking-form";
 import { WeatherWidget } from "@/components/weather-widget";
-import { Court } from "@/lib/definitions";
+import { Court } from "@/types/court";
 import { courts } from "@/lib/data";
 
 export default async function CourtDetailPage(props: {

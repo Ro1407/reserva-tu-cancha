@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Building } from "lucide-react";
-import { Club } from "@/lib/definitions";
+import { Club } from "@/types/club";
 
 interface ClubCardProps {
   club: Club;

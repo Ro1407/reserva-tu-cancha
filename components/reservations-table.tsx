@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Eye, Edit, X } from "lucide-react";
-import { Reservation } from "@/lib/definitions";
+import { Reservation } from "@/types/reservation";
 import { reservations } from "@/lib/data";
 
 export function ReservationsTable() {

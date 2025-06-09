@@ -1,4 +1,4 @@
-import { TimeSlot } from "@/lib/definitions";
+import { TimeSlot } from "@/types/time-slot";
 import { timeSlots } from "@/lib/data";
 
 export const getTimeSlots: (date: Date) => Promise<TimeSlot[]> = (date: Date): Promise<TimeSlot[]> => {
