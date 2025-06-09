@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Menu, ShoppingCart, X } from "lucide-react";
+import { CartIcon } from "@/components/cart-icon";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 export function Navigation() {
@@ -40,10 +41,8 @@ export function Navigation() {
             >
               Clubes
             </Link>
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="w-4 h-4" />
-            </Button>
             <ThemeToggle />
+            <CartIcon />
             <Link href="/login">
               <Button>Iniciar Sesión</Button>
             </Link>
@@ -52,9 +51,7 @@ export function Navigation() {
           {/* Mobile Navigation */}
           <div className="md:hidden flex items-center space-x-2">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="w-4 h-4" />
-            </Button>
+            <CartIcon />
             <Button variant="ghost" size="icon" onClick={(): void => setIsOpen(!isOpen)}>
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>

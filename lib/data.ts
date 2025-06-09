@@ -1,4 +1,4 @@
-import { Sport, Club, Court, Reservation, Benefit, TimeSlot } from "@/lib/definitions";
+import { Sport, Club, Court, Reservation, Benefit, TimeSlot, Coupon } from "@/lib/definitions";
 import { Clock, CreditCard, Shield, Users } from "lucide-react";
 
 /**
@@ -258,3 +258,9 @@ export const monthNames: string[] = [
 ];
 
 export const daysOfWeek: string[] = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+export const coupons: Coupon = {
+  PRIMERA10: 10,
+  VERANO20: 20,
+  AMIGO15: 15,
+};

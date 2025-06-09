@@ -3,8 +3,8 @@ import React from "react";
 /**
  * This interface defines the structure of a sport object.
  * It includes properties for the sport's name, icon, and a link to more information.
- *
  * @interface Sport
+ *
  * @property {string} name - The name of the sport.
  * @property {string} icon - The icon representing the sport.
  */
@@ -16,7 +16,7 @@ export interface Sport {
 /**
  * This interface defines the structure of a club object.
  * It includes properties for the club's ID, name, location, courts, rating, image, sports offered, and state.
- * * @interface Club
+ * @interface Club
  *
  * @property {number} id - The unique identifier for the club.
  * @property {string} name - The name of the club.
@@ -47,7 +47,7 @@ export interface Club {
 /**
  * This interface defines the structure of a court object.
  * It includes properties for the court's ID, name, club affiliation, sport type, price per hour, status, and an optional image.
- * * @interface Court
+ * @interface Court
  *
  * @property {number} id - The unique identifier for the court.
  * @property {string} name - The name of the court.
@@ -79,8 +79,8 @@ export interface Court {
 /**
  * This interface defines the structure of a reservation object.
  * It includes properties for the reservation ID, court name, client name, date, time slot, price, and status.
- *
  * @interface Reservation
+ *
  * @property {number} id - The unique identifier for the reservation.
  * @property {string} court - The name of the court reserved.
  * @property {string} client - The name of the client who made the reservation.
@@ -105,8 +105,8 @@ export interface Reservation {
 /**
  * This interface defines the structure of a weather report object.
  * It includes properties for the weather description, date, rain probability, wind speed, and cloud cover.
- *
  * @interface WeatherReport
+ *
  * @property {string} date - The date of the weather report in YYYY/MM/DD format.
  * @property {string} state - The weather state, which can be one of the following:
  *   - "Soleado" (Sunny)
@@ -133,7 +133,7 @@ export interface WeatherReport {
 /**
  * This interface defines the structure of a benefit object.
  * It includes properties for the benefit's icon, title, and description.
- * * @interface Benefit
+ * @interface Benefit
  *
  * @property {React.ComponentType<React.SVGProps<SVGSVGElement>>} icon - The icon component representing the benefit.
  * @property {string} title - The title of the benefit.
@@ -148,7 +148,7 @@ export interface Benefit {
 /**
  * This interface defines the structure of a time slot object.
  * It includes properties for the time and availability status.
- * * @interface TimeSlot
+ * @interface TimeSlot
  *
  * @property {string} time - The time of the slot in HH:mm format.
  * @property {boolean} available - Indicates whether the time slot is available for booking.
@@ -157,3 +157,38 @@ export interface TimeSlot {
   time: string;
   available: boolean;
 }
+
+/**
+ * This interface defines the structure of a cart item object.
+ * It includes properties for the item ID, court ID, court name, club name, date, time, price, sport type, and an image URL.
+ * @interface CartItem
+ *
+ * @property {string} id - The unique identifier for the cart item, typically a combination of court ID, date, and time.
+ * @property {number} courtId - The unique identifier for the court associated with the item.
+ * @property {string} courtName - The name of the court associated with the item.
+ * @property {string} clubName - The name of the club where the court is located.
+ * @property {string} date - The date of the reservation in YYYY-MM-DD format.
+ * @property {string} time - The time of the reservation in HH:mm format.
+ * @property {number} price - The price of the reservation in the local currency.
+ * @property {string} sport - The type of sport played on the court (e.g., "Fútbol", "Tenis").
+ * @property {string} image - The URL of the court's image.
+ *
+ */
+export interface CartItem {
+  id: string;
+  courtId: number;
+  courtName: string;
+  clubName: string;
+  date: string;
+  time: string;
+  price: number;
+  sport: string;
+  image: string;
+}
+
+/**
+ * This type defines a coupon object, which is a record where the keys are strings (representing coupon codes)
+ * and the values are numbers (representing the discount amount in the local currency).
+ * @type {Record<string, number>} Coupon
+ */
+export type Coupon = Record<string, number>;

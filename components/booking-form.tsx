@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/cart-context";
+import { toast } from "react-hot-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Clock, ShoppingCart } from "lucide-react";
-import { Court, TimeSlot } from "@/lib/definitions";
+import { CartItem, Court, TimeSlot } from "@/lib/definitions";
 import { getTimeSlots } from "@/lib/actions";
 
 interface BookingFormProps {
@@ -14,9 +17,12 @@ interface BookingFormProps {
 }
 
 export function BookingForm({ court }: BookingFormProps) {
+  const { replace } = useRouter();
+  const { addToCart } = useCart();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
   useEffect((): void => {
     getTimeSlots(selectedDate).then((slots: TimeSlot[]): void => {
@@ -24,6 +30,35 @@ export function BookingForm({ court }: BookingFormProps) {
       setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
     });
   }, [selectedDate]);
+
+  const handleAddToCart: () => void = (): void => {
+    if (!selectedDate || !selectedSlot) {
+      toast.error("Por favor, selecciona una fecha y un horario antes de agregar al carrito.");
+      return;
+    }
+
+    setIsAdding(true);
+    try {
+      const cartItem: Omit<CartItem, "id"> = {
+        courtId: court.id,
+        courtName: court.name,
+        clubName: court.name /* TODO: cambiar esto al nombre del club */,
+        date: selectedDate.toISOString().split("T")[0],
+        time: selectedSlot.time,
+        price: court.price,
+        sport: court.sport,
+        image: court.image || "/placeholder.svg?height=200&width=300",
+      };
+      addToCart(cartItem);
+      toast.success("¡Reserva agregada al carrito!");
+      replace("/");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Error al agregar al carrito");
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   return (
     <Card className="sticky top-4">
@@ -84,13 +119,15 @@ export function BookingForm({ court }: BookingFormProps) {
           </div>
         </div>
         {/* Payment Button */}
-        <Button className="w-full" size="lg" disabled={!selectedSlot}>
+        <Button
+          className="w-full"
+          size="lg"
+          disabled={isAdding || !selectedDate || !selectedSlot}
+          onClick={handleAddToCart}
+        >
           <ShoppingCart className="w-4 h-4 mr-2" />
           Agregar al Carrito
         </Button>
-        <p className="text-xs text-gray-600 text-center dark:text-gray-400">
-          Al confirmar la reserva aceptas nuestros términos y condiciones
-        </p>
       </CardContent>
     </Card>
   );

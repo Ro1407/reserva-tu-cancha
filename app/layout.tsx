@@ -1,9 +1,11 @@
 import type React from "react";
-import "./globals.css";
+import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "next-themes";
+import { CartProvider } from "@/context/cart-context";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
-import { ThemeProvider } from "next-themes";
 import { inter } from "@/app/fonts";
+import "./globals.css";
 
 export const metadata = {
   title: "ReserváTuCancha - Reserva canchas deportivas online",
@@ -16,12 +18,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <div>
+          <CartProvider>
             <Navigation />
             <main className="min-h-screen">{children}</main>
             <Footer />
-          </div>
+          </CartProvider>
         </ThemeProvider>
+        <Toaster position="bottom-right" reverseOrder={false} />
       </body>
     </html>
   );
