@@ -1,0 +1,179 @@
+// Whenever there is a change in the schema, run the following commands to update the database and generate the Prisma client:
+// pnpx prisma generate
+// pnpx prisma migrate dev --name <migration_name>
+// pnpx prisma migrate deploy
+
+// In case you want to use Prisma Studio to visualize and manage your database, you can run: pnpx prisma studio
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider = "zod-prisma"
+  output   = "./zod" // (default) the directory where generated zod schemas will be saved
+
+  // relationModel = true // (default) Create and export both plain and related models.
+  // relationModel         = "default" // Do not export model without relations.
+  relationModel = false // Do not generate related model
+
+  modelCase = "PascalCase" // (default) Output models using pascal case (ex. UserModel, PostModel)
+  // modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
+
+  modelSuffix = "Schema" // (default) Suffix to apply to your prisma models when naming Zod schemas
+
+  // useDecimalJs          = false // (default) represent the prisma Decimal type using as a JS number
+  useDecimalJs = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
+
+  imports = "" // (default) will import the referenced file in generated schemas to be used via imports.someExportedVariable
+
+  // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
+  //  prismaJsonNullability = true // (default) uses prisma's scheme for JSON field nullability
+  // prismaJsonNullability = false // allows null assignment to optional JSON fields
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Club {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  phone       String
+  location    String
+  address     String
+  /// @zod.max(5, 'The club rating must be an integer between 0 and 5' )
+  rating      Int      @default(0) // float * 100
+  image       String?
+  sports      Sport[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  courts Court[]
+
+  @@map("club") // Map to "club" table in the database
+}
+
+enum Sport {
+  Futbol
+  Tennis
+  Paddle
+  Basketball
+  Volleyball
+  Hockey
+}
+
+model Court {
+  id          String     @id @default(uuid())
+  name        String
+  address     String
+  sport       Sport
+  description String
+  /// @zod.max(5, 'Rating must be an integer between 0 and 5' )
+  rating      Int        @default(0) // float * 10
+  price       Int // Price per slot in cents
+  amenities   Amenitie[]
+  image       String?
+  state       CourtState @default(Activa)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Foreign Keys
+  clubId String
+
+  // Relations
+  club         Club          @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+  TimeSlot     TimeSlot[]
+
+  @@unique([clubId, name]) // Unique name per club
+  @@map("court")
+}
+
+// Represents if the court can be reserved or not (e.g. due to maintenance for several days)
+enum CourtState {
+  Activa
+  Inactiva
+}
+
+enum Amenitie {
+  Indoor
+  Outdoor
+  Iluminacion
+  Vestuarios
+  Estacionamiento
+  AireAcondicionado
+  Calefaccion
+  CespedSintetico
+  Buffet
+}
+
+model Reservation {
+  id        String           @id @default(uuid())
+  date      String // Date in YYYY-MM-DD format
+  timeSlot  TimeSlot
+  price     Int // Price in cents
+  state     ReservationState @default(Pendiente)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  // Foreign Keys
+  courtId String
+  userId  String
+
+  // Relations
+  court Court @relation(fields: [courtId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reservation")
+}
+
+enum ReservationState {
+  Confirmada
+  Pendiente
+  Cancelada
+  Mantenimiento
+}
+
+enum TimeSlot {
+  H0800
+  H0900
+  H1000
+  H1100
+  H1200
+  H1300
+  H1400
+  H1500
+  H1600
+  H1700
+  H1800
+  H1900
+  H2000
+  H2100
+}
+
+// TODO adaptar cuando se decida la logica de login
+model User {
+  id         String   @id @default(uuid())
+  externalId String?
+  password   String?
+  email      String   @unique
+  name       String
+  phone      String?
+  role       Role     @default(USER)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  reservations Reservation[]
+
+  @@map("user")
+}
+
+enum Role {
+  USER
+  ADMIN
+}

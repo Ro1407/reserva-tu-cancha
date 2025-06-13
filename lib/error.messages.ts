@@ -1,0 +1,35 @@
+export const ERROR_MESSAGES = {
+    CLUB: {
+        NAME_REQUIRED: "Por favor, proporcione un nombre único para el club",
+        DESCRIPTION_REQUIRED: "Por favor, proporcione una descripción del club",
+        PHONE_REQUIRED: "Por favor, proporcione un número de teléfono del club",
+        LOCATION_REQUIRED: "Por favor, proporcione la ubicación del club",
+        ADDRESS_REQUIRED: "Por favor, proporcione la dirección del club",
+        SPORTS_REQUIRED: "Por favor, seleccione al menos un deporte para el club",
+    },
+    COURT: {
+        NAME_REQUIRED: "Por favor, proporcione un nombre para la cancha",
+        ADDRESS_REQUIRED: "Por favor, proporcione la dirección de la cancha",
+        SPORT_REQUIRED: "Por favor, seleccione un deporte para la cancha",
+        DESCRIPTION_REQUIRED: "Por favor, proporcione una descripción de la cancha",
+        PRICE_REQUIRED: "Por favor, proporcione un precio para la cancha",
+        AMENITIES_REQUIRED: "Por favor, seleccione al menos una amenidad para la cancha",
+        STATE_REQUIRED: "Por favor, seleccione el estado de la cancha",
+        CLUB_ID_REQUIRED: "Por favor, proporcione el ID del club propietario de la cancha",
+    },
+    RESERVATION: {
+        DATE_REQUIRED: "Por favor, proporcione una fecha para la reserva",
+        DATE_INVALID: "Por favor, proporcione una fecha válida con el formato YYYY-MM-DD",
+        TIME_SLOT_REQUIRED: "Por favor, seleccione un horario",
+        PRICE_REQUIRED: "Por favor, proporcione el precio de la reserva",
+        STATE_REQUIRED: "Por favor, seleccione el estado de la reserva",
+        COURT_ID_REQUIRED: "Por favor, proporcione el ID de la cancha para la reserva",
+        USER_ID_REQUIRED: "Por favor, proporcione el ID del usuario que realiza la reserva",
+    },
+    USER: {
+        EMAIL_REQUIRED: "Por favor, proporcione una dirección de correo electrónico",
+        EMAIL_INVALID: "Por favor, proporcione una dirección de correo electrónico válida",
+        NAME_REQUIRED: "Por favor, proporcione su nombre",
+        ROLE_REQUIRED: "Por favor, seleccione un rol de usuario",
+    },
+};

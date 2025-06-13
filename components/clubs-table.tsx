@@ -12,7 +12,7 @@ import { Club } from "@/types/club";
 import { clubs } from "@/lib/data";
 
 export function ClubsTable() {
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>({});
   const [isCreating, setIsCreating] = useState(false);
   const [newClub, setNewClub] = useState({
@@ -51,11 +51,11 @@ export function ClubsTable() {
     setEditData({});
   };
 
-  const viewDetails: (id: number) => void = (id: number): void => {
+  const viewDetails: (id: string) => void = (id: string): void => {
     console.log("Ver detalles de club:", id);
   };
 
-  const deleteClub: (id: number) => void = (id: number): void => {
+  const deleteClub: (id: string) => void = (id: string): void => {
     console.log("Eliminando club:", id);
   };
 
