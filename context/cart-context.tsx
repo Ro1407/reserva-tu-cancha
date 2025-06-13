@@ -1,18 +1,13 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, useEffect, Context } from "react";
-import { CartItem } from "@/types/cart";
-
-interface CartState {
-  items: CartItem[];
-  total: number;
-}
+import { CartState, CartItem } from "@/types/cart";
 
 type CartAction =
   | { type: "ADD_ITEM"; payload: CartItem }
   | { type: "REMOVE_ITEM"; payload: string }
   | { type: "CLEAR_CART" }
-  | { type: "LOAD_CART"; payload: CartItem[] };
+  | { type: "LOAD_CART"; payload: CartState };
 
 interface CartContextProps {
   state: CartState;
@@ -36,20 +31,19 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "ADD_ITEM": {
       const newItems: CartItem[] = [...state.items, action.payload];
-      const newTotal: number = newItems.reduce((sum: number, item: CartItem) => sum + item.price, 0);
-      return { items: newItems, total: newTotal };
+      const newTotal: number = newItems.reduce((sum: number, item: CartItem): number => sum + item.price, 0);
+      return { ...state, items: newItems, total: newTotal };
     }
     case "REMOVE_ITEM": {
       const newItems: CartItem[] = state.items.filter((item: CartItem): boolean => item.id !== action.payload);
       const newTotal: number = newItems.reduce((sum: number, item: CartItem): number => sum + item.price, 0);
-      return { items: newItems, total: newTotal };
+      return { ...state, items: newItems, total: newTotal };
     }
     case "CLEAR_CART": {
-      return { items: [], total: 0 };
+      return { id: crypto.randomUUID(), items: [], total: 0 };
     }
     case "LOAD_CART": {
-      const newTotal: number = action.payload.reduce((sum: number, item: CartItem): number => sum + item.price, 0);
-      return { items: action.payload, total: newTotal };
+      return action.payload;
     }
     default:
       return state;
@@ -57,15 +51,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, { items: [], total: 0 });
+  const [state, dispatch] = useReducer(cartReducer, { id: crypto.randomUUID(), items: [], total: 0 });
 
   // load cart from localStorage on mount
   useEffect((): void => {
-    const savedCart: string | null = localStorage.getItem("cart-reservation");
+    const savedCart: string | null = localStorage.getItem("cart-state");
     if (!savedCart) return;
     try {
-      const cartItems: CartItem[] = JSON.parse(savedCart);
-      dispatch({ type: "LOAD_CART", payload: cartItems });
+      dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) });
     } catch (error) {
       console.error("Error loading cart from localStorage:", error);
     }
@@ -73,13 +66,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // save cart to localStorage whenever it changes
   useEffect((): void => {
-    localStorage.setItem("cart-reservation", JSON.stringify(state.items));
-  }, [state.items]);
+    localStorage.setItem("cart-state", JSON.stringify(state));
+  }, [state]);
 
   const addToCart: (item: Omit<CartItem, "id">) => void = (item: Omit<CartItem, "id">): void => {
-    const id = `${item.courtId}-${item.date}-${item.time}`;
-    const cartItem: CartItem = { id, ...item };
-    dispatch({ type: "ADD_ITEM", payload: cartItem });
+    const id = `${state.id}--${item.courtId}-${item.date}-${item.time}`;
+    dispatch({ type: "ADD_ITEM", payload: { id, ...item } });
   };
 
   const removeFromCart: (id: string) => void = (id: string): void => {

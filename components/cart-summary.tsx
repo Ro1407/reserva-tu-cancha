@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { CreditCard, Tag } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { processPreference } from "@/lib/payments";
 import { Coupon, coupons } from "@/lib/definitions";
 
 export function CartSummary() {
+  const { replace } = useRouter();
   const { state } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -34,10 +37,14 @@ export function CartSummary() {
 
   const handleCheckout: () => Promise<void> = async (): Promise<void> => {
     setIsProcessing(true);
-    setTimeout((): void => {
-      toast.error("TODO: Implementar integración con MercadoPago");
-      setIsProcessing(false);
-    }, 1000);
+    processPreference(state)
+      .then((initPoint: string): void => {
+        replace(initPoint);
+      })
+      .catch((_: Error): void => {
+        toast.error("Ocurrió un error al procesar el pago. Inténtalo nuevamente.");
+      })
+      .finally((): void => setIsProcessing(false));
   };
 
   return (
