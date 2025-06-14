@@ -11,12 +11,25 @@ interface WeatherWidgetProps {
   city: string;
 }
 
+function getIcon(state: WeatherReport["state"]) {
+  switch (state) {
+    case "Soleado":
+      return <Sun className="w-5 h-5 mr-2" />;
+    case "Nublado":
+      return <Cloud className="w-5 h-5 mr-2" />;
+    case "Lluvioso":
+      return <Droplets className="w-5 h-5 mr-2" />;
+    case "Ventoso":
+      return <Wind className="w-5 h-5 mr-2" />;
+  }
+}
+
 export function WeatherWidget({ city }: WeatherWidgetProps) {
   const { selectedDate } = useCalendar();
   const [weather, setWeather] = useState<WeatherReport | null>(null);
 
   useEffect((): void => {
-    getWeatherReport("bahía blanca", selectedDate.toISOString()).then((data: WeatherReport): void => {
+    getWeatherReport("bahía blanca", selectedDate.toISOString().slice(0, 16)).then((data: WeatherReport): void => {
       setWeather(data);
     });
   }, [selectedDate]);
@@ -26,11 +39,8 @@ export function WeatherWidget({ city }: WeatherWidgetProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Sun className="w-5 h-5 mr-2" /> {/*TODO: que esto cambie según el estado del tiempo*/}
-            Tiempo para el día seleccionado
-          </CardTitle>
-          <span>{weather.date}</span>
+          {getIcon(weather.state)}
+          <CardTitle className="flex items-center">Tiempo para el día seleccionado</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between mb-4">
