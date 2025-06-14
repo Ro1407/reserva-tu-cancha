@@ -1,24 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { useCalendar } from "@/context/calendar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getDaysInMonth, getYearRange } from "@/lib/utils";
 import { daysOfWeek, monthNames } from "@/lib/definitions";
 
 interface CalendarProps {
   selected?: Date;
-  onSelect?: (date: Date) => void;
   className?: string;
 }
 
-export function Calendar({ selected, onSelect, className = "" }: CalendarProps) {
+export function Calendar({ selected, className = "" }: CalendarProps) {
+  const { selectedDate, setSelectedDate } = useCalendar();
   const [currentDate, setCurrentDate] = useState(selected || new Date());
-  const [selectedDate, setSelectedDate] = useState<Date>(selected || new Date());
   const [showYearSelector, setShowYearSelector] = useState<boolean>(false);
 
   const handleClick: (date: Date) => void = (date: Date): void => {
     setSelectedDate(date);
-    onSelect?.(date);
   };
 
   const navigateMonth: (direction: "prev" | "next") => void = (direction: "prev" | "next"): void => {
