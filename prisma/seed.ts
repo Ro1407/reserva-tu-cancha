@@ -22,29 +22,42 @@ import { ReservationDataSchema } from "@/types/reservation"
 const prisma = new PrismaClient()
 
 function validatePlaceholder(): boolean {
-    const clubValidation = ClubDataSchema.safeParse(clubs)
-    if (!clubValidation.success) {
-        console.error("Club data validation failed:", clubValidation.error)
-        return false
-    }
+    let clubValidation
 
-    const courtValidation = CourtDataSchema.safeParse(courts)
-    if (!courtValidation.success) {
-        console.error("Court data validation failed:", courtValidation.error)
-        return false
-    }
+    clubs.forEach((club) => {
+        clubValidation = ClubDataSchema.safeParse(club)
+        if (!clubValidation.success) {
+            console.error("Club data validation failed:", clubValidation.error)
+            return false
+        }
+    })
 
-    const userValidation = UserDataSchema.safeParse(users)
-    if (!userValidation.success) {
-        console.error("User data validation failed:", userValidation.error)
-        return false
-    }
+    let courtValidation
+    courts.forEach((court) => {
+        courtValidation = CourtDataSchema.safeParse(court)
+        if (!courtValidation.success) {
+            console.error("Court data validation failed:", courtValidation.error)
+            return false
+        }
+    })
 
-    const reservationValidation = ReservationDataSchema.safeParse(reservations)
-    if (!reservationValidation.success) {
-        console.error("Reservation data validation failed:", reservationValidation.error)
-        return false
-    }
+    let usersValidation
+    users.forEach((user) => {
+        usersValidation = UserDataSchema.safeParse(user)
+        if (!usersValidation.success) {
+            console.error("User data validation failed:", usersValidation.error)
+            return false
+        }
+    })
+
+    let reservationValidation
+    reservations.forEach((reservation) => {
+        reservationValidation = ReservationDataSchema.safeParse(reservation)
+        if (!reservationValidation.success) {
+            console.error("Reservation data validation failed:", reservationValidation.error)
+            return false
+        }
+    })
 
     console.log("Placeholder data validation successful")
     return true

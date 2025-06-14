@@ -45,8 +45,8 @@ model Club {
   phone       String
   location    String
   address     String
-  /// @zod.max(5, 'The club rating must be an integer between 0 and 5' )
-  rating      Int      @default(0) // float * 100
+  /// @zod.max(50, 'The club rating must be a one point decimal between 0.0 and 5.0' )
+  rating      Int      @default(0) // float * 10
   image       String?
   sports      Sport[]
   createdAt   DateTime @default(now())
@@ -73,7 +73,7 @@ model Court {
   address     String
   sport       Sport
   description String
-  /// @zod.max(5, 'Rating must be an integer between 0 and 5' )
+  /// @zod.max(50, 'The court rating must be a one point decimal between 0.0 and 5.0' )
   rating      Int        @default(0) // float * 10
   price       Int // Price per slot in cents
   amenities   Amenitie[]
@@ -88,7 +88,7 @@ model Court {
   // Relations
   club         Club          @relation(fields: [clubId], references: [id], onDelete: Cascade)
   reservations Reservation[]
-  TimeSlot     TimeSlot[]
+  timeSlots    TimeSlot[]
 
   @@unique([clubId, name]) // Unique name per club
   @@map("court")

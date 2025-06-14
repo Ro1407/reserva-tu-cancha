@@ -47,3 +47,12 @@ export const formatDate: (dateString: string) => string = (dateString: string): 
     day: "numeric",
   });
 };
+
+/**
+ * Formats a date string into ISO format
+ * @param {Date} date - The date to format.
+ * @return {string} The formatted date string.
+ */
+export const formatDateToISO: (date: Date) => string = (date: Date): string => {
+  return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD
+}

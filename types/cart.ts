@@ -16,7 +16,7 @@
  */
 export interface CartItem {
   id: string;
-  courtId: number;
+  courtId: string;
   courtName: string;
   clubName: string;
   date: string;

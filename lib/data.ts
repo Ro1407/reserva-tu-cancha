@@ -1,4 +1,5 @@
-import { Role, Sport, Amenitie, CourtState, ReservationState, TimeSlot } from "@prisma/client"
+import { Role, Sport, Amenitie, ReservationState, TimeSlot, CourtState } from "@prisma/client"
+import { TimeSlotValues } from "@/types/enumerates";
 
 /**
  * Data for the application, used by seed scripts
@@ -57,7 +58,7 @@ export const clubs = [
         phone: "1134567890",
         address: "Av. Scalabrini Ortiz 1234",
         sports: [Sport.Futbol, Sport.Tennis, Sport.Paddle],
-        rating: 450,
+        rating: 45,
         image: "/placeholder.svg",
     },
     {
@@ -68,7 +69,7 @@ export const clubs = [
         phone: "1141234567",
         address: "Av. Cabildo 3200",
         sports: [Sport.Basketball, Sport.Volleyball, Sport.Futbol],
-        rating: 420,
+        rating: 42,
         image: "/placeholder.svg",
     },
     {
@@ -79,7 +80,7 @@ export const clubs = [
         phone: "1133345566",
         address: "Defensa 800",
         sports: [Sport.Hockey, Sport.Tennis, Sport.Paddle],
-        rating: 380,
+        rating: 38,
         image: "/placeholder.svg",
     },
     {
@@ -90,7 +91,7 @@ export const clubs = [
         phone: "1144456677",
         address: "Av. La Plata 220",
         sports: [Sport.Futbol, Sport.Basketball, Sport.Volleyball, Sport.Tennis],
-        rating: 400,
+        rating: 40,
         image: "/placeholder.svg",
     },
     {
@@ -101,7 +102,7 @@ export const clubs = [
         phone: "1167890123",
         address: "Av. Las Heras 2700",
         sports: [Sport.Hockey, Sport.Futbol, Sport.Paddle],
-        rating: 430,
+        rating: 43,
         image: "/placeholder.svg",
     },
 ];
@@ -114,11 +115,12 @@ export const courts = [
         address: "Av. San Martín 1234, Bahía Blanca",
         sport: Sport.Futbol,
         description: "Cancha de fútbol 5 con césped sintético de última generación e iluminación LED.",
-        rating: 450,
+        rating: 45,
         price: 850000,
         amenities: [Amenitie.CespedSintetico, Amenitie.Iluminacion, Amenitie.Vestuarios, Amenitie.Estacionamiento, Amenitie.Buffet],
         image: "/images/courts/futbol-central-1.jpg",
-        status: CourtState.Activa,
+        state: CourtState.Activa,
+        timeSlots: TimeSlotValues,
     },
     {
         id: "00f2281e-b39a-4b9a-be41-c9ac96c09b73",
@@ -127,11 +129,12 @@ export const courts = [
         address: "Ruta 3 Km 5, Complejo Norte",
         sport: Sport.Tennis,
         description: "Cancha profesional de tenis con superficie de polvo de ladrillo y excelente mantenimiento.",
-        rating: 420,
+        rating: 42,
         price: 600000,
         amenities: [Amenitie.Iluminacion, Amenitie.Estacionamiento, Amenitie.Vestuarios, Amenitie.Buffet],
         image: "/images/courts/tenis-norte-1.jpg",
-        status: CourtState.Activa,
+        state: CourtState.Activa,
+        timeSlots: TimeSlotValues,
     },
     {
         id: "c8c221a2-2ee0-44c3-beb9-1379ce79b142",
@@ -140,11 +143,12 @@ export const courts = [
         address: "Calle Alem 245, Centro Sur",
         sport: Sport.Paddle,
         description: "Cancha de pádel con paredes de vidrio templado e iluminación LED para juegos nocturnos.",
-        rating: 390,
+        rating: 50,
         price: 700000,
         amenities: [Amenitie.Iluminacion, Amenitie.Estacionamiento, Amenitie.Vestuarios],
         image: "/images/courts/padel-sur-1.jpg",
-        status: CourtState.Activa,
+        state: CourtState.Activa,
+        timeSlots: TimeSlotValues,
     },
     {
         id: "ae7eec76-baf9-4c9b-91ee-1ca13f376ce0",
@@ -153,11 +157,12 @@ export const courts = [
         address: "Blvd. Cerri 980, Polideportivo Oeste",
         sport: Sport.Basketball,
         description: "Gimnasio techado con cancha profesional de básquet, ideal para entrenamientos y torneos.",
-        rating: 470,
+        rating: 47,
         price: 550000,
         amenities: [Amenitie.Iluminacion, Amenitie.Buffet, Amenitie.Vestuarios, Amenitie.Estacionamiento],
         image: "/images/courts/basket-oeste-1.jpg",
-        status: CourtState.Activa,
+        state: CourtState.Activa,
+        timeSlots: TimeSlotValues,
     },
     {
         id: "e34a0fa9-e2fc-40f1-a920-e00dc575af1b",
@@ -166,11 +171,12 @@ export const courts = [
         address: "Av. Colón 2700, Parque Este",
         sport: Sport.Hockey,
         description: "Campo de hockey de césped sintético, utilizado por equipos locales y regionales.",
-        rating: 400,
+        rating: 0,
         price: 780000,
         amenities: [Amenitie.CespedSintetico, Amenitie.Iluminacion, Amenitie.Estacionamiento, Amenitie.Vestuarios],
         image: "/images/courts/hockey-este.jpg",
-        status: CourtState.Activa,
+        state: CourtState.Activa,
+        timeSlots: TimeSlotValues,
     },
 ];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit, Trash2, Plus, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,19 +9,55 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Court } from "@/types/court";
-import { courts } from "@/lib/data";
+import { getAllCourts } from "@/lib/actions";
+import { getAllClubsNamesAndIds } from "@/lib/actions-client";
+import { ClubNameId } from "@/types/club-name-id";
+import { SportValues, CourtStateValues, TimeSlotValues, AmenitieValues,
+  SportKey, CourtStateKey, TimeSlotKey, AmenitieKey } from "@/types/enumerates";
+import { CourtData } from "@/types/court";
 
 export function CourtsTable() {
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>({});
   const [isCreating, setIsCreating] = useState(false);
-  const [newCancha, setNewCancha] = useState({
+  const emptyCourt: CourtData = {
     name: "",
-    club: "",
-    sport: "",
+    address: "",
+    clubId: "",
+    sport: "" as SportKey,
+    description: "",
     price: 0,
-    status: "Activa",
-  });
+    amenities: [] as AmenitieKey[],
+    state: "Activa" as CourtStateKey,
+    timeSlots: TimeSlotValues as TimeSlotKey[]
+  }
+
+  const [newCancha, setNewCancha] = useState<CourtData>(emptyCourt);
+  const [courts, setCourts] = useState<Court[]>([]);
+  const [clubs, setClubs] = useState<ClubNameId[]>([]);
+
+  useEffect(() => {
+    const fetchCourts = async (): Promise<Court[]> => {
+      try {
+        return await getAllCourts();
+      } catch (error) {
+        console.error("Error fetching courts:", error);
+        return [];
+      }
+    };
+
+    const fetchClubs = async (): Promise<ClubNameId[]> => {
+      try {
+        return await getAllClubsNamesAndIds();
+      } catch (error) {
+        console.error("Error fetching clubs:", error);
+        return [];
+      }
+    };
+
+    fetchCourts().then((courts) => setCourts(courts));
+    fetchClubs().then((clubs) => setClubs(clubs));
+  }, []);
 
   const startEdit: (court: Court) => void = (court: Court): void => {
     setEditingId(court.id);
@@ -33,13 +69,7 @@ export function CourtsTable() {
     setEditingId(null);
     setEditData({});
     setIsCreating(false);
-    setNewCancha({
-      name: "",
-      club: "",
-      sport: "",
-      price: 0,
-      status: "Activa",
-    });
+    setNewCancha(emptyCourt);
   };
 
   const saveEdit: () => void = (): void => {
@@ -47,7 +77,7 @@ export function CourtsTable() {
     setEditData({});
   };
 
-  const deleteCancha: (id: number) => void = (id: number): void => {
+  const deleteCancha: (id: string) => void = (id: string): void => {
     console.log("Eliminando cancha:", id);
   };
 
@@ -60,13 +90,7 @@ export function CourtsTable() {
   const saveNew: () => void = (): void => {
     console.log("Creando nueva cancha:", newCancha);
     setIsCreating(false);
-    setNewCancha({
-      name: "",
-      club: "",
-      sport: "",
-      price: 0,
-      status: "Activa",
-    });
+    setNewCancha(emptyCourt);
   };
 
   return (
@@ -103,29 +127,42 @@ export function CourtsTable() {
                   />
                 </TableCell>
                 <TableCell>
-                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, club: value })}>
+                  <Input
+                    value={newCancha.address}
+                    onChange={(e): void => setNewCancha({ ...newCancha, address: e.target.value })}
+                    placeholder="Dirección de la cancha"
+                    className="min-w-[200px]"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, clubId: value })}>
                     <SelectTrigger className="min-w-[150px]">
                       <SelectValue placeholder="Seleccionar club" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Club Central">Club Central</SelectItem>
-                      <SelectItem value="Complejo Norte">Complejo Norte</SelectItem>
-                      <SelectItem value="Centro Sur">Centro Sur</SelectItem>
-                      <SelectItem value="Polideportivo Oeste">Polideportivo Oeste</SelectItem>
+                      {
+                        clubs.map((club: ClubNameId) => (
+                          <SelectItem key={club.id} value={club.name}>
+                            {club.name}
+                          </SelectItem>
+                        ))
+                      }
                     </SelectContent>
                   </Select>
                 </TableCell>
                 <TableCell>
-                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, sport: value })}>
+                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, sport: value as SportKey})}>
                     <SelectTrigger className="min-w-[120px]">
                       <SelectValue placeholder="Seleccionar deporte" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Fútbol">Fútbol</SelectItem>
-                      <SelectItem value="Tenis">Tenis</SelectItem>
-                      <SelectItem value="Pádel">Pádel</SelectItem>
-                      <SelectItem value="Básquet">Básquet</SelectItem>
-                      <SelectItem value="Vóley">Vóley</SelectItem>
+                      {
+                        SportValues.map((sport: SportKey) => (
+                          <SelectItem key={sport} value={sport}>
+                            {sport}
+                          </SelectItem>
+                        ))
+                      }
                     </SelectContent>
                   </Select>
                 </TableCell>
@@ -139,14 +176,16 @@ export function CourtsTable() {
                   />
                 </TableCell>
                 <TableCell>
-                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, status: value })}>
+                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, state: value as CourtStateKey })}>
                     <SelectTrigger className="min-w-[130px]">
                       <SelectValue placeholder="Seleccionar estado" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Activa">Activa</SelectItem>
-                      <SelectItem value="Mantenimiento">Mantenimiento</SelectItem>
-                      <SelectItem value="Inactiva">Inactiva</SelectItem>
+                      {CourtStateValues.map((state: CourtStateKey) => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </TableCell>
@@ -156,7 +195,8 @@ export function CourtsTable() {
                       variant="outline"
                       size="sm"
                       onClick={saveNew}
-                      disabled={!newCancha.name || !newCancha.club || !newCancha.sport || !newCancha.price}
+                      disabled={!newCancha.name || !newCancha.clubId || !newCancha.sport || !newCancha.price || !newCancha.state
+                    || !newCancha.address}
                     >
                       <Check className="w-4 h-4" />
                     </Button>
@@ -189,14 +229,17 @@ export function CourtsTable() {
                         <SelectValue placeholder="Seleccionar club" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Club Central">Club Central</SelectItem>
-                        <SelectItem value="Complejo Norte">Complejo Norte</SelectItem>
-                        <SelectItem value="Centro Sur">Centro Sur</SelectItem>
-                        <SelectItem value="Polideportivo Oeste">Polideportivo Oeste</SelectItem>
+                        {
+                          clubs.map((club: ClubNameId) => (
+                            <SelectItem key={club.id} value={club.name}>
+                              {club.name}
+                            </SelectItem>
+                          ))
+                        }
                       </SelectContent>
                     </Select>
                   ) : (
-                    court.club
+                    clubs.filter((club) => club.id === court.clubId)[0]?.name || "Club no encontrado"
                   )}
                 </TableCell>
                 <TableCell>
@@ -206,11 +249,13 @@ export function CourtsTable() {
                         <SelectValue placeholder="Seleccionar deporte" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Fútbol">Fútbol</SelectItem>
-                        <SelectItem value="Tenis">Tenis</SelectItem>
-                        <SelectItem value="Pádel">Pádel</SelectItem>
-                        <SelectItem value="Básquet">Básquet</SelectItem>
-                        <SelectItem value="Vóley">Vóley</SelectItem>
+                        {
+                          SportValues.map((sport: string) => (
+                            <SelectItem key={sport} value={sport}>
+                              {sport}
+                            </SelectItem>
+                          ))
+                        }
                       </SelectContent>
                     </Select>
                   ) : (
@@ -236,13 +281,15 @@ export function CourtsTable() {
                         <SelectValue placeholder="Seleccionar estado" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Activa">Activa</SelectItem>
-                        <SelectItem value="Mantenimiento">Mantenimiento</SelectItem>
-                        <SelectItem value="Inactiva">Inactiva</SelectItem>
+                        {CourtStateValues.map((state: string) => (
+                          <SelectItem key={state} value={state}>
+                            {state}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   ) : (
-                    <Badge variant={court.status === "Activa" ? "default" : "secondary"}>{court.status}</Badge>
+                    <Badge variant={court.state === "Activa" ? "default" : "secondary"}>{court.state}</Badge>
                   )}
                 </TableCell>
                 <TableCell>

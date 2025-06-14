@@ -1,8 +1,10 @@
 import { ClubCard } from "@/components/club-card";
 import { Club } from "@/types/club";
-import { clubs } from "@/lib/data";
+import { getAllClubs } from "@/lib/actions";
 
-export default function ClubesPage() {
+export default async function ClubesPage() {
+  const clubs: Club[] = await getAllClubs();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">

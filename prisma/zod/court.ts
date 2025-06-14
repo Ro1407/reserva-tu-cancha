@@ -7,7 +7,7 @@ export const CourtSchema = z.object({
   address: z.string(),
   sport: z.nativeEnum(Sport),
   description: z.string(),
-  rating: z.number().int().max(5, 'Rating must be an integer between 0 and 5'),
+  rating: z.number().int().max(50, 'The court rating must be a one point decimal between 0.0 and 5.0'),
   price: z.number().int(),
   amenities: z.nativeEnum(Amenitie).array(),
   image: z.string().nullish(),
@@ -15,5 +15,5 @@ export const CourtSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   clubId: z.string(),
-  TimeSlot: z.nativeEnum(TimeSlot).array(),
+  timeSlots: z.nativeEnum(TimeSlot).array(),
 })

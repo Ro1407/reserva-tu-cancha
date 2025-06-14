@@ -1,4 +1,4 @@
-import { z } from "zod/v4"
+import { z } from "zod"
 import { ReservationSchema } from "@/prisma/zod"
 
 export type Reservation = z.infer<typeof ReservationSchema>
@@ -8,10 +8,10 @@ export type ReservationData = z.infer<typeof ReservationDataSchema>
 
 export const ReservationZodSchema = ReservationSchema.omit({ date: true, courtId: true, id: true, userId: true }).extend(
     {
-        id: z.uuid(),
-        date: z.iso().date(),
-        courtId: z.uuid(),
-        userId: z.uuid(),
+        id: z.string().uuid(),
+        date: z.string().date(),
+        courtId: z.string().uuid(),
+        userId: z.string().uuid(),
     }
 )
 

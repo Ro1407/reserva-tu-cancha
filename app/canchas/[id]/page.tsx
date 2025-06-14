@@ -2,7 +2,8 @@ import { CourtDetails } from "@/components/court-details";
 import { BookingForm } from "@/components/booking-form";
 import { WeatherWidget } from "@/components/weather-widget";
 import { Court } from "@/types/court";
-import { courts } from "@/lib/data";
+import { getCourtById } from "@/lib/actions";
+import { notFound } from "next/navigation";
 
 export default async function CourtDetailPage(props: {
   params: Promise<{
@@ -10,7 +11,12 @@ export default async function CourtDetailPage(props: {
   }>;
 }) {
   const { id } = await props.params;
-  const court: Court = courts[Number(id)];
+  const court: Court | null = await getCourtById(id);
+
+  if (!court) {
+    return notFound();
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

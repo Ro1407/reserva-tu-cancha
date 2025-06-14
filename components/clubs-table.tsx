@@ -1,29 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Edit, Trash2, Plus, Eye, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Club } from "@/types/club";
-import { clubs } from "@/lib/data";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ClubWithCourts } from "@/types/club-with-courts";
+import { getAllClubsWithCourts } from "@/lib/actions-client";
+import { ClubData } from "@/types/club";
+import { SportValues, SportKey } from "@/types/enumerates";
+import { Label } from "@/components/ui/label";
 
 export function ClubsTable() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>({});
   const [isCreating, setIsCreating] = useState(false);
-  const [newClub, setNewClub] = useState({
+  const emptyState: ClubData = {
     name: "",
+    description: "",
+    phone: "",
     location: "",
-    canchas: 0,
-    deportes: "",
-    estado: "Activo",
-  });
+    address: "",
+    sports: [] as SportKey[]
+  };
+  const [newClub, setNewClub] = useState<ClubData>(emptyState);
+  const [clubs, setClubs] = useState<ClubWithCourts[]>([]);
 
-  const startEdit: (club: Club) => void = (club: Club): void => {
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        return await getAllClubsWithCourts();
+      } catch (error) {
+        console.error("Error fetching clubs:", error);
+        return [];
+      }
+    };
+
+    fetchClubs().then((clubs) => {
+      setClubs(clubs);
+    });
+  }, []);
+
+  const startEdit: (club: ClubWithCourts) => void = (club: ClubWithCourts): void => {
     setEditingId(club.id);
     setEditData({ ...club });
     setIsCreating(false);
@@ -33,18 +54,12 @@ export function ClubsTable() {
     setEditingId(null);
     setEditData({});
     setIsCreating(false);
-    setNewClub({
-      name: "",
-      location: "",
-      canchas: 0,
-      deportes: "",
-      estado: "Activo",
-    });
+    setNewClub(emptyState);
   };
 
   const saveEdit: () => void = (): void => {
     const dataToSave = {
-      ...editData,
+      ...editData
     };
     console.log("Guardando edición:", dataToSave);
     setEditingId(null);
@@ -67,17 +82,11 @@ export function ClubsTable() {
 
   const saveNew: () => void = (): void => {
     const dataToSave = {
-      ...newClub,
+      ...newClub
     };
     console.log("Creando nuevo club:", dataToSave);
     setIsCreating(false);
-    setNewClub({
-      name: "",
-      location: "",
-      canchas: 0,
-      deportes: "",
-      estado: "Activo",
-    });
+    setNewClub(emptyState);
   };
 
   return (
@@ -115,6 +124,22 @@ export function ClubsTable() {
                 </TableCell>
                 <TableCell>
                   <Input
+                    value={newClub.description}
+                    onChange={(e): void => setNewClub({ ...newClub, name: e.target.value })}
+                    placeholder="Descripción del club"
+                    className="min-w-[200px]"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={newClub.phone}
+                    onChange={(e): void => setNewClub({ ...newClub, name: e.target.value })}
+                    placeholder="Teléfono del club"
+                    className="min-w-[200px]"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
                     value={newClub.location}
                     onChange={(e): void => setNewClub({ ...newClub, location: e.target.value })}
                     placeholder="Ubicación"
@@ -123,32 +148,36 @@ export function ClubsTable() {
                 </TableCell>
                 <TableCell>
                   <Input
-                    type="number"
-                    value={newClub.canchas || ""}
-                    onChange={(e): void => setNewClub({ ...newClub, canchas: Number(e.target.value) })}
-                    placeholder="Nº canchas"
-                    className="min-w-[80px]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={newClub.deportes}
-                    onChange={(e): void => setNewClub({ ...newClub, deportes: e.target.value })}
-                    placeholder="Fútbol, Tenis, Pádel"
+                    value={newClub.address}
+                    onChange={(e): void => setNewClub({ ...newClub, name: e.target.value })}
+                    placeholder="Dirección del club"
                     className="min-w-[200px]"
                   />
                 </TableCell>
                 <TableCell>
-                  <Select onValueChange={(value: string): void => setNewClub({ ...newClub, estado: value })}>
-                    <SelectTrigger className="min-w-[100px]">
-                      <SelectValue placeholder="Seleccionar estado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Activo">Activo</SelectItem>
-                      <SelectItem value="Inactivo">Inactivo</SelectItem>
-                      <SelectItem value="Suspendido">Suspendido</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex flex-wrap gap-2">
+                    {SportValues.map((sport: SportKey) => (
+                      <div key={sport} className="flex items-center">
+                        <Checkbox
+                          id={sport}
+                          checked={newClub.sports.includes(sport)}
+                          onCheckedChange={(checked) => {
+                            setNewClub((prev) => {
+                              return ({
+                                ...prev,
+                                sports: checked
+                                  ? [...prev.sports, sport] // Add sport if checked
+                                  : prev.sports.filter((s) => s !== sport) // Remove sport if unchecked
+                              });
+                            });
+                          }}
+                        />
+                        <Label htmlFor={sport} className="ml-2">
+                          {sport}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
@@ -156,7 +185,8 @@ export function ClubsTable() {
                       variant="outline"
                       size="sm"
                       onClick={saveNew}
-                      disabled={!newClub.name || !newClub.location || !newClub.canchas}
+                      disabled={!newClub.name || !newClub.description || !newClub.phone || !newClub.location ||
+                        !newClub.address || newClub.sports.length === 0}
                     >
                       <Check className="w-4 h-4" />
                     </Button>
@@ -169,7 +199,7 @@ export function ClubsTable() {
             )}
 
             {/* Filas existentes */}
-            {clubs.map((club: Club) => (
+            {clubs.map((club: ClubWithCourts) => (
               <TableRow key={club.id}>
                 <TableCell>
                   {editingId === club.id ? (
@@ -226,22 +256,6 @@ export function ClubsTable() {
                         </Badge>
                       )}
                     </div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingId === club.id ? (
-                    <Select onValueChange={(value: string): void => setEditData({ ...editData, estado: value })}>
-                      <SelectTrigger className="min-w-[100px]">
-                        <SelectValue placeholder="Seleccionar estado" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Activo">Activo</SelectItem>
-                        <SelectItem value="Inactivo">Inactivo</SelectItem>
-                        <SelectItem value="Suspendido">Suspendido</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Badge variant={club.state === "Activo" ? "default" : "secondary"}>{club.state}</Badge>
                   )}
                 </TableCell>
                 <TableCell>

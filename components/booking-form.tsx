@@ -12,7 +12,8 @@ import { Clock, ShoppingCart } from "lucide-react";
 import { Court } from "@/types/court";
 import { CartItem } from "@/types/cart";
 import { TimeSlot } from "@/types/time-slot";
-import { getTimeSlots } from "@/lib/actions";
+import { getClubNameById } from "@/lib/actions";
+import { getTimeSlots } from "@/lib/actions-client";
 
 interface BookingFormProps {
   court: Court;
@@ -27,29 +28,37 @@ export function BookingForm({ court }: BookingFormProps) {
   const [isAdding, setIsAdding] = useState<boolean>(false);
 
   useEffect((): void => {
-    getTimeSlots(selectedDate).then((slots: TimeSlot[]): void => {
+    getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
       setTimeSlots(slots);
       setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
     });
   }, [selectedDate]);
 
-  const handleAddToCart: () => void = (): void => {
+  const handleAddToCart: () => void = async (): Promise<void> => {
     if (!selectedDate || !selectedSlot) {
       toast.error("Por favor, selecciona una fecha y un horario antes de agregar al carrito.");
       return;
     }
 
     setIsAdding(true);
+
+    const clubName = await getClubNameById(court.clubId);
+    if (!clubName) {
+      toast.error("Club de la cancha no encontrado");
+      setIsAdding(false);
+      return;
+    }
+
     try {
       const cartItem: Omit<CartItem, "id"> = {
         courtId: court.id,
         courtName: court.name,
-        clubName: court.name /* TODO: cambiar esto al nombre del club */,
+        clubName: clubName,
         date: selectedDate.toISOString().split("T")[0],
         time: selectedSlot.time,
         price: court.price,
         sport: court.sport,
-        image: court.image || "/placeholder.svg?height=200&width=300",
+        image: court.image || "/placeholder.svg?height=200&width=300"
       };
       addToCart(cartItem);
       toast.success("¡Reserva agregada al carrito!");
