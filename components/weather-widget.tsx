@@ -14,13 +14,13 @@ interface WeatherWidgetProps {
 function getIcon(state: WeatherReport["state"]) {
   switch (state) {
     case "Soleado":
-      return <Sun className="w-5 h-5 mr-2" />;
+      return <Sun className="w-5 h-5 text-yellow-500 mr-2" />;
     case "Nublado":
-      return <Cloud className="w-5 h-5 mr-2" />;
+      return <Cloud className="w-5 h-5 text-gray-400 mr-2" />;
     case "Lluvioso":
-      return <Droplets className="w-5 h-5 mr-2" />;
+      return <Droplets className="w-5 h-5 text-blue-500 mr-2" />;
     case "Ventoso":
-      return <Wind className="w-5 h-5 mr-2" />;
+      return <Wind className="w-5 h-5 text-gray-500 mr-2" />;
   }
 }
 
@@ -38,7 +38,6 @@ export function WeatherWidget({ city }: WeatherWidgetProps) {
     return (
       <Card>
         <CardHeader>
-          {getIcon(weather.state)}
           <CardTitle className="flex items-center">Tiempo para el día seleccionado</CardTitle>
         </CardHeader>
         <CardContent>
