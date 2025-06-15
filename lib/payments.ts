@@ -3,7 +3,6 @@
 import { Payment, Preference, MercadoPagoConfig } from "mercadopago";
 import { PreferenceResponse } from "mercadopago/dist/clients/preference/commonTypes";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
-import { createNewOrder } from "@/lib/reservations";
 import { CartState, CartItem } from "@/types/cart";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
@@ -17,7 +16,7 @@ interface PreferenceItem {
 }
 
 export const processPreference: (cart: CartState) => Promise<string> = async (cart: CartState): Promise<string> => {
-  await createNewOrder(cart);
+  /* TODO: chequear que los items del carrito estén disponibles antes de hacer la compra */
   return new Promise<string>((resolve: (value: string) => void, reject: (error: Error) => void): void => {
     preference
       .create({
@@ -28,8 +27,9 @@ export const processPreference: (cart: CartState) => Promise<string> = async (ca
             failure: `${process.env.NEXT_PUBLIC_APP_URL}/carrito/failure`,
             pending: `${process.env.NEXT_PUBLIC_APP_URL}/carrito/pending`,
           },
-          // TODO: notification_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/mercadopago/webhook`,
+          notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/mercadopago/webhook`,
           external_reference: cart.id,
+          metadata: { cart },
           items: [
             ...cart.items.map(
               (item: CartItem): PreferenceItem => ({
@@ -54,13 +54,12 @@ export const processPreference: (cart: CartState) => Promise<string> = async (ca
 
 export const processPayment: (id: string) => Promise<void> = async (id: string): Promise<void> => {
   const payment: PaymentResponse = await new Payment(client).get({ id });
-  console.log({ payment });
+  const cart: CartState = payment.metadata?.cart as CartState;
   /**
    * TODO:
-   * cambiar el estado de la orden según el estado del pago
-   * (payment.state)
-   * - approved: pago aprobado
-   * - pending: pago pendiente
-   * - rejected: pago rechazado
+   * si el pago fue exitoso (payment.status === "approved")
+   * crear una reserva por cada item del carrito.
+   *
+   * pd: chequear que cart no sea undefined
    */
 };
