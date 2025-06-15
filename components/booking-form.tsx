@@ -37,7 +37,7 @@ export function BookingForm({ court }: BookingFormProps) {
   useEffect((): void => {
     if (selectedSlot) {
       let newdate: Date = new Date(selectedDate);
-      newdate.setUTCHours(getHourTimeSlot(selectedSlot))
+      newdate.setUTCHours(getHourTimeSlot(selectedSlot), 0);
       setSelectedDate(newdate);
     }
   }, [selectedSlot]);

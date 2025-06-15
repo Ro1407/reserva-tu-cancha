@@ -34,8 +34,7 @@ export function WeatherWidget({ city }: WeatherWidgetProps) {
     });
   }, [selectedDate]);
 
-  if (!weather) return <p>cargando...</p>;
-  else
+  if (weather)
     return (
       <Card>
         <CardHeader>
@@ -45,7 +44,7 @@ export function WeatherWidget({ city }: WeatherWidgetProps) {
         <CardContent>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <Sun className="w-8 h-8 text-yellow-500 mr-3" />
+              {getIcon(weather.state)}
               <div>
                 <div className="text-2xl font-bold">{weather.temperature}°C</div>
                 <div className="text-gray-600 dark:text-gray-400">{weather.state}</div>
