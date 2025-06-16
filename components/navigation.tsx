@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { logout } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CartIcon } from "@/components/cart-icon";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
 
 export function Navigation() {
+  const { status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -43,9 +46,13 @@ export function Navigation() {
             </Link>
             <ThemeToggle />
             <CartIcon />
-            <Link href="/login">
-              <Button>Iniciar Sesión</Button>
-            </Link>
+            {status === "authenticated" ? (
+              <Button onClick={(): Promise<void> => logout()}>Cerrar Sesión</Button>
+            ) : (
+              <Link href="/login">
+                <Button>Iniciar Sesión</Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Navigation */}
@@ -79,9 +86,17 @@ export function Navigation() {
             >
               Clubes
             </Link>
-            <Link href="/login">
-              <Button className="w-full mt-4">Iniciar Sesión</Button>
-            </Link>
+            {status === "authenticated" ? (
+              <div>
+                <Button className="w-full mt-4" onClick={(): Promise<void> => logout()}>
+                  Cerrar Sesión
+                </Button>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button className="w-full mt-4">Iniciar Sesión</Button>
+              </Link>
+            )}
           </div>
         )}
       </div>

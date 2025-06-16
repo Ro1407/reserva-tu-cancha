@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { CreditCard, Tag } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useCart } from "@/context/cart-context";
@@ -10,6 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coupon, coupons } from "@/lib/definitions";
 
 export function CartSummary() {
+  const pathname: string = usePathname();
+  const { push } = useRouter();
+  const { status } = useSession();
   const { state } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -33,11 +39,17 @@ export function CartSummary() {
   };
 
   const handleCheckout: () => Promise<void> = async (): Promise<void> => {
-    setIsProcessing(true);
-    setTimeout((): void => {
-      toast.error("TODO: Implementar integración con MercadoPago");
-      setIsProcessing(false);
-    }, 1000);
+    if (status !== "authenticated") {
+      const params = new URLSearchParams();
+      params.set("callbackUrl", pathname);
+      push(`/login?${params.toString()}`);
+    } else {
+      setIsProcessing(true);
+      setTimeout((): void => {
+        toast.error("TODO: Implementar integración con MercadoPago");
+        setIsProcessing(false);
+      }, 1000);
+    }
   };
 
   return (
