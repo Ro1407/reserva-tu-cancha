@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { CreditCard, Tag } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +42,7 @@ export function CartSummary() {
         replace(initPoint);
       })
       .catch((_: Error): void => {
-        toast.error("Ocurrió un error al procesar el pago. Inténtalo nuevamente.");
+        toast.error("Ocurrió un error al procesar el pago. Intente nuevamente.");
       })
       .finally((): void => setIsProcessing(false));
   };

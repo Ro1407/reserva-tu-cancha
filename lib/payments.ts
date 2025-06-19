@@ -1,6 +1,6 @@
 "use server";
 
-import { Payment, Preference, MercadoPagoConfig } from "mercadopago";
+import { Preference, Payment, MercadoPagoConfig } from "mercadopago";
 import { PreferenceResponse } from "mercadopago/dist/clients/preference/commonTypes";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { CartState, CartItem } from "@/types/cart";
@@ -58,9 +58,8 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
   console.log(cart);
   /**
    * TODO:
-   * si el pago fue exitoso (payment.status === "approved")
-   * crear una reserva por cada item del carrito.
-   *
-   * pd: chequear que cart no sea undefined
+   * si el pago fue exitoso (payment.status === "approved"),
+   * crear una reserva por cada item del carrito con estado confirmada.
+   * pd: chequear que cart no sea undefined.
    */
 };

@@ -14,7 +14,7 @@ export default function Success() {
     <div className="mx-auto text-center">
       <h1 className="text-3xl font-bold mb-4">¡Pago Exitoso!</h1>
       <p className="text-gray-600 mb-8 dark:text-gray-400">
-        Tu pago ha sido procesado con éxito. Gracias por tu reserva.
+        Su pago ha sido procesado con éxito. Gracias por su reserva.
       </p>
     </div>
   );
