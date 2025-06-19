@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CartIcon } from "@/components/cart-icon";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,11 +41,10 @@ export function Navigation() {
             >
               Clubes
             </Link>
-            <ThemeToggle />
-            <CartIcon />
-            <Link href="/login">
-              <Button>Iniciar Sesión</Button>
-            </Link>
+            <div>
+              <ThemeToggle />
+              <CartIcon />
+            </div>
           </div>
 
           {/* Mobile Navigation */}
@@ -78,9 +77,6 @@ export function Navigation() {
               className="block py-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
             >
               Clubes
-            </Link>
-            <Link href="/login">
-              <Button className="w-full mt-4">Iniciar Sesión</Button>
             </Link>
           </div>
         )}
