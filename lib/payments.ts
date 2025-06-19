@@ -55,6 +55,7 @@ export const processPreference: (cart: CartState) => Promise<string> = async (ca
 export const processPayment: (id: string) => Promise<void> = async (id: string): Promise<void> => {
   const payment: PaymentResponse = await new Payment(client).get({ id });
   const cart: CartState = payment.metadata?.cart as CartState;
+  console.log(cart);
   /**
    * TODO:
    * si el pago fue exitoso (payment.status === "approved")
