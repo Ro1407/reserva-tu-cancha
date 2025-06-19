@@ -12,12 +12,12 @@ export async function authenticate(prevState: string | undefined, formData: Form
         case "CredentialsSignin":
           return "Usuario o contraseña incorrectos. Intente nuevamente.";
         default:
-          return "Lo sentimos, algo salió mal. Intentá de nuevo más tarde.";
+          return "Lo sentimos, algo salió mal. Intente de nuevo más tarde.";
       }
     } else throw error;
   }
 }
 
 export async function logout(): Promise<void> {
-  await signOut({ redirect: false });
+  await signOut({ redirect: true, redirectTo: "/" });
 }

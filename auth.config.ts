@@ -9,7 +9,7 @@ export const authConfig = {
       const isLoggedIn: boolean = !!auth?.user;
       const isOnDashboard: boolean = nextUrl.pathname.startsWith("/dashboard");
       if (isOnDashboard) return isLoggedIn;
-      return true;
+      else return true;
     },
   },
   providers: [],

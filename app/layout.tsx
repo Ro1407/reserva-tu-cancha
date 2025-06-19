@@ -10,11 +10,11 @@ export const metadata = {
   title: "ReserváTuCancha - Reserva canchas deportivas online",
   description: "La plataforma más fácil para reservar canchas deportivas en tu ciudad",
   generator: "v0.dev",
-  manifest: '/manifest.json',
+  manifest: "/manifest.json",
   icons: [
-    { rel: 'icon', url: '/icons/icon-192x192.png' },
-    { rel: 'icon', url: '/icons/icon-512x512.png' },
-  ]
+    { rel: "icon", url: "/icons/icon-192x192.png" },
+    { rel: "icon", url: "/icons/icon-512x512.png" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
