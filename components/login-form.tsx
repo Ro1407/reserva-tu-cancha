@@ -1,10 +1,20 @@
+"use client";
+
+import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
+import { authenticate } from "@/lib/auth";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 export function LoginForm() {
+  const searchParams = useSearchParams();
+  const callbackUrl: string = searchParams.get("callbackUrl") || "/";
+  const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined);
+
   return (
     <Card className="shadow-lg">
       <CardHeader className="text-center space-y-2">
@@ -17,19 +27,35 @@ export function LoginForm() {
         <p className="text-gray-600 dark:text-gray-400">Ingresa a tu cuenta para continuar</p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <form action="/login">
+        <form action={formAction}>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input required id="email" type="email" placeholder="tu@email.com" className="w-full" />
+              <Input
+                required
+                id="email"
+                name="email"
+                type="email"
+                placeholder="usuario@dominio.com"
+                className="w-full"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <Input required id="password" type="password" placeholder="••••••••" className="w-full" />
+              <Input
+                required
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                className="w-full"
+                minLength={6}
+              />
             </div>
           </div>
           <div className="space-y-4 mt-4 mb-2">
-            <Button className="w-full" size="lg">
+            <input type="hidden" name="redirectTo" value={callbackUrl} />
+            <Button className="w-full" size="lg" aria-disabled={isPending}>
               <input type="submit" value="Entrar" />
             </Button>
             <div className="text-center">
@@ -37,6 +63,12 @@ export function LoginForm() {
                 ¿Olvidaste tu contraseña?
               </span>
             </div>
+            {errorMessage && (
+              <div className="flex gap-1">
+                <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                <p className="text-sm text-red-500">{errorMessage}</p>
+              </div>
+            )}
           </div>
           <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-800">
             <p className="text-sm text-gray-600 dark:text-gray-400">
