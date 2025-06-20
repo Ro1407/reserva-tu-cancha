@@ -6,6 +6,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getDaysInMonth, getYearRange } from "@/lib/utils";
 import { daysOfWeek, monthNames } from "@/lib/definitions";
 
+const BOOKING_WINDOW_DAYS: number = 14;
+
 interface CalendarProps {
   selected?: Date;
   className?: string;
@@ -20,7 +22,7 @@ export function Calendar({ selected, className = "" }: CalendarProps) {
   today.setHours(0, 0, 0, 0);
 
   const maxdate = new Date();
-  maxdate.setDate(today.getDate() + 14);
+  maxdate.setDate(today.getDate() + BOOKING_WINDOW_DAYS);
   maxdate.setHours(23, 59, 59, 999);
 
   const handleClick: (date: Date) => void = (date: Date): void => {
