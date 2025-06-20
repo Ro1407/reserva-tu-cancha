@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
+import { useCalendar } from "@/context/calendar";
 import { toast } from "react-hot-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { Court } from "@/types/court";
 import { CartItem } from "@/types/cart";
 import { TimeSlot } from "@/types/time-slot";
 import { getTimeSlots } from "@/lib/actions";
+import { getHourTimeSlot } from "@/lib/utils";
 
 interface BookingFormProps {
   court: Court;
@@ -21,7 +23,7 @@ interface BookingFormProps {
 export function BookingForm({ court }: BookingFormProps) {
   const { replace } = useRouter();
   const { addToCart } = useCart();
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { selectedDate, setSelectedDate } = useCalendar();
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
@@ -29,9 +31,16 @@ export function BookingForm({ court }: BookingFormProps) {
   useEffect((): void => {
     getTimeSlots(selectedDate).then((slots: TimeSlot[]): void => {
       setTimeSlots(slots);
-      setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
     });
   }, [selectedDate]);
+
+  useEffect((): void => {
+    if (selectedSlot) {
+      let newdate: Date = new Date(selectedDate);
+      newdate.setUTCHours(getHourTimeSlot(selectedSlot), 0);
+      setSelectedDate(newdate);
+    }
+  }, [selectedSlot]);
 
   const handleAddToCart: () => void = (): void => {
     if (!selectedDate || !selectedSlot) {
@@ -74,7 +83,7 @@ export function BookingForm({ court }: BookingFormProps) {
         {/* Date Selection */}
         <div>
           <Label className="text-base font-medium mb-3 block">Seleccionar Fecha</Label>
-          <Calendar onSelect={setSelectedDate} className="rounded-md border border-gray-200 dark:border-gray-800" />
+          <Calendar className="rounded-md border border-gray-200 dark:border-gray-800" />
         </div>
         {/* Time Selection */}
         <div>
