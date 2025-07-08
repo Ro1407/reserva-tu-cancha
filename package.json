@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^5.1.1",
     "@prisma/client": "^6.9.0",
     "@tailwindcss/forms": "^0.5.10",
     "autoprefixer": "10.4.20",
@@ -15,11 +16,13 @@
     "next": "latest",
     "next-auth": "5.0.0-beta.25",
     "next-themes": "^0.4.6",
+    "pnpm": "^10.12.4",
     "postcss": "8.5.1",
     "postgres": "^3.4.6",
     "prettier": "^3.5.3",
     "react": "latest",
     "react-dom": "latest",
+    "react-hook-form": "^7.60.0",
     "react-hot-toast": "^2.5.2",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
@@ -39,8 +42,14 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
       "bcrypt",
+      "prisma",
       "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "yarn"
     ]
   }
 }

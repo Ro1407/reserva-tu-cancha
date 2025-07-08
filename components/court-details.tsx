@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Star, Phone, MapIcon } from "lucide-react";
+import { Badge, BadgeVariant } from "@/components/ui/badge";
+import { MapIcon, MapPin, Phone, Star } from "lucide-react";
 import { Club } from "@/types/club";
 import { Court } from "@/types/court";
 import { getClubById } from "@/lib/actions";
+import { formatDBPriceToCurrency } from "@/lib/utils";
 
 interface CourtDetailsProps {
   court: Court;
@@ -35,7 +36,7 @@ export async function CourtDetails({ court }: CourtDetailsProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold">${court.price.toLocaleString()}</div>
+                  <div className="text-3xl font-bold">{formatDBPriceToCurrency(court.price)}</div>
                   <div className="text-gray-600 dark:text-gray-400">por hora</div>
                 </div>
               </div>
@@ -55,7 +56,7 @@ export async function CourtDetails({ court }: CourtDetailsProps) {
               <CardContent className="pt-4">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {court.amenities.map((amenity: string) => (
-                    <Badge key={amenity} variant="secondary" className="justify-center text-xl">
+                    <Badge key={amenity} variant={BadgeVariant.secondary} className="justify-center text-xl">
                       <span className="text-lg">{amenity}</span>
                     </Badge>
                   ))}

@@ -1,5 +1,5 @@
 import { CourtDetails } from "@/components/court-details";
-import { BookingForm } from "@/components/booking-form";
+import { BookingForm } from "@/components/forms/booking-form";
 import { WeatherWidget } from "@/components/weather-widget";
 import { Court } from "@/types/court";
 import { getCourtById } from "@/lib/actions";

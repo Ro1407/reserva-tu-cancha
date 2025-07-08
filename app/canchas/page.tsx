@@ -1,11 +1,11 @@
 import { CourtCard } from "@/components/court-card";
 import { CourtFilters } from "@/components/court-filters";
 import { Pagination } from "@/components/pagination";
-import { Court } from "@/types/court";
-import { getAllCourts } from "@/lib/actions";
+import { CourtCardData } from "@/types/court";
+import { getAllCourtsCardData } from "@/lib/actions-client";
 
 export default async function CanchasPage() {
-  const courts: Court[] | null = await getAllCourts();
+  const courts: CourtCardData[] | null = await getAllCourtsCardData();
 
   return (
     <>
@@ -21,7 +21,7 @@ export default async function CanchasPage() {
             </div>
             <div className="lg:col-span-3">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                {courts.map((court: Court) => (
+                {courts.map((court: CourtCardData) => (
                   <CourtCard key={court.id} court={court} />
                 ))}
               </div>

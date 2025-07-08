@@ -1,14 +1,29 @@
-import { z } from "zod"
+import { z } from "zod";
 import { ClubSchema } from "@/prisma/zod"
+import { Sport } from "@prisma/client";
 
-export type Club = z.infer<typeof ClubSchema>
+const ClubValidatingEnums = ClubSchema.omit({ sports: true }).extend({
+  sports: z.array(z.nativeEnum(Sport)).min(1, {
+    message: "Por favor, seleccione al menos un deporte para el club",
+  }),
+});
 
-export const ClubDataSchema = ClubSchema.omit({id: true, createdAt: true, updatedAt: true})
-const EditableClubSchema = ClubDataSchema.omit({rating: true, image: true})
+export type Club = z.infer<typeof ClubValidatingEnums>
+
+export const ClubDataSchema = ClubValidatingEnums.omit({id: true, createdAt: true, updatedAt: true})
+export const EditableClubSchema = ClubDataSchema.omit({rating: true, image: true})
 export type ClubData = z.infer<typeof EditableClubSchema>
 
-export const ClubZodSchema = ClubSchema.omit({id: true, phone: true}).extend({
-    id: z.string().uuid(),
-    phone: z.string().regex(/^\+?[1-9]\d{1,14}$/),
-})
+
+const ClubNameIdSchema = ClubSchema.pick({id: true, name: true})
+export type ClubNameId = z.infer<typeof ClubNameIdSchema>
+
+export type ClubWithCourts = Club & {
+  courts: string[];  // Array of court names associated with the club
+};
+
+export type ClubCardData = Club & {availableCourtsCount: number};
+
+
+
 

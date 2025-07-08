@@ -1,17 +1,15 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Star, Building } from "lucide-react";
-import { Club } from "@/types/club";
-import { getAvailableCourtsCount } from "@/lib/actions";
+import { Badge, BadgeVariant } from "@/components/ui/badge";
+import { Building, MapPin, Star } from "lucide-react";
+import { ClubCardData } from "@/types/club";
 
 interface ClubCardProps {
-  club: Club;
+  club: ClubCardData
 }
 
 export function ClubCard({ club }: ClubCardProps) {
-  const availableCourtsCount = getAvailableCourtsCount(club.id);
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="aspect-video bg-gray-100 dark:bg-gray-800">
@@ -31,14 +29,14 @@ export function ClubCard({ club }: ClubCardProps) {
         </div>
         <div className="flex items-center text-gray-600 dark:text-gray-400">
           <Building className="w-4 h-4 mr-1" />
-          {availableCourtsCount} canchas disponibles
+          {club.availableCourtsCount} canchas disponibles
         </div>
       </CardHeader>
       <CardContent>
         <p className="text-gray-600 text-sm mb-4 line-clamp-2 dark:text-gray-400">{club.description}</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {club.sports.map((sport: string) => (
-            <Badge key={sport} variant="secondary" className="text-xs">
+            <Badge key={sport} variant={BadgeVariant.secondary} className="text-xs">
               {sport}
             </Badge>
           ))}

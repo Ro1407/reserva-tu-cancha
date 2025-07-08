@@ -1,31 +1,30 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Badge, BadgeVariant } from "@/components/ui/badge";
 import { MapPin, Star } from "lucide-react";
-import { Court } from "@/types/court";
-import { getClubLocationById} from "@/lib/actions";
+import { CourtCardData } from "@/types/court";
+import { formatDBPriceToCurrency } from "@/lib/utils";
 
 interface CourtCardProps {
-  court: Court;
+  court: CourtCardData;
 }
 
-export async function CourtCard({ court }: CourtCardProps) {
-  const clubLocation: string | null = await getClubLocationById(court.clubId);
+export function CourtCard({ court }: CourtCardProps) {
   const canchaActiva: boolean = court.state === "Activa";
 
   return (
     <>
-      {clubLocation ? (
+      {court.clubLocation ? (
         <Card className="overflow-hidden hover:shadow-lg transition-shadow">
           <div className="aspect-video bg-gray-100 relative dark:bg-gray-800">
             <img src={court.image || "/placeholder.svg"} alt={court.name} className="w-full h-full object-cover" />
             <Badge className="absolute top-2 left-2"
-                   variant={canchaActiva ? "default" : "secondary"}>
+                   variant={canchaActiva ? BadgeVariant.default : BadgeVariant.secondary}>
               {court.sport}
             </Badge>
             {!canchaActiva && (
-              <Badge className="absolute top-2 right-2" variant="destructive">
+              <Badge className="absolute top-2 right-2" variant={BadgeVariant.destructive}>
                 No disponible
               </Badge>
             )}
@@ -46,7 +45,7 @@ export async function CourtCard({ court }: CourtCardProps) {
           <CardContent>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <span className="text-2xl font-bold">${court.price.toLocaleString()}</span>
+                <span className="text-2xl font-bold">{formatDBPriceToCurrency(court.price)}</span>
                 <span className="text-gray-600 dark:text-gray-400">/hora</span>
               </div>
             </div>

@@ -14,6 +14,7 @@ import { CartItem } from "@/types/cart";
 import { TimeSlot } from "@/types/time-slot";
 import { getClubNameById } from "@/lib/actions";
 import { getTimeSlots } from "@/lib/actions-client";
+import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString } from "@/lib/utils";
 
 interface BookingFormProps {
   court: Court;
@@ -98,7 +99,7 @@ export function BookingForm({ court }: BookingFormProps) {
                 disabled={!slot.available}
                 onClick={(): void => setSelectedSlot(slot)}
               >
-                {slot.time}
+                {formatTimeSlotToString(slot.time)}
               </Button>
             ))}
           </div>
@@ -113,11 +114,11 @@ export function BookingForm({ court }: BookingFormProps) {
             </div>
             <div className="flex justify-between">
               <span>Fecha:</span>
-              <span>{selectedDate.toISOString().split("T")[0] || "Seleccionar fecha"}</span>
+              <span>{formatISODateToHumanReadable(selectedDate.toISOString()) || "Seleccionar fecha"}</span>
             </div>
             <div className="flex justify-between">
               <span>Horario:</span>
-              <span>{selectedSlot?.time || "Seleccionar horario"}</span>
+              <span>{selectedSlot? formatTimeSlotToString(selectedSlot?.time) : "Seleccionar horario"}</span>
             </div>
             <div className="flex justify-between">
               <span>Duración:</span>
@@ -125,7 +126,7 @@ export function BookingForm({ court }: BookingFormProps) {
             </div>
             <div className="border-t border-gray-200 pt-2 flex justify-between font-medium dark:border-gray-800">
               <span>Total:</span>
-              <span>${court.price.toLocaleString()}</span>
+              <span>{formatDBPriceToCurrency(court.price)}</span>
             </div>
           </div>
         </div>

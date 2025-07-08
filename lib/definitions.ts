@@ -150,7 +150,7 @@ export const faqData = [
   {
     question: "¿Qué pasa si llueve el día de mi reserva?",
     answer:
-      "Para canchas al aire libre, ofrecemos cancelación gratuita por lluvia hasta 1 hora antes del horario reservado. Para canchas techadas, las reservas se mantienen independientemente del clima.",
+      "Para (overview) al aire libre, ofrecemos cancelación gratuita por lluvia hasta 1 hora antes del horario reservado. Para (overview) techadas, las reservas se mantienen independientemente del clima.",
   },
   {
     question: "¿Necesito llevar algún equipamiento especial?",
