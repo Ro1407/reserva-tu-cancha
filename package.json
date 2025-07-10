@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "NEXT_DISABLE_TYPE_CHECK=1 next build",
+    "build": "NEXT_IGNORE_TYPE_ERRORS=true next build",
     "dev": "next dev --turbopack",
     "start": "next start",
     "seed": "tsx prisma/seed.ts"
