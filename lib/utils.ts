@@ -1,3 +1,5 @@
+import { WeatherReport } from "@/types/weather-report";
+
 /**
  * Gets the current date in the format YYYY-MM-DD.
  * @param {Date} date - The date to format.
@@ -47,6 +49,74 @@ export const formatDate: (dateString: string) => string = (dateString: string): 
     day: "numeric",
   });
 };
+
+/**
+ * Classifies the weather based on rain, clouds, and wind.
+ * @param {Object} params - The weather parameters.
+ * @param {number} params.rain - The amount of rain in mm.
+ * @param {number} params.clouds - The percentage of cloud cover.
+ * @param {number} params.wind - The wind speed in km/h.
+ * @return {string} The classified weather state.
+ */
+export function classifyWeather({
+  rain,
+  clouds,
+  wind,
+}: {
+  rain: number;
+  clouds: number;
+  wind: number;
+}): WeatherReport["state"] {
+  if (rain > 15) return "Tormentoso";
+  if (rain > 1) return "Lluvioso";
+  if (wind > 30) return "Ventoso";
+  if (clouds > 60) return "Nublado";
+  return "Soleado";
+}
+
+/**
+ * Describes the weather conditions based on rain, clouds, and wind.
+ * @param {Object} report - The weather report parameters.
+ * @param {number} report.rain - The amount of rain in mm.
+ * @param {number} report.clouds - The percentage of cloud cover.
+ * @param {number} report.wind - The wind speed in km/h.
+ * @return {string} A description of the weather conditions.
+ */
+export function describeWeather(report: { rain: number; clouds: number; wind: number }): string {
+  const parts: string[] = [];
+
+  if (report.rain > 15) parts.push("Tormentas fuertes");
+  else if (report.rain > 1) parts.push("Probabilidad de lluvia");
+  else if (report.clouds > 60) parts.push("Cielo nublado");
+  else parts.push("Cielo despejado");
+
+  if (report.wind > 30) parts.push("vientos intensos");
+  else if (report.wind > 15) parts.push("brisa");
+
+  return parts.join(" con ");
+}
+
+export function getHourTimeSlot(slot: TimeSlot): number {
+  return Number(slot.time.split(":")[0]);
+}
+
+/**
+ * Converts a base64 URL string to a Uint8Array.
+ * @param {string} base64String - The base64 URL string to convert.
+ * @return {Uint8Array} The converted Uint8Array.
+ */
+export function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
+  const padding: string = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64: string = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+
+  const rawData: string = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i: number = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
 
 /**
  * Formats a date string into ISO format

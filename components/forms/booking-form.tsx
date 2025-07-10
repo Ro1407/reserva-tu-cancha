@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
+import { useCalendar } from "@/context/calendar";
 import { toast } from "react-hot-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,7 @@ interface BookingFormProps {
 export function BookingForm({ court }: BookingFormProps) {
   const { replace } = useRouter();
   const { addToCart } = useCart();
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { selectedDate, setSelectedDate } = useCalendar();
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
@@ -34,6 +35,14 @@ export function BookingForm({ court }: BookingFormProps) {
       setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
     });
   }, [selectedDate]);
+
+  useEffect((): void => {
+    if (selectedSlot) {
+      let newdate: Date = new Date(selectedDate);
+      newdate.setUTCHours(formatTimeSlotToString(selectedSlot), 0);
+      setSelectedDate(newdate);
+    }
+  }, [selectedSlot]);
 
   const handleAddToCart: () => void = async (): Promise<void> => {
     if (!selectedDate || !selectedSlot) {
@@ -59,7 +68,7 @@ export function BookingForm({ court }: BookingFormProps) {
         time: selectedSlot.time,
         price: court.price,
         sport: court.sport,
-        image: court.image || "/placeholder.svg?height=200&width=300"
+        image: court.image || "/placeholder.svg?height=200&width=300",
       };
       addToCart(cartItem);
       toast.success("¡Reserva agregada al carrito!");
@@ -84,7 +93,7 @@ export function BookingForm({ court }: BookingFormProps) {
         {/* Date Selection */}
         <div>
           <Label className="text-base font-medium mb-3 block">Seleccionar Fecha</Label>
-          <Calendar onSelect={setSelectedDate} className="rounded-md border border-gray-200 dark:border-gray-800" />
+          <Calendar className="rounded-md border border-gray-200 dark:border-gray-800" />
         </div>
         {/* Time Selection */}
         <div>

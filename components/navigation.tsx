@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CartIcon } from "@/components/cart-icon";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { PushNotificationManager } from "@/components/push-notifications";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,7 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
+            <PushNotificationManager />
             <Link
               href="/"
               className="text-gray-600 hover:text-gray-900 transition-colors dark:text-gray-400 dark:hover:text-gray-100"
@@ -41,11 +43,10 @@ export function Navigation() {
             >
               Clubes
             </Link>
-            <ThemeToggle />
-            <CartIcon />
-            <Link href="/login">
-              <Button>Iniciar Sesión</Button>
-            </Link>
+            <div>
+              <ThemeToggle />
+              <CartIcon />
+            </div>
           </div>
 
           {/* Mobile Navigation */}
@@ -61,6 +62,7 @@ export function Navigation() {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden py-4 space-y-2">
+            <PushNotificationManager />
             <Link
               href="/"
               className="block py-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
@@ -78,9 +80,6 @@ export function Navigation() {
               className="block py-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
             >
               Clubes
-            </Link>
-            <Link href="/login">
-              <Button className="w-full mt-4">Iniciar Sesión</Button>
             </Link>
           </div>
         )}

@@ -25,3 +25,17 @@ export interface CartItem {
   sport: string;
   image: string;
 }
+
+/**
+ * This interface defines the structure of the cart state object.
+ * It includes properties for the cart ID, an array of cart items, and the total price of the items in the cart.
+ * @interface CartState
+ *  @property {string} id - The unique identifier for the cart, typically a UUID.
+ *  @property {CartItem[]} items - An array of items in the cart, each represented by a CartItem object.
+ *  @property {number} total - The total price of all items in the cart, calculated as the sum of the prices of each CartItem.
+ */
+export interface CartState {
+  id: string;
+  items: CartItem[];
+  total: number;
+}
