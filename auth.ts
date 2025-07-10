@@ -10,6 +10,7 @@ interface User {
   password: string;
 }
 
+//TODO action para user
 async function getUser(email: string): Promise<User | null> {
   return new Promise((resolve: (user: User) => void): void => {
     setTimeout(async (): Promise<void> => {

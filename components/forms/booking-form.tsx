@@ -15,7 +15,7 @@ import { CartItem } from "@/types/cart";
 import { TimeSlot } from "@/types/time-slot";
 import { getClubNameById } from "@/lib/actions";
 import { getTimeSlots } from "@/lib/actions-client";
-import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString } from "@/lib/utils";
+import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString, getHourTimeSlot, formatDateToISO } from "@/lib/utils";
 
 interface BookingFormProps {
   court: Court;
@@ -30,16 +30,25 @@ export function BookingForm({ court }: BookingFormProps) {
   const [isAdding, setIsAdding] = useState<boolean>(false);
 
   useEffect((): void => {
-    getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
+    console.log("SELECTED DATE: " + selectedDate)
+      getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
       setTimeSlots(slots);
-      setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
+     // setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
     });
   }, [selectedDate]);
 
   useEffect((): void => {
+    console.log("SELECTED DATE: " + selectedDate)
+    getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
+      setTimeSlots(slots);
+      // setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
+    });
+  }, []);
+
+  useEffect((): void => {
     if (selectedSlot) {
       let newdate: Date = new Date(selectedDate);
-      newdate.setUTCHours(formatTimeSlotToString(selectedSlot), 0);
+      newdate.setUTCHours(getHourTimeSlot(selectedSlot), 0);
       setSelectedDate(newdate);
     }
   }, [selectedSlot]);
@@ -64,7 +73,7 @@ export function BookingForm({ court }: BookingFormProps) {
         courtId: court.id,
         courtName: court.name,
         clubName: clubName,
-        date: selectedDate.toISOString().split("T")[0],
+        date: formatDateToISO(selectedDate),
         time: selectedSlot.time,
         price: court.price,
         sport: court.sport,
@@ -123,7 +132,7 @@ export function BookingForm({ court }: BookingFormProps) {
             </div>
             <div className="flex justify-between">
               <span>Fecha:</span>
-              <span>{formatISODateToHumanReadable(selectedDate.toISOString()) || "Seleccionar fecha"}</span>
+              <span>{formatISODateToHumanReadable(formatDateToISO(selectedDate)) || "Seleccionar fecha"}</span>
             </div>
             <div className="flex justify-between">
               <span>Horario:</span>

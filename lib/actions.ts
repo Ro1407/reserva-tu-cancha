@@ -51,14 +51,14 @@ export async function getClubNameById(id: string): Promise<string | null> {
   return club ? club.name : null;
 }
 
-// Returns a club's location by its ID
-export async function getClubLocationById(id: string): Promise<string | null> {
-  const club = await prisma.club.findUnique({
+// Returns a club's location by one of it's courts id
+export async function getClubLocationByCourtId(id: string): Promise<string | null> {
+  const court = await prisma.court.findUnique({
     where: { id },
-    select: { location: true }
+    select: { club: { select: { location: true } } }
   });
 
-  return club ? club.location : null;
+  return court ? court.club.location : null;
 }
 
 // Returns all clubs, allows query and pagination

@@ -1,4 +1,5 @@
 import { WeatherReport } from "@/types/weather-report";
+import { TimeSlot } from "@/types/time-slot";
 
 /**
  * Gets the current date in the format YYYY-MM-DD.

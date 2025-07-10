@@ -2,8 +2,7 @@ import { CourtDetails } from "@/components/court-details";
 import { BookingForm } from "@/components/forms/booking-form";
 import { WeatherWidget } from "@/components/weather-widget";
 import { CalendarProvider } from "@/context/calendar";
-import { Court } from "@/types/court";
-import { getCourtById } from "@/lib/actions";
+import { getCourtById, getClubLocationByCourtId } from "@/lib/actions";
 import { notFound } from "next/navigation";
 
 export default async function CourtDetailPage(props: {
@@ -12,7 +11,9 @@ export default async function CourtDetailPage(props: {
   }>;
 }) {
   const { id } = await props.params;
-  const court: Court | null = await getCourtById(id);
+  const [court, location] = await Promise.all([
+      getCourtById(id),
+      getClubLocationByCourtId(id)])
 
   if (!court) {
     return notFound();
@@ -24,9 +25,11 @@ export default async function CourtDetailPage(props: {
         <CalendarProvider>
           <div className="lg:col-span-2">
             <CourtDetails court={court} />
+            { location &&
             <div className="mt-8">
-              <WeatherWidget city={court.location} />
+              <WeatherWidget city={location} />
             </div>
+            }
           </div>
           <div className="lg:col-span-1">
             <BookingForm court={court} />
