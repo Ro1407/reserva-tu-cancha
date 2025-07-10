@@ -6,8 +6,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.22",
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/forms": "^0.5.10",
+    "ai": "^4.3.17",
     "autoprefixer": "10.4.20",
     "bcrypt": "^5.1.1",
     "lucide-react": "^0.513.0",
