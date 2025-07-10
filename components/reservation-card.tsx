@@ -6,7 +6,6 @@ import { Calendar, Clock, CreditCard, MapPin, Star, User } from "lucide-react";
 import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString } from "@/lib/utils";
 import { ReservationStateKey } from "@/types/enumerates";
 import { ReservationCardData } from "@/types/reservation";
-import { sendNotification } from "@/lib/notifications"
 
 interface ReservationCardProps {
   reservation: ReservationCardData;
@@ -86,12 +85,6 @@ return (
       </div>
 
       <div className="flex gap-2">
-        {canCancel && (
-          <Button variant="destructive" className="w-full"
-                 >
-            Cancelar
-          </Button>
-        )}
         <Link href={`/canchas/${reservation.courtId}`} className="w-full">
           <Button variant="outline" className="w-full bg-transparent">
             Ver Cancha

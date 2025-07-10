@@ -4,6 +4,9 @@ import { Court, Club } from "@prisma/client";
 import { Reservation } from "@/types/reservation";
 import { prisma } from "@/prisma/prismaClientSingleton";
 import { ITEMS_PER_PAGE } from "@/lib/definitions";
+import { CartItem } from "@/types/cart";
+import { convertTimeToTHHMM } from "@/lib/utils";
+import { TimeSlotKey } from "@/types/enumerates";
 
 interface PaginationAndQueryProps {
   query?: string;
@@ -113,6 +116,21 @@ export async function getAllReservations(): Promise<Reservation[]> {
       user: true
     }
   });
+}
+
+// Checks if a court item is still available for reservation
+export async function isItemAvailable(item: CartItem): Promise<boolean> {
+  const formattedTime: string = convertTimeToTHHMM(item.time.time);   //HH:MM a THHMM
+
+  const reservation = await prisma.reservation.findFirst({
+    where: {
+      courtId: item.courtId,
+      date: item.date,
+      timeSlot: formattedTime as TimeSlotKey
+    }
+  });
+
+  return !reservation;
 }
 
 // ACTIONS FOR THE FILTER COMPONENTS

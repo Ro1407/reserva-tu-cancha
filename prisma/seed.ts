@@ -16,7 +16,7 @@ import {
 import { ClubDataSchema } from "@/types/club"
 import { CourtDataSchema } from "@/types/court"
 import { UserDataSchema } from "@/types/user"
-import { ReservationDataSchema } from "@/types/reservation"
+import { ReservationValidatingSchema } from "@/types/reservation"
 
 
 const prisma = new PrismaClient()
@@ -52,7 +52,7 @@ function validatePlaceholder(): boolean {
 
     let reservationValidation
     reservations.forEach((reservation) => {
-        reservationValidation = ReservationDataSchema.safeParse(reservation)
+        reservationValidation = ReservationValidatingSchema.safeParse(reservation)
         if (!reservationValidation.success) {
             console.error("Reservation data validation failed:", reservationValidation.error)
             return false

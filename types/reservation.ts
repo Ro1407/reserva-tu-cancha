@@ -4,7 +4,7 @@ import { SportKey } from "@/types/enumerates";
 import { ReservationState, TimeSlot } from "@prisma/client";
 
 export type Reservation = z.infer<typeof ReservationSchema>
-const ReservationValidatingSchema = ReservationSchema.omit({
+export const ReservationValidatingSchema = ReservationSchema.omit({
     timeSlot: true, state: true
 }).extend(
   {

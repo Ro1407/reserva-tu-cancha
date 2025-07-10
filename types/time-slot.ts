@@ -7,7 +7,7 @@
  * @property {boolean} available - Indicates whether the time slot is available for booking.
  */
 export interface TimeSlot {
-  time: string;
+  time: string;                   //HH:mm format
   available: boolean;
 }
 

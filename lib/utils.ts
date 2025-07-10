@@ -191,6 +191,14 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return `${countryCode} ${mobilePrefix} ${areaCode} ${firstPart}-${secondPart}`;
 };
 
+/**
+ * Converts a time string in HH:mm format to THHMM format.
+ * @param time
+ */
+export const convertTimeToTHHMM = (time: string): string => {
+  return `T${time.replace(":", "")}`;
+};
+
 
 /**
  * Generates an array of page numbers for pagination.

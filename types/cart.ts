@@ -1,3 +1,4 @@
+import { TimeSlot } from './time-slot';
 /**
  * This interface defines the structure of a cart item object.
  * It includes properties for the item ID, court ID, court name, club name, date, time, price, sport type, and an image URL.
@@ -20,7 +21,7 @@ export interface CartItem {
   courtName: string;
   clubName: string;
   date: string;
-  time: string;
+  time: TimeSlot;
   price: number;
   sport: string;
   image: string;

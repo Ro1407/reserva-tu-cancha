@@ -33,7 +33,6 @@ export function BookingForm({ court }: BookingFormProps) {
     console.log("SELECTED DATE: " + selectedDate)
       getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
       setTimeSlots(slots);
-     // setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
     });
   }, [selectedDate]);
 
@@ -41,7 +40,6 @@ export function BookingForm({ court }: BookingFormProps) {
     console.log("SELECTED DATE: " + selectedDate)
     getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
       setTimeSlots(slots);
-      // setSelectedSlot(slots.find((slot: TimeSlot): boolean => slot.available) || null);
     });
   }, []);
 
@@ -74,7 +72,7 @@ export function BookingForm({ court }: BookingFormProps) {
         courtName: court.name,
         clubName: clubName,
         date: formatDateToISO(selectedDate),
-        time: selectedSlot.time,
+        time: selectedSlot,
         price: court.price,
         sport: court.sport,
         image: court.image || "/placeholder.svg?height=200&width=300",
