@@ -29,10 +29,7 @@ export function WeatherWidget({ city }: WeatherWidgetProps) {
   const [weather, setWeather] = useState<WeatherReport | null>(null);
 
   useEffect((): void => {
-    /* TODO: cambiar esto para que use el prop "city",
-    *        cuando este garantizado que el valor de court.location
-    *        es por ejemplo "Buenos Aires" y no "CABA, Belgrano" */
-    getWeatherReport("bahía blanca", selectedDate.toISOString().slice(0, 16)).then((data: WeatherReport): void => {
+    getWeatherReport(city, selectedDate.toISOString().slice(0, 16)).then((data: WeatherReport): void => {
       setWeather(data);
     });
   }, [selectedDate]);

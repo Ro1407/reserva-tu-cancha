@@ -1,4 +1,5 @@
 import { Clock, CreditCard, Mail, MapPin, MessageCircle, Phone, Shield, Users } from "lucide-react";
+import { SportKey, SportValues } from "@/types/enumerates";
 
 /**
  * This interface defines the structure of a sport object.
@@ -8,14 +9,18 @@ import { Clock, CreditCard, Mail, MapPin, MessageCircle, Phone, Shield, Users } 
  * @property {string} name - The name of the sport.
  * @property {string} icon - The icon representing the sport.
  */
-export const sports = [
-  { name: "Fútbol", icon: "⚽" },
-  { name: "Tenis", icon: "🎾" },
-  { name: "Pádel", icon: "🏓" },
-  { name: "Básquet", icon: "🏀" },
-  { name: "Vóley", icon: "🏐" },
-  { name: "Hockey", icon: "🏑" },
-] as const;
+export const sports: Array<{ key: SportKey; icon: string }> = SportValues.map((sport) => {
+  const icons: Record<SportKey, string> = {
+    Futbol: "⚽",
+    Tennis: "🎾",
+    Paddle: "🏓",
+    Basketball: "🏀",
+    Volleyball: "🏐",
+    Hockey: "🏑",
+  };
+
+  return { key: sport, icon: icons[sport] };
+});
 export type Sport = (typeof sports)[number];
 
 /**
@@ -150,7 +155,7 @@ export const faqData = [
   {
     question: "¿Qué pasa si llueve el día de mi reserva?",
     answer:
-      "Para canchas al aire libre, ofrecemos cancelación gratuita por lluvia hasta 1 hora antes del horario reservado. Para canchas techadas, las reservas se mantienen independientemente del clima.",
+      "Para (overview) al aire libre, ofrecemos cancelación gratuita por lluvia hasta 1 hora antes del horario reservado. Para (overview) techadas, las reservas se mantienen independientemente del clima.",
   },
   {
     question: "¿Necesito llevar algún equipamiento especial?",
@@ -174,3 +179,7 @@ export const faqData = [
   },
 ] as const;
 export type FAQItem = (typeof faqData)[number];
+
+
+//Constants for pagination
+export const ITEMS_PER_PAGE = 2;

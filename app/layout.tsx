@@ -7,8 +7,8 @@ import { inter } from "@/app/fonts";
 import "./globals.css";
 
 export const metadata = {
-  title: "ReserváTuCancha - Reserva canchas deportivas online",
-  description: "La plataforma más fácil para reservar canchas deportivas en tu ciudad",
+  title: "ReserváTuCancha - Reserva (overview) deportivas online",
+  description: "La plataforma más fácil para reservar (overview) deportivas en tu ciudad",
   generator: "v0.dev",
   manifest: "/manifest.json",
   icons: [

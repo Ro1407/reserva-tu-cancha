@@ -11,7 +11,7 @@ export async function generateCourtDescription(court: Court): Promise<string> {
       
       Nombre: ${court.name}
       Deporte: ${court.sport}
-      Ubicación: ${court.location}
+      Ubicación: ${court.address}
       Precio: $${court.price} por hora
       Rating: ${court.rating}/5
       Servicios: ${court.amenities.join(", ")}

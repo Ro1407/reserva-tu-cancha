@@ -3,32 +3,39 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
     "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^5.1.1",
+    "@prisma/client": "^6.9.0",
     "@tailwindcss/forms": "^0.5.10",
     "ai": "^4.3.17",
     "autoprefixer": "10.4.20",
     "bcrypt": "^5.1.1",
+    "clsx": "^2.1.1",
     "lucide-react": "^0.513.0",
     "mercadopago": "^2.7.0",
     "next": "latest",
     "next-auth": "5.0.0-beta.28",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.4.6",
+    "pnpm": "^10.12.4",
     "postcss": "8.5.1",
     "postgres": "^3.4.6",
     "prettier": "^3.5.3",
     "react": "latest",
     "react-dom": "latest",
+    "react-hook-form": "^7.60.0",
     "react-hot-toast": "^2.5.2",
     "tailwindcss": "3.4.17",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "5.7.3",
+    "tsx": "^4.20.3",
     "use-debounce": "^10.0.4",
     "web-push": "^3.6.7",
+    "yarn": "^1.22.22",
     "zod": "^3.25.17"
   },
   "devDependencies": {
@@ -36,12 +43,22 @@
     "@types/node": "22.10.7",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",
-    "@types/web-push": "^3.6.4"
+    "@types/web-push": "^3.6.4",
+    "prisma": "^6.9.0",
+    "ts-node": "^10.9.2",
+    "typescript": "5.7.3",
+    "zod-prisma": "^0.5.4"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
       "bcrypt",
+      "prisma",
       "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "yarn"
     ]
   }
 }

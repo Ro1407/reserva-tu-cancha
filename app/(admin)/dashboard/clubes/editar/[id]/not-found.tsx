@@ -1,0 +1,5 @@
+import NotFoundPage from "@/components/not-found-page";
+
+export default function NotFound() {
+  return <NotFoundPage msg={"No se encontró el club solicitado"} hrefVolver={"/dashboard/clubes"}></NotFoundPage>
+}
