@@ -103,21 +103,25 @@ async function createReservations(): Promise<Reservation[]> {
 async function main() {
 
     const validationSuccess =  validatePlaceholder()
-    if (!validationSuccess) { process.exit(1) }
+    if (validationSuccess) {
 
-    await clearExistingData()
+        await clearExistingData()
 
-    const users = await createUsers()
-    const clubs = await createClubs()
-    const courts = await createCourts()
-    const reservations = await createReservations()
+        const users = await createUsers()
+        const clubs = await createClubs()
+        const courts = await createCourts()
+        const reservations = await createReservations()
 
-    console.log("Database seeding completed successfully!")
-    console.log("\n Seeding Summary:")
-    console.log(`   • ${clubs.length} clubs created`)
-    console.log(`   • ${courts.length} courts created`)
-    console.log(`   • ${users.length} users created`)
-    console.log(`   • ${reservations.length} reservations created`)
+        console.log("Database seeding completed successfully!")
+        console.log("\n Seeding Summary:")
+        console.log(`   • ${clubs.length} clubs created`)
+        console.log(`   • ${courts.length} courts created`)
+        console.log(`   • ${users.length} users created`)
+        console.log(`   • ${reservations.length} reservations created`)
+    }
+    else {
+        console.error("Placeholder data validation failed. Seeding aborted.")
+    }
 }
 
 main()

@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge, BadgeVariant } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,13 +8,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ClubCardData } from "@/types/club";
 import { getAllClubsCardData } from "@/lib/actions-client";
 import { formatPhoneNumber } from "@/lib/utils";
-import { Create, Edit, See } from "@/components/ui/dashboard-buttons";
+import { Create, Edit, See, Delete, DeleteClub } from "@/components/ui/dashboard-buttons";
 import { Modal } from "@/components/modal";
 import { ClubCard } from "@/components/club-card";
+import { useRouter } from "next/navigation";
 
 export function ClubsTable() {
   const [clubs, setClubs] = useState<ClubCardData[]>([]);
-  const [selectedClub, setSelectedClub] = useState<ClubCardData | null>(null);
+  const [clubForView, setClubForView] = useState<ClubCardData | null>(null);
+  const [clubForDelete, setClubForDelete] = useState<ClubCardData | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchClubs = async () => {
@@ -30,17 +32,19 @@ export function ClubsTable() {
     fetchClubs().then((data) => {setClubs(data);});
   }, []);
 
-  const handleCloseModal = useCallback(() => {
-    setSelectedClub(null)
-  }, [])
+  function handleDeleteClub() {
+    // Actualizar el estado local inmediatamente
+    if (clubForDelete) {
+      setClubs((prevClubs) => prevClubs.filter((club) => club.id !== clubForDelete.id))
+    }
 
-  const handleSeeClub = useCallback((club: ClubCardData) => {
-    setSelectedClub(club)
-  }, [])
+    setClubForDelete(null)
 
-  const deleteClub: (id: string) => void = (id: string): void => {
-    console.log("Eliminando club:", id);
-  };
+    // Refresh con un pequeño delay para asegurar que la Server Action termine
+    setTimeout(() => {
+      router.refresh()
+    }, 100)
+  }
 
   return (
     <>
@@ -93,15 +97,9 @@ export function ClubsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <See onSeeClick={() => handleSeeClub(club)} />
+                      <See onSeeClick={() => setClubForView(club)} />
                       <Edit editHref={`/dashboard/clubes/editar/${club.id}`}/>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(): void => deleteClub(club.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <Delete onClick={() => setClubForDelete(club)} />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -111,9 +109,22 @@ export function ClubsTable() {
         </CardContent>
       </Card>
       {/* Render the modal only when a club is selected for viewing */}
-      {selectedClub != null && (
-        <Modal onModalClose={handleCloseModal}>
-          <ClubCard club={selectedClub} />
+      {clubForView != null && (
+        <Modal onModalClose={() => setClubForView(null)}>
+          <ClubCard club={clubForView} />
+        </Modal>
+      )}
+      {/* Render the modal only when a club is selected for deleting */}
+      {clubForDelete != null && (
+        <Modal onModalClose={ () => setClubForDelete(null)}>
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Confirmar Eliminación</h2>
+            <p>¿Estás seguro de que deseas eliminar el club "{clubForDelete.name}"?</p>
+            <div className="mt-6 flex justify-end gap-4">
+              <Button variant="outline" onClick={() => setClubForDelete(null)}>Cancelar</Button>
+              <DeleteClub club={clubForDelete} afterSubmit={handleDeleteClub}/>
+            </div>
+          </div>
         </Modal>
       )}
     </>

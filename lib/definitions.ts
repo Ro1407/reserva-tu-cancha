@@ -1,4 +1,5 @@
 import { Clock, CreditCard, Mail, MapPin, MessageCircle, Phone, Shield, Users } from "lucide-react";
+import { SportKey, SportValues } from "@/types/enumerates";
 
 /**
  * This interface defines the structure of a sport object.
@@ -8,14 +9,18 @@ import { Clock, CreditCard, Mail, MapPin, MessageCircle, Phone, Shield, Users } 
  * @property {string} name - The name of the sport.
  * @property {string} icon - The icon representing the sport.
  */
-export const sports = [
-  { name: "Fútbol", icon: "⚽" },
-  { name: "Tenis", icon: "🎾" },
-  { name: "Pádel", icon: "🏓" },
-  { name: "Básquet", icon: "🏀" },
-  { name: "Vóley", icon: "🏐" },
-  { name: "Hockey", icon: "🏑" },
-] as const;
+export const sports: Array<{ key: SportKey; icon: string }> = SportValues.map((sport) => {
+  const icons: Record<SportKey, string> = {
+    Futbol: "⚽",
+    Tennis: "🎾",
+    Paddle: "🏓",
+    Basketball: "🏀",
+    Volleyball: "🏐",
+    Hockey: "🏑",
+  };
+
+  return { key: sport, icon: icons[sport] };
+});
 export type Sport = (typeof sports)[number];
 
 /**

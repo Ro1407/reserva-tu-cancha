@@ -1,9 +1,8 @@
-import ClubForm from "@/components/forms/club-form";
-import { Club, ClubData } from "@/types/club";
-import { SportKey } from "@/types/enumerates";
+import { Club } from "@/types/club";
 import { getClubById } from "@/lib/actions";
 
 import { notFound } from "next/navigation";
+import UpdateClubForm from "@/components/forms/update-club-form";
 
 export default async function Page(props: { params: Promise<{ id: string; }>; }) {
   const { id } = await props.params;
@@ -13,23 +12,9 @@ export default async function Page(props: { params: Promise<{ id: string; }>; })
     return notFound();
   }
 
-  const actualClub: ClubData = {
-    name: club.name,
-    description: club.description,
-    phone: club.phone,
-    location: club.location,
-    address: club.address,
-    sports: club.sports,
-  }
-
   return (
     <main>
-      <ClubForm
-        submitButtonMessage="Editar Club"
-        loadingMessage="Editando Club..."
-        submitSuccessfulMessage="El club fue editado existosamente"
-        initialState={actualClub}
-        onSubmitAction={(actualClub) => {console.log("Editado")}}/>
+      <UpdateClubForm actualClub={club} clubId={club.id}/>
     </main>
   );
 }

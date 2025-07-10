@@ -1,23 +1,8 @@
-import { CourtData } from "@/types/court";
-import { AmenitieKey, CourtStateKey, SportKey, TimeSlotKey, TimeSlotValues } from "@/types/enumerates";
 
+import CreateCourtForm from "@/components/forms/create-court-form";
 
 export default async function Page() {
-  const emptyCourt: CourtData = {
-    name: "",
-    address: "",
-    clubId: "",
-    sport: "" as SportKey,
-    description: "",
-    price: 0,
-    amenities: [] as AmenitieKey[],
-    state: "Activa" as CourtStateKey,
-    timeSlots: TimeSlotValues as TimeSlotKey[]
-  }
-
   return (
-    <main>
-
-    </main>
+    <CreateCourtForm></CreateCourtForm>
   );
 }

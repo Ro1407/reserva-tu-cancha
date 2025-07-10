@@ -9,14 +9,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { CourtCardData } from "@/types/court";
 import { getAllCourtsCardData } from "@/lib/actions-client";
 import { formatDBPriceToCurrency } from "@/lib/utils";
-import { Create, Edit, See } from "@/components/ui/dashboard-buttons";
+import { Create, DeleteCourt, Edit, See } from "@/components/ui/dashboard-buttons";
 import { Modal } from "@/components/modal";
 import { CourtCard } from "@/components/court-card";
+import { useRouter } from "next/navigation";
 
 export function CourtsTable() {
 
   const [courts, setCourts] = useState<CourtCardData[]>([]);
-  const [selectedCourt, setSelectedCourt] = useState<CourtCardData | null>(null);
+  const [courtForView, setCourtForView] = useState<CourtCardData | null>(null);
+  const [courtForDelete, setCourtForDelete] = useState<CourtCardData | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCourts = async (): Promise<CourtCardData[]> => {
@@ -31,9 +34,19 @@ export function CourtsTable() {
     fetchCourts().then((courts) => setCourts(courts));
   }, []);
 
-  const deleteCancha: (id: string) => void = (id: string): void => {
-    console.log("Eliminando cancha:", id);
-  };
+  function handleDeleteCourt(){
+    // Update local state immediately
+    if (courtForDelete) {
+      setCourts((prevCourts) => prevCourts.filter((court) => court.id !== courtForDelete.id));
+    }
+
+    setCourtForDelete(null);
+
+    // Refresh with a small delay to ensure the server action completes
+    setTimeout(() => {
+      router.refresh();
+    }, 100);
+  }
 
   return (
         <>
@@ -79,12 +92,12 @@ export function CourtsTable() {
                     </TableCell>
                    <TableCell>
                         <div className="flex space-x-2">
-                          <See onSeeClick={() => setSelectedCourt(court)} />
-                          <Edit editHref={`/dashboard/canchas/editar/${court.id}`} />
+                          <See onSeeClick={() => setCourtForView(court)} />
+                          <Edit editHref={`/dashboard/editar/${court.id}`} />
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={(): void => deleteCancha(court.id)}
+                            onClick={() => setCourtForDelete(court)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -97,7 +110,24 @@ export function CourtsTable() {
           </CardContent>
         </Card>
         {/* Render the modal only when a court is selected for viewing */}
-        {selectedCourt != null && <Modal onModalClose={(): void => setSelectedCourt(null)}> <CourtCard court={selectedCourt} /> </Modal>}
+        {courtForView != null &&
+          <Modal onModalClose={(): void => setCourtForView(null)}>
+            <CourtCard court={courtForView} />
+          </Modal>
+        }
+        {/* Render the modal only when a court is selected for deleting */}
+          {courtForDelete != null && (
+            <Modal onModalClose={ () => setCourtForDelete(null)}>
+              <div className="p-6">
+                <h2 className="text-lg font-semibold mb-4">Confirmar Eliminación</h2>
+                <p>¿Estás seguro de que deseas eliminar la cancha "{courtForDelete.name}"?</p>
+                <div className="mt-6 flex justify-end gap-4">
+                  <Button variant="outline" onClick={() => setCourtForDelete(null)}>Cancelar</Button>
+                  <DeleteCourt court={courtForDelete} afterSubmit={handleDeleteCourt}/>
+                </div>
+              </div>
+            </Modal>
+          )}
     </>
   );
 }

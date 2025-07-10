@@ -6,7 +6,7 @@ import { TimeSlot } from "@/types/time-slot";
 import { ClubWithCourts, ClubCardData } from "@/types/club";
 import { TimeSlotValues } from "@/types/enumerates";
 import { ClubNameId } from "@/types/club";
-import { CourtNameId, CourtCardData } from "@/types/court";
+import { CourtNameId, CourtCardData, CourtNamePriceId } from "@/types/court";
 import { UsersEmailId } from "@/types/users-email-id";
 import { formatDateToISO } from "@/lib/utils";
 import { prisma } from "@/prisma/prismaClientSingleton";
@@ -70,6 +70,17 @@ export async function getAllCourtsNamesAndIds(): Promise<CourtNameId[]> {
     select: {
       id: true,
       name: true
+    }
+  });
+}
+
+// Returns all courts names, prices and IDs
+export async function getAllCourtsNamesPricesAndIds(): Promise<CourtNamePriceId[]> {
+  return prisma.court.findMany({
+    select: {
+      id: true,
+      name: true,
+      price: true
     }
   });
 }

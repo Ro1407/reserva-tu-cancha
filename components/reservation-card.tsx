@@ -2,10 +2,12 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge, BadgeVariant } from "@/components/ui/badge";
-import { Calendar, Clock, CreditCard, MapPin, Star } from "lucide-react";
+import { Calendar, Clock, CreditCard, MapPin, Star, User } from "lucide-react";
 import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString } from "@/lib/utils";
 import { ReservationStateKey } from "@/types/enumerates";
 import { ReservationCardData } from "@/types/reservation";
+
+/* TODO PWA notification  */
 
 interface ReservationCardProps {
   reservation: ReservationCardData;
@@ -55,12 +57,16 @@ return (
         </div>
       </CardTitle>
 
+      <div className="flex items-center text-gray-600 dark:text-gray-400">
+        <User className="w-4 h-4 mr-1" />
+        {reservation.userEmail}
+      </div>
       <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
         <MapPin className="w-4 h-4 mr-1" />
-        {reservation.clubLocation + " "+ reservation.courtAddress}
+        {reservation.clubLocation + " - " + reservation.courtAddress}
       </div>
 
-      <div className="space-y-1">
+      <div className="flex items-start justify-between">
         <div className="flex items-center text-gray-600 dark:text-gray-400">
           <Calendar className="w-4 h-4 mr-1" />
           {formatISODateToHumanReadable(reservation.date)}
@@ -81,18 +87,16 @@ return (
       </div>
 
       <div className="flex gap-2">
-        <Link href={`/canchas/${reservation.courtId}`} className="flex-1">
+        {canCancel && (
+          <Button variant="destructive" className="w-full">
+            Cancelar
+          </Button>
+        )}
+        <Link href={`/canchas/${reservation.courtId}`} className="w-full">
           <Button variant="outline" className="w-full bg-transparent">
             Ver Cancha
           </Button>
         </Link>
-
-        {canCancel && (
-          <Button variant="destructive" size="sm" className="px-3">
-            Cancelar
-            /* TODO PWA notification  */
-          </Button>
-        )}
       </div>
     </CardContent>
   </Card>

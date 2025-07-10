@@ -1,16 +1,20 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react"
 
 interface SelectProps {
   children: React.ReactNode
   onValueChange?: (value: string) => void
+  value?: string
+  defaultValue?: string
 }
 
 interface SelectTriggerProps {
   children: React.ReactNode
   className?: string
+  "aria-describedby"?: string
+  "aria-invalid"?: boolean
 }
 
 interface SelectContentProps {
@@ -25,6 +29,7 @@ interface SelectItemProps {
 
 interface SelectValueProps {
   placeholder?: string
+  convertSelectedValue?: (value: string) => string
 }
 
 const SelectContext = React.createContext<{
@@ -40,14 +45,28 @@ const SelectContext = React.createContext<{
   setSelectedValue: () => {},
 })
 
-export function Select({ children, onValueChange }: SelectProps) {
+export function Select({ children, onValueChange, value, defaultValue = "" }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedValue, setSelectedValue] = useState("")
+  const [internalValue, setInternalValue] = useState(defaultValue)
 
-  const handleValueChange = (value: string) => {
-    setSelectedValue(value)
+  // Usar valor controlado si se proporciona, sino usar valor interno
+  const selectedValue = value !== undefined ? value : internalValue
+
+  // Sincronizar valor interno cuando cambia el valor externo
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value)
+    }
+  }, [value])
+
+  const handleValueChange = (newValue: string) => {
+    // Solo actualizar estado interno si no es controlado
+    if (value === undefined) {
+      setInternalValue(newValue)
+    }
+
     setIsOpen(false)
-    onValueChange?.(value)
+    onValueChange?.(newValue)
   }
 
   return (
@@ -80,14 +99,16 @@ export function SelectTrigger({ children, className = "" }: SelectTriggerProps) 
   )
 }
 
-export function SelectValue({ placeholder }: SelectValueProps) {
+export function SelectValue({ placeholder, convertSelectedValue }: SelectValueProps) {
   const { selectedValue } = React.useContext(SelectContext)
 
-  return <span className={selectedValue ? "" : "text-gray-500 dark:text-gray-400"}>{selectedValue || placeholder}</span>
+  return (convertSelectedValue != null ?
+      <span className={selectedValue ? "" : "text-gray-500 dark:text-gray-400"}>{convertSelectedValue(selectedValue) || placeholder}</span> :
+      <span className={selectedValue ? "" : "text-gray-500 dark:text-gray-400"}>{selectedValue || placeholder}</span>)
 }
 
 export function SelectContent({ children }: SelectContentProps) {
-  const { isOpen } = React.useContext(SelectContext)
+  const { isOpen } = React.useContext(SelectContext);
 
   if (!isOpen) return null
 
@@ -99,15 +120,22 @@ export function SelectContent({ children }: SelectContentProps) {
 }
 
 export function SelectItem({ value, children, onSelect }: SelectItemProps) {
-  const { setSelectedValue } = React.useContext(SelectContext)
+  const { setSelectedValue, selectedValue } = React.useContext(SelectContext)
 
   const handleClick = () => {
     setSelectedValue(value)
     onSelect?.(value)
   }
 
+  const isSelected = selectedValue === value
+
   return (
-    <div className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800" onClick={handleClick}>
+    <div
+      className={`cursor-pointer px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 ${
+        isSelected ? "bg-gray-100 dark:bg-gray-800 font-medium" : ""
+      }`}
+      onClick={handleClick}
+    >
       {children}
     </div>
   )

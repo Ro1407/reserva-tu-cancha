@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Sport, sports } from "@/lib/definitions";
+import { TimeSlotValues, TimeSlotKey } from "@/types/enumerates";
+import { formatTimeSlotToString } from "@/lib/utils";
 
 export function SearchForm() {
   const [sport, setSport] = useState<string>("");
@@ -34,8 +36,8 @@ export function SearchForm() {
               </SelectTrigger>
               <SelectContent>
                 {sports.map((sport: Sport) => (
-                  <SelectItem key={sport.name} value={sport.name}>
-                    {sport.name}
+                  <SelectItem key={sport.key} value={sport.key}>
+                    {sport.key}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -52,9 +54,11 @@ export function SearchForm() {
                 <SelectValue placeholder="Seleccionar horario" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Mañana">Mañana (8:00 - 12:00)</SelectItem>
-                <SelectItem value="Tarde">Tarde (12:00 - 18:00)</SelectItem>
-                <SelectItem value="Noche">Noche (18:00 - 23:00)</SelectItem>
+                {
+                  TimeSlotValues.map((key: TimeSlotKey) => {
+                    return <SelectItem key={key} value={key}> {formatTimeSlotToString(key)} </SelectItem>;
+                  })
+                }
               </SelectContent>
             </Select>
           </div>

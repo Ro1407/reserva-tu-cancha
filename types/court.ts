@@ -2,7 +2,9 @@ import { z } from "zod"
 import {CourtSchema} from "@/prisma/zod"
 import { Amenitie, CourtState, Sport, TimeSlot } from "@prisma/client";
 
-const CourtValidatingEnums = CourtSchema.omit({}).extend({
+const CourtValidatingEnums = CourtSchema.omit({
+  sport: true, amenities: true, state: true, timeSlots: true,
+}).extend({
   sport: z.nativeEnum(Sport).refine((value) => value !== undefined, {
     message: "Por favor, seleccione un deporte válido para la cancha",
   }),
@@ -19,11 +21,14 @@ const CourtValidatingEnums = CourtSchema.omit({}).extend({
 
 export type Court =  z.infer<typeof CourtValidatingEnums>
 
-export const CourtDataSchema = CourtSchema.omit({id: true, createdAt: true, updatedAt: true})
-const EditableCourtSchema = CourtDataSchema.omit({rating: true, image: true})
+export const CourtDataSchema = CourtValidatingEnums.omit({id: true, createdAt: true, updatedAt: true})
+export const EditableCourtSchema = CourtDataSchema.omit({rating: true, image: true})
 export type CourtData = z.infer<typeof EditableCourtSchema>
 
 const CourtNameIdSchema = CourtSchema.pick({id: true, name: true})
 export type CourtNameId = z.infer<typeof CourtNameIdSchema>
+
+const CourtNameIdPriceSchema = CourtSchema.pick({id: true, name: true, price: true})
+export type CourtNamePriceId = z.infer<typeof CourtNameIdSchema>
 
 export type CourtCardData = Court & {clubLocation: string, clubName:string}

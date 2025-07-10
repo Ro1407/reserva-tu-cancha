@@ -1,15 +1,20 @@
 import * as React from "react"
 import { AlertCircle, CheckCircle, XCircleIcon } from "lucide-react"
 
+export enum FormMessageType {
+  "error",
+  "success",
+  "info"
+}
 interface FormMessageProps extends React.HTMLAttributes<HTMLDivElement> {
-  type?: "error" | "success" | "info"
+  type?: FormMessageType
   children: React.ReactNode
 }
 
 const FormMessage = React.forwardRef<HTMLDivElement, FormMessageProps>(
-  ({ className, type = "error", children, ...props }, ref) => {
-    const Icon = type === "error" ? XCircleIcon : (type === "info"? AlertCircle : CheckCircle)
-    const typeClass = type === "error" ? "text-destructive" : (type === "success" ? "text-green-600" : "text-blue-600")
+  ({ className, type = FormMessageType.info, children, ...props }, ref) => {
+    const Icon = type === FormMessageType.error ? XCircleIcon : (type === FormMessageType.info ? AlertCircle : CheckCircle)
+    const typeClass = type === FormMessageType.error ? "text-destructive" : (type === FormMessageType.success ? "text-green-600" : "text-blue-600")
 
     return (
       <div
