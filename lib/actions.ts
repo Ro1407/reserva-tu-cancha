@@ -288,6 +288,37 @@ export async function createReservation(reservation: ReservationData): Promise<b
 }
 
 
+// Updates an existing reservation
+export async function updateReservation(reservation: ReservationData, id: string): Promise<boolean>{
+  // Validate the reservation data against the schema on the server's side
+  const parsedReservation = EditableReservationSchema.safeParse(reservation);
+  if (!parsedReservation.success) {
+    return false;
+  }
+
+  // Convert price to cents for database storage
+  parsedReservation.data.price = parsedReservation.data.price * 100;
+
+  // Update the reservation in the database
+  try {
+    await prisma.reservation.update({
+      where: { id: id },
+      data: {
+        ...parsedReservation.data,
+      }
+    });
+
+    //Clear client-side browser cache and trigger a new request to the server
+    revalidatePath('/dashboard/reservas');
+
+    return true;
+
+  } catch (error) {
+    return false;
+  }
+}
+
+
 
 
 

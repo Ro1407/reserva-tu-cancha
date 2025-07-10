@@ -13,15 +13,15 @@ import { FormMessage, FormMessageType } from "@/components/ui/form-messages";
 import { Volver } from "@/components/ui/dashboard-buttons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UsersEmailId } from "@/types/users-email-id";
-import { CourtNamePriceId } from "@/types/court";
-import { getAllCourtsNamesPricesAndIds, getAllUsersEmailsAndIds } from "@/lib/actions-client";
+import { CourtNameId } from "@/types/court";
+import { getAllCourtsNamesAndIds, getAllUsersEmailsAndIds } from "@/lib/actions-client";
 import {
   ReservationStateKey,
   ReservationStateValues, TimeSlotKey,
   TimeSlotValues
 } from "@/types/enumerates";
 import { formatTimeSlotToString } from "@/lib/utils";
-import { createReservation } from "@/lib/actions";
+import { updateReservation } from "@/lib/actions";
 
 interface ReservationFormProps {
   actualReservation: ReservationData;
@@ -30,7 +30,7 @@ interface ReservationFormProps {
 
 export default function UpdateReservationForm({actualReservation, reservationId}: ReservationFormProps) {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-  const [courts, setCourts] = useState<CourtNamePriceId[]>([]);
+  const [courts, setCourts] = useState<CourtNameId[]>([]);
   const [users, setUsers] = useState<UsersEmailId[]>([]);
 
   const {
@@ -49,9 +49,9 @@ export default function UpdateReservationForm({actualReservation, reservationId}
 
 // Cargar canchas y usuarios al iniciar el formulario
   useEffect(() => {
-    const fetchCourts = async (): Promise<CourtNamePriceId[]> => {
+    const fetchCourts = async (): Promise<CourtNameId[]> => {
       try {
-        return await getAllCourtsNamesPricesAndIds();
+        return await getAllCourtsNamesAndIds();
       } catch (error) {
         console.error("Error fetching courts:", error);
         return [];
@@ -75,7 +75,7 @@ export default function UpdateReservationForm({actualReservation, reservationId}
 
   async function onSubmit(data: ReservationData) {
     try {
-      const result = await createReservation(data);
+      const result = await updateReservation(data, reservationId);
 
       if (result) {
         setSubmitStatus("success");
@@ -211,7 +211,7 @@ export default function UpdateReservationForm({actualReservation, reservationId}
                                      convertSelectedValue={getCourtNameById}></SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {courts.map((court: CourtNamePriceId) => (
+                        {courts.map((court: CourtNameId) => (
                           <SelectItem key={court.id} value={court.id}>
                             {court.name}
                           </SelectItem>

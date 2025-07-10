@@ -12,6 +12,8 @@ export default async function Page(props: { params: Promise<{ id: string; }>; })
     return notFound();
   }
 
+  court.price = court.price / 100; // Convert price to a more readable format rather than cents
+
   return (
     <main>
       <UpdateCourtForm actualCourt={court} courtId={court.id}/>

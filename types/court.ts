@@ -28,7 +28,4 @@ export type CourtData = z.infer<typeof EditableCourtSchema>
 const CourtNameIdSchema = CourtSchema.pick({id: true, name: true})
 export type CourtNameId = z.infer<typeof CourtNameIdSchema>
 
-const CourtNameIdPriceSchema = CourtSchema.pick({id: true, name: true, price: true})
-export type CourtNamePriceId = z.infer<typeof CourtNameIdSchema>
-
 export type CourtCardData = Court & {clubLocation: string, clubName:string}

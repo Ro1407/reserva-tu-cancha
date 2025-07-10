@@ -13,8 +13,8 @@ import { FormMessage, FormMessageType } from "@/components/ui/form-messages";
 import { Volver } from "@/components/ui/dashboard-buttons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UsersEmailId } from "@/types/users-email-id";
-import { CourtNamePriceId } from "@/types/court";
-import { getAllCourtsNamesPricesAndIds, getAllUsersEmailsAndIds } from "@/lib/actions-client";
+import { CourtNameId } from "@/types/court";
+import { getAllCourtsNamesAndIds, getAllUsersEmailsAndIds } from "@/lib/actions-client";
 import {
   ReservationStateKey,
   ReservationStateValues, TimeSlotKey,
@@ -26,7 +26,7 @@ import { createReservation } from "@/lib/actions";
 
 export default function CreateReservationForm() {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-  const [courts, setCourts] = useState<CourtNamePriceId[]>([]);
+  const [courts, setCourts] = useState<CourtNameId[]>([]);
   const [users, setUsers] = useState<UsersEmailId[]>([]);
 
   const emptyReservation: ReservationData = {
@@ -54,9 +54,9 @@ export default function CreateReservationForm() {
 
 // Cargar canchas y usuarios al iniciar el formulario
   useEffect(() => {
-    const fetchCourts = async (): Promise<CourtNamePriceId[]> => {
+    const fetchCourts = async (): Promise<CourtNameId[]> => {
       try {
-        return await getAllCourtsNamesPricesAndIds();
+        return await getAllCourtsNamesAndIds();
       } catch (error) {
         console.error("Error fetching courts:", error);
         return [];
@@ -218,7 +218,7 @@ export default function CreateReservationForm() {
                                      convertSelectedValue={getCourtNameById}></SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {courts.map((court: CourtNamePriceId) => (
+                        {courts.map((court: CourtNameId) => (
                           <SelectItem key={court.id} value={court.id}>
                             {court.name}
                           </SelectItem>

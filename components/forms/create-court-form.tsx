@@ -281,7 +281,7 @@ export default function CreateCourtForm() {
                   control={control}
                   name="state"
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value as TimeSlotKey}>
                       <SelectTrigger
                         aria-describedby={errors.state ? "state-error" : undefined}
                         aria-invalid={!!errors.state}

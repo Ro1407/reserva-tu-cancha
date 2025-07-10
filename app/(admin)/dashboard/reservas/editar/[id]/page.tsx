@@ -12,6 +12,8 @@ export default async function Page(props: { params: Promise<{ id: string; }>; })
     return notFound();
   }
 
+  reservation.price = reservation.price/100 // Convert price to a more readable format rather than cents
+
   return (
     <main>
       <UpdateReservationForm actualReservation={reservation} reservationId={reservation.id}/>
