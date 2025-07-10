@@ -21,7 +21,7 @@ import {
   TimeSlotValues
 } from "@/types/enumerates";
 import { formatTimeSlotToString } from "@/lib/utils";
-import { createReservation } from "@/lib/actions";
+import { createReservation } from "@/lib/actions-CRUD";
 
 
 export default function CreateReservationForm() {

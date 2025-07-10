@@ -1,11 +1,17 @@
 import { CourtCard } from "@/components/court-card";
 import { CourtFilters } from "@/components/court-filters";
-import { Pagination } from "@/components/pagination";
+import Pagination from "@/components/pagination";
 import { CourtCardData } from "@/types/court";
 import { getAllCourtsCardData } from "@/lib/actions-client";
 
-export default async function CanchasPage() {
-  const courts: CourtCardData[] | null = await getAllCourtsCardData();
+export default async function CanchasPage(props: {
+                                            searchParams?: Promise<{ query?: string; page?: string; }>;
+                                          }) {
+
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
+  const [courts, totalPages] = await getAllCourtsCardData(currentPage);
 
   return (
     <>
@@ -25,7 +31,9 @@ export default async function CanchasPage() {
                   <CourtCard key={court.id} court={court} />
                 ))}
               </div>
-              <Pagination totalPages={10} />
+              <div className="mt-5 flex w-full justify-center">
+                <Pagination totalPages={totalPages} />
+              </div>
             </div>
           </div>
         </div>

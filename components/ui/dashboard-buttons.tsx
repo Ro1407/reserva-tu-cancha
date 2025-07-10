@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowLeft, Eye, PencilIcon, Trash2 } from "lucide-react";
-import { deleteClub, deleteReservation, deleteCourt } from "@/lib/actions";
+import { deleteClub, deleteReservation, deleteCourt } from "@/lib/actions-CRUD";
 import { ClubCardData } from "@/types/club";
 import { ReservationCardData } from "@/types/reservation";
 import { CourtCardData } from "@/types/court";

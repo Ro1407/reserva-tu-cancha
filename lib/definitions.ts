@@ -179,3 +179,7 @@ export const faqData = [
   },
 ] as const;
 export type FAQItem = (typeof faqData)[number];
+
+
+//Constants for pagination
+export const ITEMS_PER_PAGE = 2;

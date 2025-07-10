@@ -1,9 +1,16 @@
 import { ClubCard } from "@/components/club-card";
 import { getAllClubsCardData } from "@/lib/actions-client";
 import { ClubCardData } from "@/types/club";
+import Pagination from "@/components/pagination";
 
-export default async function ClubesPage() {
-  const clubCardData= await getAllClubsCardData();
+export default async function ClubesPage(props: {
+                                           searchParams?: Promise<{ query?: string; page?: string; }>;
+                                         }) {
+
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
+  const [clubCardData, totalPages] = await getAllClubsCardData(currentPage);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -15,6 +22,9 @@ export default async function ClubesPage() {
         {clubCardData.map((data: ClubCardData) => (
           <ClubCard key={data.id} club={data} />
         ))}
+      </div>
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
       </div>
     </div>
   );

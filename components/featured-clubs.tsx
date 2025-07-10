@@ -4,9 +4,16 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Star } from "lucide-react";
 import { Club } from "@/types/club";
 import { getAllClubs } from "@/lib/actions";
+import Pagination from "@/components/pagination";
 
-export async function FeaturedClubs() {
-  const clubs: Club[] | null = await getAllClubs();
+export async function FeaturedClubs(props: {
+                                      searchParams?: Promise<{ query?: string; page?: string; }>;
+                                    }) {
+
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
+  const [clubs, totalPages] = await getAllClubs(currentPage);
 
   return (
     <>
@@ -20,7 +27,8 @@ export async function FeaturedClubs() {
               {clubs.slice(0, 3).map((club: Club) => (
                 <Card key={club.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="aspect-video bg-gray-100 dark:bg-gray-800">
-                    <img src={club.image || "/placeholder.svg"} alt={club.name} className="w-full h-full object-cover" />
+                    <img src={club.image || "/placeholder.svg"} alt={club.name}
+                         className="w-full h-full object-cover" />
                   </div>
                   <CardHeader>
                     <CardTitle className="flex items-start justify-between">
@@ -52,6 +60,9 @@ export async function FeaturedClubs() {
                   </CardContent>
                 </Card>
               ))}
+              <div className="mt-5 flex w-full justify-center">
+                <Pagination totalPages={totalPages} />
+              </div>
             </div>
           </section>
         ) :
@@ -61,7 +72,7 @@ export async function FeaturedClubs() {
             <p className="text-gray-600 dark:text-gray-400">Por favor, vuelve más tarde.</p>
           </div>
         )
-    }
+      }
     </>
   );
 }

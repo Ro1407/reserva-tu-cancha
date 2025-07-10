@@ -11,26 +11,34 @@ import { formatPhoneNumber } from "@/lib/utils";
 import { Create, Edit, See, Delete, DeleteClub } from "@/components/ui/dashboard-buttons";
 import { Modal } from "@/components/modal";
 import { ClubCard } from "@/components/club-card";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Pagination from "@/components/pagination";
 
 export function ClubsTable() {
+  const searchParams = useSearchParams()
+  const currentPage = Number(searchParams.get("page")) || 1
+  const [totalPages, setTotalPages] = useState(0);
+
   const [clubs, setClubs] = useState<ClubCardData[]>([]);
   const [clubForView, setClubForView] = useState<ClubCardData | null>(null);
   const [clubForDelete, setClubForDelete] = useState<ClubCardData | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchClubs = async () => {
+    const fetchClubs = async (): Promise<[ClubCardData[], number]> => {
       try {
-        return await getAllClubsCardData();
+        return await getAllClubsCardData(currentPage);
       } catch (error) {
         console.error("Error fetching clubs:", error);
-        return [];
+        return [[], 0];
       }
     };
 
-    fetchClubs().then((data) => {setClubs(data);});
-  }, []);
+    fetchClubs().then((data) => {
+      setClubs(data[0]);
+      setTotalPages(data[1]);
+    });
+  }, [currentPage]);
 
   function handleDeleteClub() {
     // Actualizar el estado local inmediatamente
@@ -108,6 +116,10 @@ export function ClubsTable() {
           </Table>
         </CardContent>
       </Card>
+      {/* Render the pagination component */}
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
+      </div>
       {/* Render the modal only when a club is selected for viewing */}
       {clubForView != null && (
         <Modal onModalClose={() => setClubForView(null)}>

@@ -11,6 +11,12 @@ import { UsersEmailId } from "@/types/users-email-id";
 import { formatDateToISO } from "@/lib/utils";
 import { prisma } from "@/prisma/prismaClientSingleton";
 import { ReservationCardData } from "@/types/reservation";
+import { ITEMS_PER_PAGE } from "@/lib/definitions";
+
+interface PaginationAndQueryProps {
+  query?: string;
+  currentPage?: number;
+}
 
 //Returns all the time slots for a given date and court
 export async function getTimeSlots(date: Date, courtId: string): Promise<TimeSlot[]> {
@@ -86,8 +92,10 @@ export async function getAllUsersEmailsAndIds(): Promise<UsersEmailId[]> {
 }
 
 //Returns all the clubs's data to populate a card
-export async function getAllClubsCardData(): Promise<ClubCardData[]> {
-  const clubs = await prisma.club.findMany({
+export async function getAllClubsCardData(currentPage: number): Promise<[ClubCardData[], number]> {
+  const skip = (currentPage - 1) * ITEMS_PER_PAGE
+  const [clubs, totalClubs] = await Promise.all([
+    prisma.club.findMany({
     include: {
       courts: {
         where: {
@@ -97,10 +105,16 @@ export async function getAllClubsCardData(): Promise<ClubCardData[]> {
         },
         select: { id: true }
       }
-    }
-  });
+    },
+    skip: skip,
+    take: ITEMS_PER_PAGE
+  }),
+    prisma.club.count(),
+  ]);
 
-  return clubs.map((data) => (
+  const totalPages = Math.ceil(totalClubs / ITEMS_PER_PAGE);
+
+  return [clubs.map((data) => (
     {
       id: data.id,
       name: data.name,
@@ -114,23 +128,31 @@ export async function getAllClubsCardData(): Promise<ClubCardData[]> {
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       availableCourtsCount: data.courts.length
-    }));
+    })), totalPages]
 }
 
 //Returns all the court's data to populate a card
-export async function getAllCourtsCardData(): Promise<CourtCardData[]> {
-  const courts = await prisma.court.findMany({
-    include: {
-      club: {
-        select: {
-          location: true,
-          name: true
-        }
-      }
-    }
-  });
+export async function getAllCourtsCardData(currentPage: number): Promise<[CourtCardData[], number]> {
+  const skip = (currentPage - 1) * ITEMS_PER_PAGE
+  const [courts, totalCourts] = await Promise.all([
+    prisma.court.findMany({
+      include: {
+        club: {
+          select: {
+            location: true,
+            name: true,
+          },
+        },
+      },
+      skip: skip,
+      take: ITEMS_PER_PAGE,
+    }),
+    prisma.court.count(),
+  ])
 
-  return courts.map((court) => ({
+  const totalPages = Math.ceil(totalCourts / ITEMS_PER_PAGE)
+
+  return [courts.map((court) => ({
     id: court.id,
     name: court.name,
     address: court.address,
@@ -147,12 +169,14 @@ export async function getAllCourtsCardData(): Promise<CourtCardData[]> {
     updatedAt: court.updatedAt,
     clubLocation: court.club.location,
     clubName: court.club.name
-  }));
+  })), totalPages];
 }
 
 // Returns all reservation's data to populate a card
-export async function getAllReservationsCardData(): Promise<ReservationCardData[]> {
-  const reservations = await prisma.reservation.findMany({
+export async function getAllReservationsCardData(currentPage: number): Promise<[ReservationCardData[], number]> {
+  const skip = (currentPage - 1) * ITEMS_PER_PAGE
+  const [reservations, totalReservations] = await Promise.all([
+    prisma.reservation.findMany({
     include: {
       court: {
         select: {
@@ -170,13 +194,19 @@ export async function getAllReservationsCardData(): Promise<ReservationCardData[
       },
       user: {
         select: {
-          email: true // Incluye el email del usuario
+          email: true
         }
       }
-    }
-  });
+    },
+    skip: skip,
+    take: ITEMS_PER_PAGE
+  }),
+    prisma.reservation.count(),
+  ]);
 
-  return reservations.map((reservation) => ({
+  const totalPages = Math.ceil(totalReservations / ITEMS_PER_PAGE);
+
+  return [reservations.map((reservation) => ({
     id: reservation.id,
     date: reservation.date,
     timeSlot: reservation.timeSlot,
@@ -193,5 +223,5 @@ export async function getAllReservationsCardData(): Promise<ReservationCardData[
     courtRating: reservation.court.rating,
     courtAddress: reservation.court.address,
     clubLocation: reservation.court.club.location
-  }));
+  })), totalPages]
 }

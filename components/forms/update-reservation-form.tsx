@@ -21,7 +21,7 @@ import {
   TimeSlotValues
 } from "@/types/enumerates";
 import { formatTimeSlotToString } from "@/lib/utils";
-import { updateReservation } from "@/lib/actions";
+import { updateReservation } from "@/lib/actions-CRUD";
 
 interface ReservationFormProps {
   actualReservation: ReservationData;

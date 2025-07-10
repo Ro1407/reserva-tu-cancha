@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EditableClubSchema, ClubData } from "@/types/club";
 import { FormMessage, FormMessageType } from "@/components/ui/form-messages";
 import { Volver } from "@/components/ui/dashboard-buttons";
-import { updateClub } from "@/lib/actions";
+import { updateClub } from "@/lib/actions-CRUD";
 
 interface UpdateClubFormProps {
   actualClub: ClubData;

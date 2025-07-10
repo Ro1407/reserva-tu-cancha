@@ -12,9 +12,13 @@ import { Modal } from "@/components/modal";
 import { BadgeVariant, Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ReservationCard } from "@/components/reservation-card";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Pagination from "@/components/pagination";
 
 export function ReservationsTable() {
+  const searchParams = useSearchParams()
+  const currentPage = Number(searchParams.get("page")) || 1
+  const [totalPages, setTotalPages] = useState(0);
 
   const [reservations, setReservations] = useState<ReservationCardData[]>([]);
   const [reservationForView, setReservationForView] = useState<ReservationCardData | null>(null);
@@ -22,19 +26,20 @@ export function ReservationsTable() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (): Promise<[ReservationCardData[], number]> => {
       try {
-        return await getAllReservationsCardData();
+        return await getAllReservationsCardData(currentPage);
       } catch (error) {
         console.error("Error fetching data:", error);
-        return [];
+        return [[], 0];
       }
     };
 
     fetchData().then((data) => {
-      setReservations(data);
+      setReservations(data[0]);
+      setTotalPages(data[1]);
     });
-  }, []);
+  }, [currentPage]);
 
 
   function handleDeleteReservation() {
@@ -113,6 +118,10 @@ export function ReservationsTable() {
           </Table>
         </CardContent>
       </Card>
+      {/* Render the pagination component */}
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
+      </div>
       {/* Render the reservation details view */}
       {reservationForView != null &&
         <Modal onModalClose={(): void => setReservationForView(null)}>
