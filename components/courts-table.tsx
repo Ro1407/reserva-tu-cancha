@@ -26,12 +26,12 @@ export function CourtsTable() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchCourts = async (): Promise<[CourtCardData[], number]> => {
+    const fetchCourts = async (): Promise<[CourtCardData[], number, number]> => {
       try {
-        return await getAllCourtsCardData(currentPage);
+        return await getAllCourtsCardData({currentPage: currentPage});
       } catch (error) {
         console.error("Error fetching courts:", error);
-        return [[], 0];
+        return [[], 0, 0];
       }
     };
 

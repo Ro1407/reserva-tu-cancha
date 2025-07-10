@@ -4,7 +4,7 @@
 
 import { TimeSlot } from "@/types/time-slot";
 import { ClubWithCourts, ClubCardData } from "@/types/club";
-import { TimeSlotValues } from "@/types/enumerates";
+import { AmenitieKey, CourtStateKey, SportKey, TimeSlotValues } from "@/types/enumerates";
 import { ClubNameId } from "@/types/club";
 import { CourtNameId, CourtCardData } from "@/types/court";
 import { UsersEmailId } from "@/types/users-email-id";
@@ -13,9 +13,17 @@ import { prisma } from "@/prisma/prismaClientSingleton";
 import { ReservationCardData } from "@/types/reservation";
 import { ITEMS_PER_PAGE } from "@/lib/definitions";
 
-interface PaginationAndQueryProps {
-  query?: string;
-  currentPage?: number;
+export interface Filters {
+    sports?: SportKey[],
+    maxPrice?: number,
+    location?: string,
+    amenities?: AmenitieKey[],
+    onlyAvailable?: boolean,
+}
+
+interface PaginationAndFilterProps {
+  currentPage: number;
+  filters?: Filters;
 }
 
 //Returns all the time slots for a given date and court
@@ -132,8 +140,20 @@ export async function getAllClubsCardData(currentPage: number): Promise<[ClubCar
 }
 
 //Returns all the court's data to populate a card
-export async function getAllCourtsCardData(currentPage: number): Promise<[CourtCardData[], number]> {
+export async function getAllCourtsCardData({currentPage, filters }: PaginationAndFilterProps): Promise<[CourtCardData[], number, number]> {
   const skip = (currentPage - 1) * ITEMS_PER_PAGE
+
+  // Condiciones de filtros según parámetros
+  const where = {
+    AND: [
+      filters?.sports ? { sport: { in: filters.sports } } : {},
+      filters?.maxPrice ? { price: { lte: filters.maxPrice } } : {},
+      filters?.location ? { club: { location: filters.location } } : {},
+      filters?.amenities ? { amenities: { hasEvery: filters.amenities } } : {},
+      filters?.onlyAvailable ? { state: "Activa" as CourtStateKey } : {}
+    ]
+  }
+
   const [courts, totalCourts] = await Promise.all([
     prisma.court.findMany({
       include: {
@@ -146,8 +166,9 @@ export async function getAllCourtsCardData(currentPage: number): Promise<[CourtC
       },
       skip: skip,
       take: ITEMS_PER_PAGE,
+      where: where,
     }),
-    prisma.court.count(),
+    prisma.court.count({where: where}),
   ])
 
   const totalPages = Math.ceil(totalCourts / ITEMS_PER_PAGE)
@@ -169,7 +190,7 @@ export async function getAllCourtsCardData(currentPage: number): Promise<[CourtC
     updatedAt: court.updatedAt,
     clubLocation: court.club.location,
     clubName: court.club.name
-  })), totalPages];
+  })), totalPages, totalCourts];
 }
 
 // Returns all reservation's data to populate a card
