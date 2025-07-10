@@ -12,7 +12,7 @@ export default async function Page(props: { params: Promise<{ id: string; }>; })
     return notFound();
   }
 
-  let price: number = court.price;
+  let price: number = court.price as number;
   price =  price / 100;
   court.price = price; // Convert price to a more readable format rather than cents
 
