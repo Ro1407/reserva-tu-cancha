@@ -73,7 +73,7 @@ export function BookingForm({ court }: BookingFormProps) {
         clubName: clubName,
         date: formatDateToISO(selectedDate),
         time: selectedSlot,
-        price: court.price,
+        price: court.price / 100,
         sport: court.sport,
         image: court.image || "/placeholder.svg?height=200&width=300",
       };

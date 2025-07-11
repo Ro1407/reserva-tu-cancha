@@ -7,6 +7,7 @@ import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatTimeSlotToString } from "@/lib/utils";
 
 export function CartItems() {
   const { state, removeFromCart } = useCart();
@@ -41,7 +42,7 @@ export function CartItems() {
                   </div>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <Clock className="w-4 h-4 mr-2" />
-                    {item.time.time}
+                    {formatTimeSlotToString(item.time.time)}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
