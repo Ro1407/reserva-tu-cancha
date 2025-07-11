@@ -96,7 +96,7 @@ Cada comisión podrá proponer variaciones siempre que se mantenga la estructura
 
 - Los filtros funcionan para las canchas, tener en cuenta que el filtrado en base a parámetros de la URL se realiza al presionar "Aplicar Filtros". En un inicio se había planteado realizarla en tiempo real pero no quisimos entorpecer la UX por posibles retardos de la base de datos, al ser cuenta gratuita. No se implementa funcionalidad de filtros para la página de inicio al sitio, además en la misma el componente de paginación no está centrado. 
 
-- Dentro del componente para agregar un item al carrito dentro de la página /canchas/[id] la fecha se selecciona un día atrasado y el horario no queda seleccionado, si se registran ambos datos para el item del carrito. Los timeslots tardan un poco más en aparecer, ya que la consulta depende de la fecha y horario seleccionado.
+- Dentro del componente para agregar un item al carrito dentro de la página /canchas/[id] la fecha se selecciona un día atrasado y el horario no queda seleccionado, si se registran ambos datos para el item del carrito. Los timeslots tardan un poco más en aparecer, ya que la consulta depende de la fecha y horario seleccionado. Se pensaba implementar Skeletons para mejorar la UX pese a los retardos de las querys, no tuvimos suficiente tiempo.
 
 - La integración con IA funciona pero agotamos los créditos testeando por lo que actualmente se ve el mensaje de placeholder.
   
