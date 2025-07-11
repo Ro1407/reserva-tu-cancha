@@ -23,18 +23,6 @@ interface PreferenceItem {
 }
 
 export const processPreference: (cart: CartState) => Promise<string> = async (cart: CartState): Promise<string> => {
-
-  //Controlar si los items del carrito están disponibles
-  for (const item of cart.items) {
-
-      const isAvailable = await isItemAvailable(item)
-      if (!isAvailable) {
-        throw new Error(`El item ${item.id} no está disponible para la fecha y hora seleccionada.`);
-      }
-
-  }
-
-  //
   return new Promise<string>((resolve: (value: string) => void, reject: (error: Error) => void): void => {
     preference
       .create({
