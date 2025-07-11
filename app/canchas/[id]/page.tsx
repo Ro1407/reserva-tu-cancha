@@ -17,7 +17,7 @@ export default async function CourtDetailPage(props: {
       getCourtById(id),
       getClubLocationByCourtId(id)],
       )
-  const club: Club | null = await getClubById(court.id)
+  const club: Club | null = await getClubById(court.clubId)
 
   if (!court || !club) {
     return notFound();
