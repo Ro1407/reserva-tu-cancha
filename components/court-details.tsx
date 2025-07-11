@@ -7,15 +7,14 @@ import { MapPin, Star, Phone, MapIcon, Sparkles, Zap } from "lucide-react";
 import { Club } from "@/types/club";
 import { Court } from "@/types/court";
 import { generateCourtDescription } from "@/lib/descriptions";
-import { getClubById } from "@/lib/actions";
 import { formatDBPriceToCurrency } from "@/lib/utils";
 
 interface CourtDetailsProps {
   court: Court;
+  club: Club;
 }
 
-export async function CourtDetails({ court }: CourtDetailsProps) {
-  const club: Club | null = await getClubById(court.clubId);
+export async function CourtDetails({ court, club }: CourtDetailsProps) {
   const [description, setDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
