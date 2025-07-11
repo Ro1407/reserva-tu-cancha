@@ -82,6 +82,32 @@ Cada comisión podrá proponer variaciones siempre que se mantenga la estructura
 
 - Código fuente del proyecto en un repositorio de GitHub cuyo nombre debe *incluir* la palabra `proyecto-nextjs`.
 - Link a la aplicación desplegada en Vercel. [Link a Vercel](https://proyecto-2-lagos-zentrigen-swart.vercel.app/)
+- **DATOS PARA TESTEAR:**
+      Mercado Pago:
+          Usuario del comprador: TESTUSER475575928
+          Contraseña del comprador: LdggOU9c4N
+          Usuario del vendedor: TESTUSER669812421
+          Contraseña del vendedor: mkj2gqlVfG
+      Log In (admin)
+          Usuario: admin@cs.uns.edu.ar
+          Contraseña: 1234567
+
+- **FE DE ERRATAS**
+
+- Los filtros funcionan para las canchas, tener en cuenta que el filtrado en base a parámetros de la URL se realiza al presionar "Aplicar Filtros". En un inicio se había planteado realizarla en tiempo real pero no quisimos entorpecer la UX por posibles retardos de la base de datos, al ser cuenta gratuita. No se implementa funcionalidad de filtros para la página de inicio al sitio, además en la misma el componente de paginación no está centrado. 
+
+- Dentro del componente para agregar un item al carrito dentro de la página /canchas/[id] la fecha se selecciona un día atrasado y el horario no queda seleccionado, si se registran ambos datos para el item del carrito. Los timeslots tardan un poco más en aparecer, ya que la consulta depende de la fecha y horario seleccionado.
+
+- La integración con IA funciona pero agotamos los créditos testeando por lo que actualmente se ve el mensaje de placeholder.
+  
+- Al ingresar a mercado pago permite ingresar sesión y seleccionar una tarjeta para pagar pero al continuar muestra "Ingresá el código que te enviamos por e-mail. Te enviamos un código a tu e-mail para validar que sos vos y que puedas continuar.", no podemos obtener el código de verificación para tenerlo operativo nuevamente ya que el email no existe.
+  
+- Por falta de tiempo y este inconveniente con mercado pago fuimos incapaces de testear si funcionaba crear una reserva a partir de los items del carrito una vez que pago fue exitoso. Las notificaciones de la PWA sólo estaban pensadas para este uso, se notificaría a los usuarios que el pago fue exitoso y la reserva se encontraba registrada (las testeamos por saparado y funcionaban).
+
+- Si dentro del dashboard crean una cancha con ubicación no compatible con la API del clima, la reserva se crea normalmente y el widget del clima no es visible al volver a la página /canchas/[id] ya que no hacemos un post a la misma como parte de la validación de los CRUD del dashboard.
+
+- Los datos de prueba son escasos, agregaremos más desde la base de datos remota con SQL para mejor UX.
+
 
 ### Comisiones:
 
