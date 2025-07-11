@@ -14,7 +14,7 @@ interface CourtDetailsProps {
   club: Club;
 }
 
-export async function CourtDetails({ court, club }: CourtDetailsProps) {
+export function CourtDetails({ court, club }: CourtDetailsProps) {
   const [description, setDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
