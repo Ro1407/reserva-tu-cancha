@@ -4,6 +4,13 @@ import { Preference, Payment, MercadoPagoConfig } from "mercadopago";
 import { PreferenceResponse } from "mercadopago/dist/clients/preference/commonTypes";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { CartState, CartItem } from "@/types/cart";
+import { sendNotification } from "@/lib/notifications";
+import { createReservation } from "@/lib/actions-CRUD";
+import { ReservationData } from "@/types/reservation";
+import { TimeSlotKey } from "@/types/enumerates";
+import { ReservationState } from "@prisma/client";
+import { convertTimeToTHHMM } from "@/lib/utils";
+import { isItemAvailable } from "@/lib/actions";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
 const preference = new Preference(client);
@@ -16,7 +23,18 @@ interface PreferenceItem {
 }
 
 export const processPreference: (cart: CartState) => Promise<string> = async (cart: CartState): Promise<string> => {
-  /* TODO: chequear que los items del carrito estén disponibles antes de hacer la compra */
+
+  //Controlar si los items del carrito están disponibles
+  for (const item of cart.items) {
+
+      const isAvailable = await isItemAvailable(item)
+      if (!isAvailable) {
+        throw new Error(`El item ${item.id} no está disponible para la fecha y hora seleccionada.`);
+      }
+
+  }
+
+  //
   return new Promise<string>((resolve: (value: string) => void, reject: (error: Error) => void): void => {
     preference
       .create({
@@ -56,10 +74,35 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
   const payment: PaymentResponse = await new Payment(client).get({ id });
   const cart: CartState = payment.metadata?.cart as CartState;
   console.log(cart);
-  /**
-   * TODO:
-   * si el pago fue exitoso (payment.status === "approved"),
-   * crear una reserva por cada item del carrito con estado confirmada.
-   * pd: chequear que cart no sea undefined.
-   */
+
+
+  if(payment.status === "approved"){
+
+    await sendNotification("Tu pago fue procesado!", "Gracias por tu compra. Tu reserva está siendo procesada.");
+
+    if(cart) {
+      for (const item of cart.items) {
+        try {
+
+          const formattedTime: string = convertTimeToTHHMM(item.time.time);   //HH:MM a THHMM
+          const reserva: ReservationData = {
+            date: item.date,
+            timeSlot: formattedTime as TimeSlotKey,
+            price: item.price * 100,
+            state: ReservationState.Confirmada,
+            courtId: item.courtId,
+            userId: "ff62bb55-4d73-4bbb-9d8c-d4dae9680e30"
+          };
+
+          await createReservation(reserva).then((): void => {
+            sendNotification("Tu reserva está lista!", "Solo debes presentarte en el club el día y horario acordado para disfrutar de tu reserva.");
+          })
+
+        } catch (error) {
+          console.error(`Error al crear la reserva para el item ${item.id}:`, error);
+        }
+      }
+    }
+
+  }
 };

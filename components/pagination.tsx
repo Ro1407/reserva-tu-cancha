@@ -1,69 +1,143 @@
-"use client";
+"use client"
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline"
+import Link from "next/link"
+import { usePathname, useSearchParams } from "next/navigation"
+import { generatePagination } from "@/lib/utils"
+import clsx from "clsx"
 
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+export default function PaginationWithText({ totalPages }: { totalPages: number }) {
+  const searchParams = useSearchParams()
+  const currentPage = Number(searchParams.get("page")) || 1
+  const allPages = generatePagination(currentPage, totalPages)
+  const pathname = usePathname()
 
-interface PaginationProps {
-  totalPages: number;
-}
-
-export function Pagination({ totalPages }: PaginationProps) {
-  const searchParams = useSearchParams();
-  const pathname: string = usePathname();
-  const { replace } = useRouter();
-  const pages: number[] = Array.from({ length: totalPages - 1 });
-  const currentPage: number = Number(searchParams?.get("page")) || 1;
-
-  const onPageChange: (page: number) => void = (page: number): void => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", page.toString());
-    replace(`${pathname}?${params.toString()}`);
-  };
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams)
+    params.set("page", pageNumber.toString())
+    return `${pathname}?${params.toString()}`
+  }
 
   return (
-    <div className="flex items-center justify-center space-x-2">
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={currentPage == 1}
-        onClick={(): void => onPageChange(currentPage - 1)}
-      >
-        <ChevronLeft className="w-4 h-4 mr-1" />
-        Anterior
-      </Button>
-      <div className="flex space-x-1">
-        {pages.map((_: number, page: number) => (
-          <Button
-            key={page + 1}
-            variant="outline"
-            size="sm"
-            disabled={page + 1 == currentPage}
-            onClick={(): void => onPageChange(page + 1)}
-          >
-            {page + 1}
-          </Button>
-        ))}
-        <span className="px-2 py-1 text-gray-600 dark:text-gray-400">...</span>
-        <Button
-          key={totalPages}
-          variant="outline"
-          size="sm"
-          disabled={currentPage == totalPages}
-          onClick={(): void => onPageChange(totalPages)}
-        >
-          {totalPages}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={currentPage == totalPages}
-          onClick={(): void => onPageChange(currentPage + 1)}
-        >
-          Siguiente
-          <ChevronRight className="w-4 h-4 ml-1" />
-        </Button>
+    <>
+      <div className="flex items-center justify-center space-x-2">
+        <PaginationArrowWithText
+          direction="left"
+          href={createPageURL(currentPage - 1)}
+          isDisabled={currentPage <= 1}
+          text="Anterior"
+        />
+
+        <div className="flex space-x-1">
+          {allPages.map((page, index) => {
+            let position: "first" | "last" | "single" | "middle" | undefined
+            if (index === 0) position = "first"
+            if (index === allPages.length - 1) position = "last"
+            if (allPages.length === 1) position = "single"
+            if (page === "...") position = "middle"
+
+            return (
+              <PaginationNumber
+                key={`${page}-${index}`}
+                href={createPageURL(page)}
+                page={page}
+                position={position}
+                isActive={currentPage === page}
+              />
+            )
+          })}
+        </div>
+
+        <PaginationArrowWithText
+          direction="right"
+          href={createPageURL(currentPage + 1)}
+          isDisabled={currentPage >= totalPages}
+          text="Siguiente"
+        />
       </div>
-    </div>
-  );
+    </>
+  )
+}
+
+function PaginationNumber({
+                            page,
+                            href,
+                            isActive,
+                            position,
+                          }: {
+  page: number | string
+  href: string
+  position?: "first" | "last" | "middle" | "single"
+  isActive: boolean
+}) {
+  // Estilos base del Button component
+  const baseClasses =
+    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+
+  // Tamaño pequeño del Button component
+  const sizeClasses = "h-8 px-3 text-sm"
+
+  const className = clsx(baseClasses, sizeClasses, {
+    // Activo - usando estilos del Button variant "default"
+    "bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-600": isActive,
+    // No activo - usando estilos del Button variant "outline"
+    "border border-gray-300 bg-transparent hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800":
+      !isActive && position !== "middle",
+    // Puntos suspensivos - usando estilos del Button variant "ghost"
+    "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 cursor-default": position === "middle",
+  })
+
+  return isActive || position === "middle" ? (
+    <div className={className}>{page}</div>
+  ) : (
+    <Link href={href} className={className}>
+      {page}
+    </Link>
+  )
+}
+
+function PaginationArrowWithText({
+                                   href,
+                                   direction,
+                                   isDisabled,
+                                   text,
+                                 }: {
+  href: string
+  direction: "left" | "right"
+  isDisabled?: boolean
+  text: string
+}) {
+  // Estilos base del Button component
+  const baseClasses =
+    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+
+  // Tamaño pequeño del Button component
+  const sizeClasses = "h-8 px-3 text-sm"
+
+  const className = clsx(baseClasses, sizeClasses, {
+    // Deshabilitado - usando opacity del Button component
+    "opacity-50 pointer-events-none border border-gray-300 bg-transparent": isDisabled,
+    // Habilitado - usando estilos del Button variant "outline"
+    "border border-gray-300 bg-transparent hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800": !isDisabled,
+  })
+
+  const content =
+    direction === "left" ? (
+      <>
+        <ArrowLeftIcon className="w-4 h-4 mr-1" />
+        {text}
+      </>
+    ) : (
+      <>
+        {text}
+        <ArrowRightIcon className="w-4 h-4 ml-1" />
+      </>
+    )
+
+  return isDisabled ? (
+    <div className={className}>{content}</div>
+  ) : (
+    <Link className={className} href={href}>
+      {content}
+    </Link>
+  )
 }

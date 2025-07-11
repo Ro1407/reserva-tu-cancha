@@ -41,7 +41,7 @@ export function CartItems() {
                   </div>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <Clock className="w-4 h-4 mr-2" />
-                    {item.time}
+                    {item.time.time}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">

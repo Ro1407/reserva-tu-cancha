@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState, createContext, useContext } from "react"
+import { createContext, useContext } from "react"
+import Link from "next/link";
 
 interface TabsContextType {
   activeTab: string
@@ -11,7 +12,6 @@ interface TabsContextType {
 const TabsContext = createContext<TabsContextType | undefined>(undefined)
 
 interface TabsProps {
-  defaultValue: string
   children: React.ReactNode
   className?: string
 }
@@ -22,8 +22,9 @@ interface TabsListProps {
 }
 
 interface TabsTriggerProps {
-  value: string
-  children: React.ReactNode
+  tabKey: string
+  tabHref: string
+  isActive: boolean
   className?: string
 }
 
@@ -33,44 +34,34 @@ interface TabsContentProps {
   className?: string
 }
 
-export function Tabs({ defaultValue, children, className = "" }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultValue)
-
-  return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
-      <div className={className}>{children}</div>
-    </TabsContext.Provider>
-  )
+export function Tabs({ children, className = "" }: TabsProps) {
+  return <div className={className}>{children}</div>
 }
 
 export function TabsList({ children, className = "" }: TabsListProps) {
   return (
     <div
-      className={`inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-500 dark:bg-gray-800 dark:text-gray-400 ${className}`}
+      className={`w-full h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-500 dark:bg-gray-800 dark:text-gray-400 ${className}`}
     >
       {children}
     </div>
   )
 }
 
-export function TabsTrigger({ value, children, className = "" }: TabsTriggerProps) {
-  const context = useContext(TabsContext)
-  if (!context) throw new Error("TabsTrigger must be used within Tabs")
-
-  const { activeTab, setActiveTab } = context
-  const isActive = activeTab === value
-
+export function TabsTrigger({ tabKey, tabHref, isActive, className = "" }: TabsTriggerProps) {
   return (
-    <button
+    <Link
+      key={tabKey}
+      href={tabHref}
       className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
         isActive
           ? "bg-white text-gray-950 shadow-sm dark:bg-gray-950 dark:text-gray-50"
           : "hover:bg-white/50 dark:hover:bg-gray-950/50"
-      } ${className}`}
-      onClick={() => setActiveTab(value)}
+      } ${className}`
+    }
     >
-      {children}
-    </button>
+      {tabKey}
+    </Link>
   )
 }
 

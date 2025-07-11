@@ -1,281 +1,146 @@
 "use client";
 
-import { useState } from "react";
-import { Edit, Trash2, Plus, X, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { Badge, BadgeVariant } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Court } from "@/types/court";
-import { courts } from "@/lib/data";
+import { CourtCardData } from "@/types/court";
+import { getAllCourtsCardData } from "@/lib/actions-client";
+import { formatDBPriceToCurrency } from "@/lib/utils";
+import { Create, DeleteCourt, Edit, See } from "@/components/ui/dashboard-buttons";
+import { Modal } from "@/components/modal";
+import { CourtCard } from "@/components/court-card";
+import { useRouter, useSearchParams } from "next/navigation";
+import Pagination from "@/components/pagination";
 
 export function CourtsTable() {
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editData, setEditData] = useState<any>({});
-  const [isCreating, setIsCreating] = useState(false);
-  const [newCancha, setNewCancha] = useState({
-    name: "",
-    club: "",
-    sport: "",
-    price: 0,
-    status: "Activa",
-  });
+  const searchParams = useSearchParams()
+  const currentPage = Number(searchParams.get("page")) || 1
+  const [totalPages, setTotalPages] = useState(0);
 
-  const startEdit: (court: Court) => void = (court: Court): void => {
-    setEditingId(court.id);
-    setEditData({ ...court });
-    setIsCreating(false);
-  };
+  const [courts, setCourts] = useState<CourtCardData[]>([]);
+  const [courtForView, setCourtForView] = useState<CourtCardData | null>(null);
+  const [courtForDelete, setCourtForDelete] = useState<CourtCardData | null>(null);
+  const router = useRouter();
 
-  const cancelEdit: () => void = (): void => {
-    setEditingId(null);
-    setEditData({});
-    setIsCreating(false);
-    setNewCancha({
-      name: "",
-      club: "",
-      sport: "",
-      price: 0,
-      status: "Activa",
-    });
-  };
+  useEffect(() => {
+    const fetchCourts = async (): Promise<[CourtCardData[], number, number]> => {
+      try {
+        return await getAllCourtsCardData({currentPage: currentPage});
+      } catch (error) {
+        console.error("Error fetching courts:", error);
+        return [[], 0, 0];
+      }
+    };
 
-  const saveEdit: () => void = (): void => {
-    setEditingId(null);
-    setEditData({});
-  };
+    fetchCourts().then((data) => {
+        setCourts(data[0])
+        setTotalPages(data[1])
+      }
+    );
+  }, [currentPage]);
 
-  const deleteCancha: (id: number) => void = (id: number): void => {
-    console.log("Eliminando cancha:", id);
-  };
+  function handleDeleteCourt(){
+    // Update local state immediately
+    if (courtForDelete) {
+      setCourts((prevCourts) => prevCourts.filter((court) => court.id !== courtForDelete.id));
+    }
 
-  const startCreate: () => void = (): void => {
-    setIsCreating(true);
-    setEditingId(null);
-    setEditData({});
-  };
+    setCourtForDelete(null);
 
-  const saveNew: () => void = (): void => {
-    console.log("Creando nueva cancha:", newCancha);
-    setIsCreating(false);
-    setNewCancha({
-      name: "",
-      club: "",
-      sport: "",
-      price: 0,
-      status: "Activa",
-    });
-  };
+    // Refresh with a small delay to ensure the server action completes
+    setTimeout(() => {
+      router.refresh();
+    }, 100);
+  }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="mb-2">Gestión de Canchas</CardTitle>
-        <Button onClick={startCreate} disabled={isCreating || editingId !== null}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nueva Cancha
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Club</TableHead>
-              <TableHead>Deporte</TableHead>
-              <TableHead>Precio/Hora</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead>Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {/* new court */}
-            {isCreating && (
-              <TableRow className="bg-green-50 dark:bg-green-950/20">
-                <TableCell>
-                  <Input
-                    value={newCancha.name}
-                    onChange={(e): void => setNewCancha({ ...newCancha, name: e.target.value })}
-                    placeholder="Nombre de la cancha"
-                    className="min-w-[200px]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, club: value })}>
-                    <SelectTrigger className="min-w-[150px]">
-                      <SelectValue placeholder="Seleccionar club" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Club Central">Club Central</SelectItem>
-                      <SelectItem value="Complejo Norte">Complejo Norte</SelectItem>
-                      <SelectItem value="Centro Sur">Centro Sur</SelectItem>
-                      <SelectItem value="Polideportivo Oeste">Polideportivo Oeste</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, sport: value })}>
-                    <SelectTrigger className="min-w-[120px]">
-                      <SelectValue placeholder="Seleccionar deporte" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Fútbol">Fútbol</SelectItem>
-                      <SelectItem value="Tenis">Tenis</SelectItem>
-                      <SelectItem value="Pádel">Pádel</SelectItem>
-                      <SelectItem value="Básquet">Básquet</SelectItem>
-                      <SelectItem value="Vóley">Vóley</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    value={newCancha.price || ""}
-                    onChange={(e): void => setNewCancha({ ...newCancha, price: Number(e.target.value) })}
-                    placeholder="Precio"
-                    className="min-w-[100px]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Select onValueChange={(value: string): void => setNewCancha({ ...newCancha, status: value })}>
-                    <SelectTrigger className="min-w-[130px]">
-                      <SelectValue placeholder="Seleccionar estado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Activa">Activa</SelectItem>
-                      <SelectItem value="Mantenimiento">Mantenimiento</SelectItem>
-                      <SelectItem value="Inactiva">Inactiva</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={saveNew}
-                      disabled={!newCancha.name || !newCancha.club || !newCancha.sport || !newCancha.price}
-                    >
-                      <Check className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={cancelEdit}>
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+    <>
+      { /* Render the courts table */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="mb-2">Gestión de Canchas</CardTitle>
+          <Create href="/dashboard/crear" buttonText="Nueva Cancha"></Create>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Club</TableHead>
+                <TableHead>Ubicación</TableHead>
+                <TableHead>Deporte</TableHead>
+                <TableHead>Precio/Hora</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Acciones</TableHead>
               </TableRow>
-            )}
-
-            {/* actual courts */}
-            {courts.map((court: Court) => (
-              <TableRow key={court.id}>
-                <TableCell>
-                  {editingId === court.id ? (
-                    <Input
-                      value={editData.name || ""}
-                      onChange={(e): void => setEditData({ ...editData, name: e.target.value })}
-                      className="min-w-[200px]"
-                    />
-                  ) : (
+            </TableHeader>
+            <TableBody>
+              {courts.map((court: CourtCardData) => (
+                <TableRow key={court.id}>
+                  <TableCell>
                     <span className="font-medium">{court.name}</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingId === court.id ? (
-                    <Select onValueChange={(value: string): void => setEditData({ ...editData, club: value })}>
-                      <SelectTrigger className="min-w-[150px]">
-                        <SelectValue placeholder="Seleccionar club" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Club Central">Club Central</SelectItem>
-                        <SelectItem value="Complejo Norte">Complejo Norte</SelectItem>
-                        <SelectItem value="Centro Sur">Centro Sur</SelectItem>
-                        <SelectItem value="Polideportivo Oeste">Polideportivo Oeste</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    court.club
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingId === court.id ? (
-                    <Select onValueChange={(value: string): void => setEditData({ ...editData, sport: value })}>
-                      <SelectTrigger className="min-w-[120px]">
-                        <SelectValue placeholder="Seleccionar deporte" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Fútbol">Fútbol</SelectItem>
-                        <SelectItem value="Tenis">Tenis</SelectItem>
-                        <SelectItem value="Pádel">Pádel</SelectItem>
-                        <SelectItem value="Básquet">Básquet</SelectItem>
-                        <SelectItem value="Vóley">Vóley</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    court.sport
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingId === court.id ? (
-                    <Input
-                      type="number"
-                      value={editData.price || ""}
-                      onChange={(e): void => setEditData({ ...editData, price: Number(e.target.value) })}
-                      className="min-w-[100px]"
-                    />
-                  ) : (
-                    `$${court.price.toLocaleString()}`
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingId === court.id ? (
-                    <Select onValueChange={(value: string): void => setEditData({ ...editData, status: value })}>
-                      <SelectTrigger className="min-w-[130px]">
-                        <SelectValue placeholder="Seleccionar estado" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Activa">Activa</SelectItem>
-                        <SelectItem value="Mantenimiento">Mantenimiento</SelectItem>
-                        <SelectItem value="Inactiva">Inactiva</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Badge variant={court.status === "Activa" ? "default" : "secondary"}>{court.status}</Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {editingId === court.id ? (
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium">{court.clubName}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium">{court.clubLocation}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium">{court.sport}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium">{formatDBPriceToCurrency(court.price)}</span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={court.state === "Activa" ? BadgeVariant.default : BadgeVariant.secondary}>{court.state}</Badge>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex space-x-2">
-                      <Button variant="outline" size="sm" onClick={saveEdit}>
-                        <Check className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={cancelEdit}>
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm" onClick={(): void => startEdit(court)} disabled={isCreating}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
+                      <See onSeeClick={() => setCourtForView(court)} />
+                      <Edit editHref={`/dashboard/editar/${court.id}`} />
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={(): void => deleteCancha(court.id)}
-                        disabled={isCreating}
+                        onClick={() => setCourtForDelete(court)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      {/* Render the pagination component */}
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
+      </div>
+      {/* Render the modal only when a court is selected for viewing */}
+      {courtForView != null &&
+        <Modal onModalClose={(): void => setCourtForView(null)}>
+          <CourtCard court={courtForView} />
+        </Modal>
+      }
+      {/* Render the modal only when a court is selected for deleting */}
+      {courtForDelete != null && (
+        <Modal onModalClose={() => setCourtForDelete(null)}>
+          <div className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Confirmar Eliminación</h2>
+            <p>¿Estás seguro de que deseas eliminar la cancha "{courtForDelete.name}"?</p>
+            <div className="mt-6 flex justify-end gap-4">
+              <Button variant="outline" onClick={() => setCourtForDelete(null)}>Cancelar</Button>
+              <DeleteCourt court={courtForDelete} afterSubmit={handleDeleteCourt} />
+            </div>
+          </div>
+        </Modal>
+      )}
+    </>
   );
 }

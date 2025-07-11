@@ -1,25 +1,31 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourtsTable } from "@/components/courts-table";
-import { ReservationsTable } from "@/components/reservations-table";
-import { ClubsTable } from "@/components/clubs-table";
+"use client"
 
-export function AdminTabs() {
+import type React from "react"
+import { usePathname } from 'next/navigation';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const links = [
+  { name: "Canchas", href: '/dashboard'},
+  { name: "Clubes", href: '/dashboard/clubes'},
+  { name: "Reservas", href: '/dashboard/reservas' },
+];
+
+export function AdminTabs({ children }: { children: React.ReactNode }) {
+  const activePath = usePathname();
+
   return (
-    <Tabs defaultValue="canchas" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="canchas">Canchas</TabsTrigger>
-        <TabsTrigger value="reservas">Reservas</TabsTrigger>
-        <TabsTrigger value="clubes">Clubes</TabsTrigger>
+    <Tabs className="space-y-6">
+      <TabsList>
+        {links.map((link) => (
+          <TabsTrigger
+            key={link.name}
+            tabKey={link.name}
+            tabHref={link.href}
+            isActive={activePath === link.href}>
+          </TabsTrigger>
+        ))}
       </TabsList>
-      <TabsContent value="canchas">
-        <CourtsTable />
-      </TabsContent>
-      <TabsContent value="reservas">
-        <ReservationsTable />
-      </TabsContent>
-      <TabsContent value="clubes">
-        <ClubsTable />
-      </TabsContent>
+      {children}
     </Tabs>
   );
 }

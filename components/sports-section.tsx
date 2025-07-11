@@ -16,11 +16,11 @@ export function SportsSection() {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {sports.map((sport: Sport) => (
-          <Link key={sport.name} href={buildSearchURL(sport.name)}>
+          <Link key={sport.key} href={buildSearchURL(sport.key)}>
             <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
               <CardContent className="p-6 text-center">
                 <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{sport.icon}</div>
-                <h3 className="font-semibold">{sport.name}</h3>
+                <h3 className="font-semibold">{sport.key}</h3>
               </CardContent>
             </Card>
           </Link>

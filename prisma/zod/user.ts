@@ -1,0 +1,11 @@
+import * as z from "zod"
+import { Role } from "@prisma/client"
+
+export const UserSchema = z.object({
+  id: z.string(),
+  password: z.string().min(1, 'Por favor, proporcione una contraseña').nullish(),
+  email: z.string().min(1, 'Por favor, proporcione un correo electrónico único').email('Por favor, proporcione un correo electrónico válido'),
+  name: z.string(),
+  phone: z.string().nullish(),
+  role: z.nativeEnum(Role),
+})
