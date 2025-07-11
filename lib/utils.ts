@@ -125,6 +125,7 @@ export function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuf
  * @return {string} The formatted date string.
  */
 export const formatDateToISO: (date: Date) => string = (date: Date): string => {
+  if (!date) return "";
   return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD
 }
 

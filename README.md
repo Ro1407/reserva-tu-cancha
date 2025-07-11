@@ -81,7 +81,7 @@ Cada comisión podrá proponer variaciones siempre que se mantenga la estructura
 ### **Entregables:**
 
 - Código fuente del proyecto en un repositorio de GitHub cuyo nombre debe *incluir* la palabra `proyecto-nextjs`.
-- Link a la aplicación desplegada en Vercel. [Link a Vercel](https://proyecto-2-lagos-zentrigen-omega.vercel.app/)
+- Link a la aplicación desplegada en Vercel. [Link a Vercel](https://proyecto-2-lagos-zentrigen-swart.vercel.app/)
 
 ### Comisiones:
 
