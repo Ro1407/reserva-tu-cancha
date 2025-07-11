@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "build": "NEXT_IGNORE_TYPE_ERRORS=true next build",
     "dev": "next dev --turbopack",
     "start": "next start",
