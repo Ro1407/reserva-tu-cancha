@@ -4,7 +4,7 @@ import { Sport, sports } from "@/lib/definitions";
 
 export function SportsSection() {
   const buildSearchURL: (sport: string) => string = (sport: string): string => {
-    const params = new URLSearchParams({ deporte: sport.toLowerCase() });
+    const params = new URLSearchParams({ sports: sport });
     return `/canchas?${params.toString()}`;
   };
 
