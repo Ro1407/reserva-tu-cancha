@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ReservationCardData } from "@/types/reservation";
@@ -23,6 +24,7 @@ export function ReservationsTable() {
   const [reservations, setReservations] = useState<ReservationCardData[]>([]);
   const [reservationForView, setReservationForView] = useState<ReservationCardData | null>(null);
   const [reservationForDelete, setReservationForDelete] = useState<ReservationCardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,12 +37,14 @@ export function ReservationsTable() {
       }
     };
 
+    setIsLoading(true);
     fetchData().then((data) => {
       setReservations(data[0]);
       setTotalPages(data[1]);
+    }).finally(() => {
+      setIsLoading(false);
     });
   }, [currentPage]);
-
 
   function handleDeleteReservation() {
     // Actualizar el estado local inmediatamente
@@ -65,57 +69,64 @@ export function ReservationsTable() {
           <Create href="/dashboard/reservas/crear" buttonText="Nueva Reserva"></Create>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cancha</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Fecha y Hora</TableHead>
-                <TableHead>Ubicación</TableHead>
-                <TableHead>Precio</TableHead>
-                <TableHead>Deporte</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {reservations.map((reservation: ReservationCardData) => (
-                <TableRow key={reservation.id}>
-                  <TableCell>
-                    <span className="font-medium">{reservation.courtName}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{reservation.userEmail}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{formatISODateToHumanReadable(reservation.date)}</span>
-                    <span className="font-medium">{formatTimeSlotToString(reservation.timeSlot)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{reservation.clubLocation + " - " + reservation.courtAddress}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{formatDBPriceToCurrency(reservation.price)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{reservation.courtSport}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStateVariant(reservation.state)} className="text-xs">
-                      {reservation.state}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <See onSeeClick={() => setReservationForView(reservation)} />
-                      <Edit editHref={`/dashboard/reservas/editar/${reservation.id}`} />
-                      <Delete onClick={() => setReservationForDelete(reservation)} />
-                    </div>
-                  </TableCell>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="ml-2">Cargando reservas...</span>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Cancha</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Fecha y Hora</TableHead>
+                  <TableHead>Ubicación</TableHead>
+                  <TableHead>Precio</TableHead>
+                  <TableHead>Deporte</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Acciones</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {reservations.map((reservation: ReservationCardData) => (
+                  <TableRow key={reservation.id}>
+                    <TableCell>
+                      <span className="font-medium">{reservation.courtName}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{reservation.userEmail}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{formatISODateToHumanReadable(reservation.date)}</span>
+                      <span className="font-medium">{formatTimeSlotToString(reservation.timeSlot)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{reservation.clubLocation + " - " + reservation.courtAddress}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{formatDBPriceToCurrency(reservation.price)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{reservation.courtSport}</span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={getStateVariant(reservation.state)} className="text-xs">
+                        {reservation.state}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <See onSeeClick={() => setReservationForView(reservation)} />
+                        <Edit editHref={`/dashboard/reservas/editar/${reservation.id}`} />
+                        <Delete onClick={() => setReservationForDelete(reservation)} />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
       {/* Render the pagination component */}

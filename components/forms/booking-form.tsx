@@ -9,13 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { Clock, ShoppingCart } from "lucide-react";
+import { Clock, ShoppingCart, Loader2 } from "lucide-react";
 import { Court } from "@/types/court";
 import { CartItem } from "@/types/cart";
 import { TimeSlot } from "@/types/time-slot";
 import { getClubNameById } from "@/lib/actions";
 import { getTimeSlots } from "@/lib/actions-client";
-import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString, getHourTimeSlot, formatDateToISO } from "@/lib/utils";
+import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString, formatDateToISO } from "@/lib/utils";
 
 interface BookingFormProps {
   court: Court;
@@ -27,21 +27,20 @@ export function BookingForm({ court }: BookingFormProps) {
   const { selectedDate, setSelectedDate } = useCalendar();
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+  const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState<boolean>(false);
   const [isAdding, setIsAdding] = useState<boolean>(false);
 
   useEffect((): void => {
-    console.log("SELECTED DATE: " + selectedDate)
-      getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
-      setTimeSlots(slots);
-    });
-  }, [selectedDate]);
-
-  useEffect((): void => {
-    console.log("SELECTED DATE: " + selectedDate)
-    getTimeSlots(selectedDate, court.id).then((slots: TimeSlot[]): void => {
-      setTimeSlots(slots);
-    });
-  }, []);
+    setIsLoadingTimeSlots(true);
+    getTimeSlots(selectedDate, court.id)
+      .then((slots: TimeSlot[]): void => {
+        setTimeSlots(slots);
+        setSelectedSlot(slots.find((timeSlot: TimeSlot): boolean => timeSlot.available) ?? null);
+      })
+      .finally((): void => {
+        setIsLoadingTimeSlots(false);
+      });
+  }, [selectedDate.toDateString()]);
 
   useEffect((): void => {
     if (selectedSlot) {
@@ -100,24 +99,40 @@ export function BookingForm({ court }: BookingFormProps) {
         {/* Date Selection */}
         <div>
           <Label className="text-base font-medium mb-3 block">Seleccionar Fecha</Label>
-          <Calendar className="rounded-md border border-gray-200 dark:border-gray-800" />
+          <div
+            className={`${isLoadingTimeSlots ? "pointer-events-none opacity-50" : ""} transition-opacity duration-200`}
+          >
+            <Calendar className="rounded-md border border-gray-200 dark:border-gray-800" />
+          </div>
+          {isLoadingTimeSlots && (
+            <p className="text-xs text-gray-500 mt-2">
+              Espere a que terminen de cargar los horarios antes de cambiar la fecha
+            </p>
+          )}
         </div>
         {/* Time Selection */}
         <div>
           <Label className="text-base font-medium mb-3 block">Horarios Disponibles</Label>
           <div className="grid grid-cols-3 gap-2">
-            {timeSlots.map((slot: TimeSlot) => (
-              <Button
-                key={slot.time}
-                variant={selectedSlot == slot ? "default" : slot.available ? "outline" : "secondary"}
-                size="sm"
-                className="text-xs"
-                disabled={!slot.available}
-                onClick={(): void => setSelectedSlot(slot)}
-              >
-                {formatTimeSlotToString(slot.time)}
-              </Button>
-            ))}
+            {isLoadingTimeSlots ? (
+              <div className="col-span-3 flex flex-col items-center justify-center py-8 text-sm text-gray-500">
+                <Loader2 className="w-6 h-6 animate-spin mb-2" />
+                <span>Cargando horarios disponibles...</span>
+              </div>
+            ) : (
+              timeSlots.map((slot: TimeSlot) => (
+                <Button
+                  key={slot.time}
+                  variant={selectedSlot == slot ? "default" : slot.available ? "outline" : "secondary"}
+                  size="sm"
+                  className="text-xs"
+                  disabled={!slot.available || isLoadingTimeSlots}
+                  onClick={(): void => setSelectedSlot(slot)}
+                >
+                  {formatTimeSlotToString(slot.time)}
+                </Button>
+              ))
+            )}
           </div>
         </div>
         {/* Booking Summary */}

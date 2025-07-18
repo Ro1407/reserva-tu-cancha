@@ -171,6 +171,7 @@ export const formatTimeSlotToString = (timeSlot: string): string => {
 export const formatISODateToHumanReadable = (isoDate: string): string => {
   const date = new Date(isoDate);
   return date.toLocaleDateString("es-ES", {
+    timeZone: "UTC",
     weekday: "short",
     year: "numeric",
     month: "numeric",

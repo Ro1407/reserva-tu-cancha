@@ -4,16 +4,13 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Star } from "lucide-react";
 import { Club } from "@/types/club";
 import { getAllClubs } from "@/lib/actions";
-import Pagination from "@/components/pagination";
 
 export async function FeaturedClubs(props: {
                                       searchParams?: Promise<{ query?: string; page?: string; }>;
                                     }) {
-
   const searchParams = await props.searchParams;
   const query = searchParams?.query || '';
-  const currentPage = Number(searchParams?.page) || 1;
-  const [clubs, totalPages] = await getAllClubs(currentPage);
+  const [clubs, totalPages] = await getAllClubs(1);
 
   return (
     <>
@@ -60,9 +57,6 @@ export async function FeaturedClubs(props: {
                   </CardContent>
                 </Card>
               ))}
-              <div className="mt-5 flex w-full justify-center">
-                <Pagination totalPages={totalPages} />
-              </div>
             </div>
           </section>
         ) :

@@ -8,9 +8,6 @@ export default function HomePage() {
   return (
     <div className="space-y-16 pb-16">
       <Hero />
-      <div className="container mx-auto px-4">
-        <SearchForm />
-      </div>
       <SportsSection />
       <FeaturedClubs />
       <Benefits />
