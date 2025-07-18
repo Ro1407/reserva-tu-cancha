@@ -1,3 +1,5 @@
+"use client";
+
 import { PushNotificationForm } from "@/components/forms/push-notification-form";
 import { AdminTabs } from "@/components/admin-tabs";
 import { Button } from "@/components/ui/button";
@@ -11,7 +13,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <h1 className="text-3xl font-bold mb-2">Panel de Administración</h1>
           <p className="text-gray-600 dark:text-gray-400">Gestiona canchas, reservas y clubes desde un solo lugar</p>
         </div>
-        <Button onClick={logout}>Cerrar Sesión</Button>
+        <Button onClick={(): Promise<void> => logout().then((): void => window.location.replace("/"))}>
+          Cerrar Sesión
+        </Button>
       </div>
       <div className="flex gap-5">
         <div className="flex-1">

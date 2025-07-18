@@ -19,5 +19,5 @@ export async function authenticate(prevState: string | undefined, formData: Form
 }
 
 export async function logout(): Promise<void> {
-  await signOut({ redirect: true, redirectTo: "/" });
+  await signOut({ redirect: false });
 }
