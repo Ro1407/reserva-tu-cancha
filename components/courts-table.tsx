@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge, BadgeVariant } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +23,7 @@ export function CourtsTable() {
   const [courts, setCourts] = useState<CourtCardData[]>([]);
   const [courtForView, setCourtForView] = useState<CourtCardData | null>(null);
   const [courtForDelete, setCourtForDelete] = useState<CourtCardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,12 +35,13 @@ export function CourtsTable() {
         return [[], 0, 0];
       }
     };
-
+    setIsLoading(true);
     fetchCourts().then((data) => {
-        setCourts(data[0])
-        setTotalPages(data[1])
-      }
-    );
+      setCourts(data[0])
+      setTotalPages(data[1])
+    }).finally(() => {
+      setIsLoading(false);
+    });
   }, [currentPage]);
 
   function handleDeleteCourt(){
@@ -65,57 +67,64 @@ export function CourtsTable() {
           <Create href="/dashboard/crear" buttonText="Nueva Cancha"></Create>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Club</TableHead>
-                <TableHead>Ubicación</TableHead>
-                <TableHead>Deporte</TableHead>
-                <TableHead>Precio/Hora</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {courts.map((court: CourtCardData) => (
-                <TableRow key={court.id}>
-                  <TableCell>
-                    <span className="font-medium">{court.name}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{court.clubName}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{court.clubLocation}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{court.sport}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{formatDBPriceToCurrency(court.price)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={court.state === "Activa" ? BadgeVariant.default : BadgeVariant.secondary}>{court.state}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <See onSeeClick={() => setCourtForView(court)} />
-                      <Edit editHref={`/dashboard/editar/${court.id}`} />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setCourtForDelete(court)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="ml-2">Cargando canchas...</span>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Club</TableHead>
+                  <TableHead>Ubicación</TableHead>
+                  <TableHead>Deporte</TableHead>
+                  <TableHead>Precio/Hora</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Acciones</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {courts.map((court: CourtCardData) => (
+                  <TableRow key={court.id}>
+                    <TableCell>
+                      <span className="font-medium">{court.name}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{court.clubName}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{court.clubLocation}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{court.sport}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{formatDBPriceToCurrency(court.price)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={court.state === "Activa" ? BadgeVariant.default : BadgeVariant.secondary}>{court.state}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <See onSeeClick={() => setCourtForView(court)} />
+                        <Edit editHref={`/dashboard/editar/${court.id}`} />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCourtForDelete(court)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
       {/* Render the pagination component */}
