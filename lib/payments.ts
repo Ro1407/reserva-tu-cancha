@@ -9,8 +9,6 @@ import { createReservation } from "@/lib/actions-CRUD";
 import { ReservationData } from "@/types/reservation";
 import { TimeSlotKey } from "@/types/enumerates";
 import { ReservationState } from "@prisma/client";
-import { convertTimeToTHHMM } from "@/lib/utils";
-import { isItemAvailable } from "@/lib/actions";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
 const preference = new Preference(client);
@@ -61,31 +59,24 @@ export const processPreference: (cart: CartState) => Promise<string> = async (ca
 export const processPayment: (id: string) => Promise<void> = async (id: string): Promise<void> => {
   const payment: PaymentResponse = await new Payment(client).get({ id });
   const cart: CartState = payment.metadata?.cart as CartState;
-  console.log(cart);
 
-
-  if(payment.status === "approved"){
-
+  if (payment.status === "approved") {
     await sendNotification("Tu pago fue procesado!", "Gracias por tu compra. Tu reserva está siendo procesada.");
-
-    if(cart) {
-      for (const item of cart.items) {
+    if (cart) {
+      for (const rawItem of cart.items) {
+        const item: CartItem = normalizeItem(rawItem);
         try {
-
-          const formattedTime: string = convertTimeToTHHMM(item.time.time);   //HH:MM a THHMM
           const reserva: ReservationData = {
             date: item.date,
-            timeSlot: formattedTime as TimeSlotKey,
+            timeSlot: item.time.time as TimeSlotKey,
             price: item.price * 100,
             state: ReservationState.Confirmada,
             courtId: item.courtId,
             userId: "ff62bb55-4d73-4bbb-9d8c-d4dae9680e30"
           };
-
           await createReservation(reserva).then((): void => {
             sendNotification("Tu reserva está lista!", "Solo debes presentarte en el club el día y horario acordado para disfrutar de tu reserva.");
           })
-
         } catch (error) {
           console.error(`Error al crear la reserva para el item ${item.id}:`, error);
         }
@@ -94,3 +85,17 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
 
   }
 };
+
+function normalizeItem(item: any): CartItem {
+  return {
+    id: item.id,
+    courtId: item.court_id,
+    courtName: item.court_name,
+    clubName: item.club_name,
+    date: item.date,
+    time: item.time,
+    price: item.price,
+    sport: item.sport,
+    image: item.image,
+  };
+}

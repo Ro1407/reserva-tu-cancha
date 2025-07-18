@@ -13,7 +13,8 @@ const CalendarContext: Context<CalendarContextProps | null> = createContext<{
 } | null>(null);
 
 export function CalendarProvider({ children }: { children: React.ReactNode }) {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const now = new Date();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
   return <CalendarContext.Provider value={{ selectedDate, setSelectedDate }}>{children}</CalendarContext.Provider>;
 }
 

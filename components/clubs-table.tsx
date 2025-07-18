@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge, BadgeVariant } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +23,7 @@ export function ClubsTable() {
   const [clubs, setClubs] = useState<ClubCardData[]>([]);
   const [clubForView, setClubForView] = useState<ClubCardData | null>(null);
   const [clubForDelete, setClubForDelete] = useState<ClubCardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,10 +35,12 @@ export function ClubsTable() {
         return [[], 0];
       }
     };
-
+    setIsLoading(true);
     fetchClubs().then((data) => {
       setClubs(data[0]);
       setTotalPages(data[1]);
+    }).finally(() => {
+      setIsLoading(false);
     });
   }, [currentPage]);
 
@@ -63,57 +67,64 @@ export function ClubsTable() {
           <Create href="/dashboard/clubes/crear" buttonText="Nuevo Club"></Create>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Ubicación</TableHead>
-                <TableHead>Dirección</TableHead>
-                <TableHead>Teléfono</TableHead>
-                <TableHead>Deportes</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {clubs.map((club) => (
-                <TableRow key={club.id}>
-                  <TableCell>
-                    <span className="font-medium">{club.name}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{club.location}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{club.address}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{formatPhoneNumber(club.phone)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {club.sports.slice(0, 2).map((sport: string) => (
-                        <Badge key={sport} variant={BadgeVariant.outline} className="text-xs">
-                          {sport}
-                        </Badge>
-                      ))}
-                      {club.sports.length > 2 && (
-                        <Badge variant={BadgeVariant.outline} className="text-xs">
-                          +{club.sports.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <See onSeeClick={() => setClubForView(club)} />
-                      <Edit editHref={`/dashboard/clubes/editar/${club.id}`}/>
-                      <Delete onClick={() => setClubForDelete(club)} />
-                    </div>
-                  </TableCell>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="ml-2">Cargando clubes...</span>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Ubicación</TableHead>
+                  <TableHead>Dirección</TableHead>
+                  <TableHead>Teléfono</TableHead>
+                  <TableHead>Deportes</TableHead>
+                  <TableHead>Acciones</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {clubs.map((club) => (
+                  <TableRow key={club.id}>
+                    <TableCell>
+                      <span className="font-medium">{club.name}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{club.location}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{club.address}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium">{formatPhoneNumber(club.phone)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {club.sports.slice(0, 2).map((sport: string) => (
+                          <Badge key={sport} variant={BadgeVariant.outline} className="text-xs">
+                            {sport}
+                          </Badge>
+                        ))}
+                        {club.sports.length > 2 && (
+                          <Badge variant={BadgeVariant.outline} className="text-xs">
+                            +{club.sports.length - 2}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <See onSeeClick={() => setClubForView(club)} />
+                        <Edit editHref={`/dashboard/clubes/editar/${club.id}`}/>
+                        <Delete onClick={() => setClubForDelete(club)} />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
       {/* Render the pagination component */}
