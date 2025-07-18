@@ -43,6 +43,12 @@ export function Navigation() {
             >
               Clubes
             </Link>
+            <Link
+              href="/reservas"
+              className="text-gray-600 hover:text-gray-900 transition-colors dark:text-gray-400 dark:hover:text-gray-100"
+            >
+              Reservas
+            </Link>
             <div>
               <ThemeToggle />
               <CartIcon />
@@ -80,6 +86,12 @@ export function Navigation() {
               className="block py-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
             >
               Clubes
+            </Link>
+            <Link
+              href="/reservas"
+              className="block py-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+            >
+              Reservas
             </Link>
           </div>
         )}
