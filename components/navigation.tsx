@@ -7,9 +7,11 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { CartIcon } from "@/components/cart-icon";
 import { Menu, X } from "lucide-react";
 import { PushNotificationManager } from "@/components/push-notifications";
+import { useSession } from "next-auth/react";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const { status } = useSession();
 
   return (
     <nav className="border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-gray-800 dark:bg-gray-950/95 dark:supports-[backdrop-filter]:bg-gray-950/60">
@@ -43,6 +45,14 @@ export function Navigation() {
             >
               Clubes
             </Link>
+            {status === "authenticated" && (
+              <Link
+                href="/reservas"
+                className="text-gray-600 hover:text-gray-900 transition-colors dark:text-gray-400 dark:hover:text-gray-100"
+              >
+                Reservas
+              </Link>
+            )}
             <div>
               <ThemeToggle />
               <CartIcon />
@@ -81,6 +91,14 @@ export function Navigation() {
             >
               Clubes
             </Link>
+            {status === "authenticated" && (
+              <Link
+                href="/reservas"
+                className="block py-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+              >
+                Reservas
+              </Link>
+            )}
           </div>
         )}
       </div>

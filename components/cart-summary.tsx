@@ -1,17 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { CreditCard, Tag } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreditCard, Tag } from "lucide-react";
 import { processPreference } from "@/lib/payments";
 import { Coupon, coupons } from "@/lib/definitions";
+import { useSession } from "next-auth/react";
+import { logout } from "@/lib/auth"
 
 export function CartSummary() {
+  const { status, data } = useSession();
   const { replace } = useRouter();
   const { state } = useCart();
   const [couponCode, setCouponCode] = useState("");
@@ -21,6 +25,12 @@ export function CartSummary() {
   const subtotal: number = state.total;
   const discountAmount: number = (subtotal * discount) / 100;
   const total: number = subtotal - discountAmount;
+
+  const handleLogout: () => Promise<void> = async (): Promise<void> => {
+    logout().then(async (): Promise<void> => {
+      window.location.reload();
+    })
+  }
 
   const applyCoupon: () => void = (): void => {
     const coupon: Coupon | undefined = coupons.find(
@@ -49,6 +59,39 @@ export function CartSummary() {
 
   return (
     <div className="space-y-6">
+      <Card>
+        <CardContent className="space-y-4">
+          {status === "authenticated" ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <span className="text-green-700 font-medium text-sm">{data?.user?.email?.charAt(0).toUpperCase()}</span>
+                </div>
+                <div>
+                  <p className="font-medium">¡Hola {data?.user?.email?.split("@")[0]}!</p>
+                  <p className="text-xs text-muted-foreground">Tu compra se vinculará a tu cuenta</p>
+                </div>
+              </div>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                Salir
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm">Inicia sesión para vincular tu compra y acceder al historial de tus pedidos.</p>
+              <div className="flex gap-2">
+                <Button>
+                  <Link href="/login?callbackUrl=/carrito">Iniciar Sesión</Link>
+                </Button>
+                <Button variant="outline">
+                  <Link href="/register?callbackUrl=/carrito">Crear Cuenta</Link>
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Cupón de descuento */}
       <Card>
         <CardHeader>
