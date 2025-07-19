@@ -26,9 +26,6 @@ export const processPreference: (cart: CartState, email: string) => Promise<stri
   cart: CartState, email: string
 ): Promise<string> => {
   return new Promise<string>((resolve: (value: string) => void, reject: (error: Error) => void): void => {
-    if (cart.items.some(async (item: CartItem): Promise<boolean> => !await isItemAvailable(item))) {
-      reject(new Error("Algunos de los items ya no están disponibles"));
-    }
     preference
       .create({
         body: {
