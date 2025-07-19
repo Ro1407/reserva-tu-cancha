@@ -27,14 +27,17 @@ export async function getCourtById(id: string): Promise<Court | null> {
 }
 
 // Returns a club by its ID
-export async function getClubById(id: string): Promise<Club | null> {
-  const club = await prisma.club.findUnique({
-    where: { id }
-  });
+export async function getClubById(id: string | null): Promise<Club | null> {
+  if (id) {
+    const club = await prisma.club.findUnique({
+      where: { id }
+    });
 
-  if (!club) return null;
+    if (!club) return null;
 
-  return club;
+    return club;
+  }
+  return null;
 }
 
 // Returns a reservation by its ID
@@ -163,7 +166,7 @@ export async function getMaxCourtPrice(): Promise<number> {
 export async function getAllCourtLocations(): Promise<string[]> {
   const locations = await prisma.club.findMany({
     select: { location: true },
-    distinct: ["location"],
+    distinct: ["location"]
   });
 
   return locations.map((club) => club.location);
@@ -182,7 +185,7 @@ export async function existsUserByEmail(email: string): Promise<boolean> {
 
 //Returns a user by its email
 export async function getUserByEmail(email: string | null): Promise<User | null> {
-  return email? await prisma.user.findUnique({
+  return email ? await prisma.user.findUnique({
     where: { email }
   }) : null;
 }
