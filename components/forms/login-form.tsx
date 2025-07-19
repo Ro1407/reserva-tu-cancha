@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { authenticate } from "@/lib/auth";
 import Link from "next/link";
@@ -15,8 +15,12 @@ import { useSession } from "next-auth/react";
 export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl: string = searchParams.get("callbackUrl") || "/";
-  const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined);
+  const [state, formAction, isPending] = useActionState(authenticate, undefined);
   const { status } = useSession();
+
+  useEffect((): void => {
+    if (state === "success") window.location.replace(callbackUrl);
+  }, [state]);
 
   if (status === "authenticated") {
     return (
@@ -87,10 +91,10 @@ export function LoginForm() {
                 ¿Olvidaste tu contraseña?
               </span>
             </div>
-            {errorMessage && (
+            {state && state !== "success" && (
               <div className="flex gap-1">
                 <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-                <p className="text-sm text-red-500">{errorMessage}</p>
+                <p className="text-sm text-red-500">{state}</p>
               </div>
             )}
           </div>

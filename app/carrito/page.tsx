@@ -2,13 +2,27 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/cart-context";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartItems } from "@/components/cart-items";
 import { CartSummary } from "@/components/cart-summary";
 
 export default function CarritoPage() {
-  const { getItemCount } = useCart();
+  const { getItemCount, isLoading } = useCart();
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-900 dark:text-gray-100" aria-hidden="true" />
+            <p className="text-gray-600 dark:text-gray-400">Cargando carrito...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const itemCount: number = getItemCount();
 
   if (itemCount === 0) {

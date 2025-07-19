@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, useEffect, Context } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useState, Context } from "react";
 import { CartState, CartItem } from "@/types/cart";
 
 type CartAction =
@@ -16,16 +16,10 @@ interface CartContextProps {
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   getItemCount: () => number;
+  isLoading: boolean;
 }
 
-const CartContext: Context<CartContextProps | null> = createContext<{
-  state: CartState;
-  dispatch: React.Dispatch<CartAction>;
-  addToCart: (item: Omit<CartItem, "id">) => void;
-  removeFromCart: (id: string) => void;
-  clearCart: () => void;
-  getItemCount: () => number;
-} | null>(null);
+const CartContext: Context<CartContextProps | null> = createContext<CartContextProps | null>(null);
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
@@ -52,22 +46,25 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { id: crypto.randomUUID(), items: [], total: 0 });
+  const [isLoading, setIsLoading] = useState(true);
 
   // load cart from localStorage on mount
   useEffect((): void => {
     const savedCart: string | null = localStorage.getItem("cart-state");
-    if (!savedCart) return;
+    if (!savedCart) return setIsLoading(false);
     try {
       dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) });
     } catch (error) {
       console.error("Error loading cart from localStorage:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   // save cart to localStorage whenever it changes
   useEffect((): void => {
-    localStorage.setItem("cart-state", JSON.stringify(state));
-  }, [state]);
+    if (!isLoading) localStorage.setItem("cart-state", JSON.stringify(state));
+  }, [state, isLoading]);
 
   const addToCart: (item: Omit<CartItem, "id">) => void = (item: Omit<CartItem, "id">): void => {
     const id = `${state.id}--${item.courtId}-${item.date}-${item.time}`;
@@ -95,6 +92,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         removeFromCart,
         clearCart,
         getItemCount,
+        isLoading,
       }}
     >
       {children}
