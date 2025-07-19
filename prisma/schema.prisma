@@ -172,7 +172,6 @@ enum TimeSlot {
   H2100
 }
 
-// TODO adaptar cuando se decida la logica de login
 model User {
   id       String  @id @default(uuid())
   /// @zod.min(1, 'Por favor, proporcione una contraseña' )
@@ -180,7 +179,9 @@ model User {
   /// @zod.min(1, 'Por favor, proporcione un correo electrónico único' )
   /// @zod.email('Por favor, proporcione un correo electrónico válido' )
   email    String  @unique
+  /// @zod.min(1, 'Por favor, proporcione un nombre de usuario' )
   name     String
+  /// @zod.regex(/^\+[1-9]\d{1,3}\s\d{1,4}\s\d{3}-\d{4}$/, 'Por favor, proporcione un número de teléfono válido en formato +CódigoPais CódigoÁrea XXX-XXXX' )
   phone    String?
   role     Role    @default(USER)
 

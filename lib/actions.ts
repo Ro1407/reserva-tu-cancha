@@ -10,11 +10,6 @@ import { convertTimeToTHHMM } from "@/lib/utils";
 import { TimeSlotKey } from "@/types/enumerates";
 import bcrypt from "bcrypt";
 
-interface PaginationAndQueryProps {
-  query?: string;
-  currentPage?: number;
-}
-
 //Returns a court by its ID
 export async function getCourtById(id: string): Promise<Court | null> {
   const court = await prisma.court.findUnique({
@@ -86,41 +81,6 @@ export async function getAllClubs(currentPage: number): Promise<[Club[], number]
   const totalPages = Math.ceil(totalClubs / ITEMS_PER_PAGE);
 
   return [clubs, totalPages];
-}
-
-// Returns all courts, allows query and pagination
-export async function getAllCourts(currentPage: number): Promise<[Court[], number]> {
-  const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-  const [courts, totalCourts] = await Promise.all([
-    prisma.court.findMany(
-      {
-        skip: skip,
-        take: ITEMS_PER_PAGE
-      }
-    ),
-    prisma.court.count()
-  ]);
-
-  const totalPages = Math.ceil(totalCourts / ITEMS_PER_PAGE);
-
-  return [courts, totalPages];
-}
-
-// Returns all the courts for a given club
-export async function getCourtsByClubId(clubId: string): Promise<Court[]> {
-  return prisma.court.findMany({
-    where: { clubId }
-  });
-}
-
-// Returns all the reservations
-export async function getAllReservations(): Promise<Reservation[]> {
-  return prisma.reservation.findMany({
-    include: {
-      court: true,
-      user: true
-    }
-  });
 }
 
 // Checks if a court item is still available for reservation

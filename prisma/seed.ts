@@ -1,22 +1,11 @@
-import { PrismaClient } from "@prisma/client"
-import {
-    Club,
-    Reservation,
-    Court,
-    User,
-} from "@prisma/client"
+import { Club, Court, PrismaClient, Reservation, User } from "@prisma/client";
 
-import {
-    clubs,
-    courts,
-    users,
-    reservations,
-} from "@/lib/data"
+import { clubs, courts, reservations, users } from "@/lib/data";
 
-import { ClubDataSchema } from "@/types/club"
-import { CourtDataSchema } from "@/types/court"
-import { UserDataSchema } from "@/types/user"
-import { ReservationValidatingSchema } from "@/types/reservation"
+import { ClubDataSchema } from "@/types/club";
+import { CourtDataSchema } from "@/types/court";
+import { ReservationValidatingSchema } from "@/types/reservation";
+import { UserSchema } from "@/prisma/zod";
 
 
 const prisma = new PrismaClient()
@@ -43,7 +32,7 @@ function validatePlaceholder(): boolean {
 
     let usersValidation
     users.forEach((user) => {
-        usersValidation = UserDataSchema.safeParse(user)
+        usersValidation = UserSchema.safeParse(user)
         if (!usersValidation.success) {
             console.error("User data validation failed:", usersValidation.error)
             return false
