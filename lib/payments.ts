@@ -9,7 +9,7 @@ import { createReservation } from "@/lib/actions-CRUD";
 import { ReservationData } from "@/types/reservation";
 import { TimeSlotKey } from "@/types/enumerates";
 import { ReservationState } from "@prisma/client";
-import { getUserByEmail } from "@/lib/actions";
+import {getUserByEmail, isItemAvailable} from "@/lib/actions";
 import { User } from "@prisma/client";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
@@ -26,6 +26,9 @@ export const processPreference: (cart: CartState, email: string) => Promise<stri
   cart: CartState, email: string
 ): Promise<string> => {
   return new Promise<string>((resolve: (value: string) => void, reject: (error: Error) => void): void => {
+    if (cart.items.some(async (item: CartItem): Promise<boolean> => !await isItemAvailable(item))) {
+      reject(new Error("Algunos de los items ya no están disponibles"));
+    }
     preference
       .create({
         body: {
@@ -66,7 +69,6 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
   const email: string = payment.metadata?.email as string;
 
   if (payment.status === "approved") {
-    await sendNotification("Tu pago fue procesado!", "Gracias por tu compra. Tu reserva está siendo procesada.");
     if (cart) {
       for (const rawItem of cart.items) {
         const item: CartItem = normalizeItem(rawItem);
@@ -80,9 +82,9 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
             courtId: item.courtId,
             userId: user?.id ?? "78c9b746-c08f-4995-9d73-9cf1b92e8aff",
           };
-          await createReservation(reserva).then((): void => {
-            sendNotification(
-              "Tu reserva está lista!",
+          await createReservation(reserva).then(async (): Promise<void> => {
+            await sendNotification(
+              "Se concretó tu reserva!",
               "Solo debes presentarte en el club el día y horario acordado para disfrutar de tu reserva.",
             );
           });

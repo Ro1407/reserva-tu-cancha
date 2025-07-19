@@ -27,4 +27,16 @@ export type ReservationCardData = Reservation &
     userEmail: string
   }
 
+export type ReservationResume = {
+  id: string;
+  courtName: string;
+  clubName: string;
+  date: string;
+  time: string;
+  duration: number;
+  price: number;
+  sport: string;
+  state: ReservationState;
+  image: string;
+}
 

@@ -83,10 +83,10 @@ export function CartSummary() {
             <div className="space-y-3">
               <p className="text-sm">Inicia sesión para vincular tu compra y acceder al historial de tus pedidos.</p>
               <div className="flex gap-2">
-                <Button>
+                <Button className="w-full">
                   <Link href="/login?callbackUrl=/carrito">Iniciar Sesión</Link>
                 </Button>
-                <Button variant="outline">
+                <Button className="w-full" variant="outline">
                   <Link href="/register?callbackUrl=/carrito">Crear Cuenta</Link>
                 </Button>
               </div>

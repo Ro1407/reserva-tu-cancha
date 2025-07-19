@@ -1,5 +1,7 @@
 import { WeatherReport } from "@/types/weather-report";
 import { TimeSlot } from "@/types/time-slot";
+import { BadgeVariant } from "@/components/ui/badge";
+import { ReservationStateKey } from "@/types/enumerates";
 
 export const DEFAULT_USER: string = "user@domain.com";
 
@@ -243,6 +245,16 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
   ];
 };
 
-
-
-
+export function getStateVariant(state: ReservationStateKey): BadgeVariant {
+  switch (state) {
+    case "Confirmada":
+      return BadgeVariant.confirmada;
+    case "Pendiente":
+      return BadgeVariant.pendiente;
+    case "Cancelada":
+      return BadgeVariant.cancelada;
+    case "Mantenimiento":
+      return BadgeVariant.mantenimiento;
+  }
+  return BadgeVariant.default;
+}

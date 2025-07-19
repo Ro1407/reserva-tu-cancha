@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ReservationCard } from "@/components/reservation-card";
 import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/components/pagination";
+import { getStateVariant } from "@/lib/utils";
 
 export function ReservationsTable() {
   const searchParams = useSearchParams()
@@ -155,19 +156,4 @@ export function ReservationsTable() {
         </Modal>
       )}
     </>);
-}
-
-// Helper function to get state badge variant
-function getStateVariant(state: ReservationStateKey): BadgeVariant {
-  switch (state) {
-    case "Confirmada":
-      return BadgeVariant.confirmada;
-    case "Pendiente":
-      return BadgeVariant.pendiente;
-    case "Cancelada":
-      return BadgeVariant.cancelada;
-    case "Mantenimiento":
-      return BadgeVariant.mantenimiento;
-  }
-  return BadgeVariant.default;
 }
