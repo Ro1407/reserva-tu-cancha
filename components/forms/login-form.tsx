@@ -58,7 +58,7 @@ export function LoginForm() {
         <form action={formAction}>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 required
                 id="email"
@@ -66,10 +66,12 @@ export function LoginForm() {
                 type="email"
                 placeholder="usuario@dominio.com"
                 className="w-full"
+                aria-describedby={(state && state != "success") ? "form-error" : undefined}
+                aria-invalid={!!(state && state != "success")}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">Contraseña *</Label>
               <Input
                 required
                 id="password"
@@ -78,6 +80,8 @@ export function LoginForm() {
                 placeholder="••••••••"
                 className="w-full"
                 minLength={6}
+                aria-describedby={(state && state != "success") ? "form-error" : undefined}
+                aria-invalid={!!(state && state != "success")}
               />
             </div>
           </div>
@@ -92,7 +96,7 @@ export function LoginForm() {
               </span>
             </div>
             {state && state !== "success" && (
-              <div className="flex gap-1">
+              <div id="form-error" className="flex gap-1" aria-live="polite" aria-atomic="true" role="alert">
                 <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
                 <p className="text-sm text-red-500">{state}</p>
               </div>
