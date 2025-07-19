@@ -9,6 +9,8 @@ import { createReservation } from "@/lib/actions-CRUD";
 import { ReservationData } from "@/types/reservation";
 import { TimeSlotKey } from "@/types/enumerates";
 import { ReservationState } from "@prisma/client";
+import { getUserByEmail } from "@/lib/actions";
+import { User } from "@prisma/client";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
 const preference = new Preference(client);
@@ -20,7 +22,9 @@ interface PreferenceItem {
   unit_price: number;
 }
 
-export const processPreference: (cart: CartState) => Promise<string> = async (cart: CartState): Promise<string> => {
+export const processPreference: (cart: CartState, email: string) => Promise<string> = async (
+  cart: CartState, email: string
+): Promise<string> => {
   return new Promise<string>((resolve: (value: string) => void, reject: (error: Error) => void): void => {
     preference
       .create({
@@ -33,7 +37,7 @@ export const processPreference: (cart: CartState) => Promise<string> = async (ca
           },
           notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/mercadopago/webhook`,
           external_reference: cart.id,
-          metadata: { cart },
+          metadata: { cart, email },
           items: [
             ...cart.items.map(
               (item: CartItem): PreferenceItem => ({
@@ -59,12 +63,14 @@ export const processPreference: (cart: CartState) => Promise<string> = async (ca
 export const processPayment: (id: string) => Promise<void> = async (id: string): Promise<void> => {
   const payment: PaymentResponse = await new Payment(client).get({ id });
   const cart: CartState = payment.metadata?.cart as CartState;
+  const email: string = payment.metadata?.email as string;
 
   if (payment.status === "approved") {
     await sendNotification("Tu pago fue procesado!", "Gracias por tu compra. Tu reserva está siendo procesada.");
     if (cart) {
       for (const rawItem of cart.items) {
         const item: CartItem = normalizeItem(rawItem);
+        const user: User | null = await getUserByEmail(email);
         try {
           const reserva: ReservationData = {
             date: item.date,
@@ -72,17 +78,19 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
             price: item.price * 100,
             state: ReservationState.Confirmada,
             courtId: item.courtId,
-            userId: "ff62bb55-4d73-4bbb-9d8c-d4dae9680e30"
+            userId: user?.id ?? "78c9b746-c08f-4995-9d73-9cf1b92e8aff",
           };
           await createReservation(reserva).then((): void => {
-            sendNotification("Tu reserva está lista!", "Solo debes presentarte en el club el día y horario acordado para disfrutar de tu reserva.");
-          })
+            sendNotification(
+              "Tu reserva está lista!",
+              "Solo debes presentarte en el club el día y horario acordado para disfrutar de tu reserva.",
+            );
+          });
         } catch (error) {
           console.error(`Error al crear la reserva para el item ${item.id}:`, error);
         }
       }
     }
-
   }
 };
 

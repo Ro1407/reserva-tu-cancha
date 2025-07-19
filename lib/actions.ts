@@ -1,6 +1,6 @@
 "use server";
 
-import { Court, Club } from "@prisma/client";
+import { Court, Club, User } from "@prisma/client";
 import { Reservation } from "@/types/reservation";
 import { prisma } from "@/prisma/prismaClientSingleton";
 import { ITEMS_PER_PAGE } from "@/lib/definitions";
@@ -167,6 +167,12 @@ export async function getAllCourtLocations(): Promise<string[]> {
   return locations.map((club) => club.location);
 }
 
+//Returns a user by its email
+export async function getUserByEmail(email: string | null): Promise<User | null> {
+  return email? await prisma.user.findUnique({
+    where: { email }
+  }) : null;
+}
 
 
 

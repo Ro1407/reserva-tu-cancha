@@ -1,6 +1,8 @@
 import { WeatherReport } from "@/types/weather-report";
 import { TimeSlot } from "@/types/time-slot";
 
+export const DEFAULT_USER: string = "user@domain.com";
+
 /**
  * Gets the current date in the format YYYY-MM-DD.
  * @param {Date} date - The date to format.
