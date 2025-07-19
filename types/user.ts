@@ -4,7 +4,8 @@ import {UserSchema} from "@/prisma/zod"
 export type User = z.infer<typeof UserSchema>
 
 export const UserDataSchema = UserSchema
-export type UserData = z.infer<typeof UserDataSchema>
+export const NewUser = UserDataSchema.omit({id: true, role: true})
+export type UserData = z.infer<typeof NewUser>
 
 export const UserZodSchema = UserSchema.omit({id: true, phone: true, email: true}).extend({
     id: z.string().uuid(),

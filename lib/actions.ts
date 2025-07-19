@@ -1,12 +1,14 @@
 "use server";
 
-import { Court, Club, User } from "@prisma/client";
+import { Court, Club, User, Role } from "@prisma/client";
 import { Reservation } from "@/types/reservation";
+import { UserData, NewUser } from "@/types/user";
 import { prisma } from "@/prisma/prismaClientSingleton";
 import { ITEMS_PER_PAGE } from "@/lib/definitions";
 import { CartItem } from "@/types/cart";
 import { convertTimeToTHHMM } from "@/lib/utils";
 import { TimeSlotKey } from "@/types/enumerates";
+import bcrypt from "bcrypt";
 
 interface PaginationAndQueryProps {
   query?: string;
@@ -167,6 +169,17 @@ export async function getAllCourtLocations(): Promise<string[]> {
   return locations.map((club) => club.location);
 }
 
+// Returns true if a user with that email exist
+export async function existsUserByEmail(email: string): Promise<boolean> {
+  try {
+    return await prisma.user.findUnique({
+      where: { email }
+    }) !== null;
+  } catch (_) {
+    return false;
+  }
+}
+
 //Returns a user by its email
 export async function getUserByEmail(email: string | null): Promise<User | null> {
   return email? await prisma.user.findUnique({
@@ -174,6 +187,23 @@ export async function getUserByEmail(email: string | null): Promise<User | null>
   }) : null;
 }
 
-
-
-
+export async function registerUser(user: UserData): Promise<boolean> {
+  if (user && user.password) user.password = bcrypt.hashSync(user.password, 10);
+  // Validate the user data against the schema on the server's side
+  const parsedUser = NewUser.safeParse(user);
+  if (!parsedUser.success) {
+    return false;
+  }
+  // Create the user in the database
+  try {
+    await prisma.user.create({
+      data: {
+        ...parsedUser.data,
+        role: Role.USER
+      }
+    });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
