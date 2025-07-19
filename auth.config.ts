@@ -5,10 +5,10 @@ export const authConfig = {
     signIn: "/login",
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }): boolean {
-      const isLoggedIn: boolean = !!auth?.user;
+    authorized({ request: { nextUrl }, auth }): boolean {
+      const isLogged: boolean = !!auth?.user;
       const isOnDashboard: boolean = nextUrl.pathname.startsWith("/dashboard");
-      if (isOnDashboard) return isLoggedIn;
+      if (isOnDashboard) return isLogged;
       else return true;
     },
   },
