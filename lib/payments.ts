@@ -74,7 +74,7 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
           const reserva: ReservationData = {
             date: item.date,
             timeSlot: item.time.time as TimeSlotKey,
-            price: item.price * 100,
+            price: item.price / 100,
             state: ReservationState.Confirmada,
             courtId: item.courtId,
             userId: user?.id ?? "78c9b746-c08f-4995-9d73-9cf1b92e8aff",
