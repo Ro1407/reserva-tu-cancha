@@ -1,6 +1,7 @@
 "use server";
 
 import webpush, { PushSubscription, SendResult } from "web-push";
+import { createPushSubscription, deletePushSubscription, getAllPushSubscriptions } from "@/lib/actions-client";
 
 webpush.setVapidDetails(
   "mailto:example@domain.com",
@@ -8,23 +9,25 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY!,
 );
 
-let subscriptions: webpush.PushSubscription[] = [];
-
 export async function subscribeUser(sub: PushSubscription): Promise<void> {
-  if (sub) subscriptions.push(sub);
+  if (sub) await createPushSubscription(sub);
 }
 
 export async function unsubscribeUser(subscription: PushSubscription): Promise<void> {
-  subscriptions = subscriptions.filter((sub: PushSubscription): boolean => sub.endpoint !== subscription.endpoint);
+  await deletePushSubscription(subscription);
 }
 
 export async function sendNotification(title: string, message: string): Promise<void> {
+  const subscriptions: PushSubscription[] = await getAllPushSubscriptions();
+
   if (subscriptions.length === 0) return;
+
   const payload: string = JSON.stringify({
     title: title,
     body: message,
     icon: "/icons/icon-192x192.png",
   });
+
   await Promise.all(
     subscriptions.map(
       (subscription: PushSubscription): Promise<SendResult> => webpush.sendNotification(subscription, payload),

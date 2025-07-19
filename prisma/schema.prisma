@@ -172,7 +172,6 @@ enum TimeSlot {
   H2100
 }
 
-// TODO adaptar cuando se decida la logica de login
 model User {
   id       String  @id @default(uuid())
   /// @zod.min(1, 'Por favor, proporcione una contraseña' )
@@ -192,4 +191,14 @@ model User {
 enum Role {
   USER
   ADMIN
+}
+
+model PushSubscription {
+  id             String @id @default(uuid())
+  endpoint       String
+  expirationTime Float?
+  p256dh         String
+  auth           String
+
+  @@map("push_subscription")
 }

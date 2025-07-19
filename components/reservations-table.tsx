@@ -105,7 +105,7 @@ export function ReservationsTable() {
                       <span className="font-medium">{reservation.clubLocation + " - " + reservation.courtAddress}</span>
                     </TableCell>
                     <TableCell>
-                      <span className="font-medium">{formatDBPriceToCurrency(reservation.price)}</span>
+                      <span className="font-medium">{formatDBPriceToCurrency(reservation.price/100)}</span>
                     </TableCell>
                     <TableCell>
                       <span className="font-medium">{reservation.courtSport}</span>
