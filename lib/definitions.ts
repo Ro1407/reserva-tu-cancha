@@ -182,4 +182,4 @@ export type FAQItem = (typeof faqData)[number];
 
 
 //Constants for pagination
-export const ITEMS_PER_PAGE = 4;
+export const ITEMS_PER_PAGE = 9;
