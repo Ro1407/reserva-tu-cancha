@@ -1,109 +1,55 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge, BadgeVariant } from "@/components/ui/badge";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, User, Plus } from "lucide-react";
-
-interface Reserva {
-  id: string;
-  courtName: string;
-  clubName: string;
-  date: string;
-  time: string;
-  duration: number;
-  price: number;
-  sport: string;
-  status: "confirmada" | "pendiente" | "cancelada" | "completada";
-  image: string;
-}
+import { formatDBPriceToCurrency, formatISODateToHumanReadable } from "@/lib/utils";
+import { logout } from "@/lib/auth";
+import { getUserReservations } from "@/lib/actions-client";
+import { ReservationResume } from "@/types/reservation";
+import { getStateVariant } from "@/lib/utils";
 
 export default function ReservasPage() {
-  const { data: session, status } = useSession();
-  const [reservas, setReservas] = useState<Reserva[]>([]);
+  const { data, status } = useSession();
+  const [reservas, setReservas] = useState<ReservationResume[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const mockReservas: Reserva[] = [
-    {
-      id: "1",
-      courtName: "Cancha de Fútbol 5 - Central",
-      clubName: "Club Deportivo Central",
-      date: "2024-01-20",
-      time: "18:00",
-      duration: 1,
-      price: 8000,
-      sport: "Fútbol",
-      status: "confirmada",
-      image: "/courts/football.jpg",
-    },
-    {
-      id: "2",
-      courtName: "Cancha de Tenis - Norte",
-      clubName: "Complejo Atlético Norte",
-      date: "2024-01-18",
-      time: "10:00",
-      duration: 1,
-      price: 6000,
-      sport: "Tenis",
-      status: "completada",
-      image: "/courts/tennis.jpg",
-    },
-    {
-      id: "3",
-      courtName: "Cancha de Pádel - Sur",
-      clubName: "Centro Deportivo Sur",
-      date: "2024-01-25",
-      time: "20:00",
-      duration: 1,
-      price: 7000,
-      sport: "Pádel",
-      status: "pendiente",
-      image: "/courts/paddle.jpg",
-    },
-  ];
-
-  useEffect((): void => {
-    if (status === "authenticated") {
-      setTimeout((): void => {
-        setReservas(mockReservas);
-        setLoading(false);
-      }, 1000);
-    }
-  }, [status]);
-
-  const getStatusBadge = (status: Reserva["status"]) => {
-    const config = {
-      confirmada: { variant: BadgeVariant.confirmada, label: "Confirmada" },
-      pendiente: { variant: BadgeVariant.pendiente, label: "Pendiente" },
-      cancelada: { variant: BadgeVariant.cancelada, label: "Cancelada" },
-      completada: { variant: BadgeVariant.outline, label: "Completada" },
-    };
-    return <Badge variant={config[status].variant}>{config[status].label}</Badge>;
-  };
-
-  const formatDate: (dateString: string) => string = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString("es-ES", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
+  const handleLogout: () => Promise<void> = async (): Promise<void> => {
+    logout().then(async (): Promise<void> => {
+      window.location.reload();
     });
   };
 
-  console.log(status)
+  useEffect((): void => {
+    if (status === "authenticated") {
+      getUserReservations(data?.user?.email || null)
+        .then((reservations: ReservationResume[]): void => {
+          setReservas(reservations);
+        })
+        .finally((): void => {
+          setLoading(false);
+        });
+    }
+  }, []);
 
   if (status === "unauthenticated") {
     return (
-      <div className="container mx-auto px-4 py-16">
-        <Card className="max-w-md mx-auto text-center">
-          <CardContent className="pt-6">
-            <User className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h2 className="text-xl font-semibold mb-2">Acceso requerido</h2>
-            <p className="text-gray-600 mb-6 dark:text-gray-400">Necesitas iniciar sesión para ver tus reservas</p>
-            <Link href="/login">
-              <Button>Iniciar Sesión</Button>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardContent className="p-8 text-center">
+            <div className="w-20 h-20 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+              <User className="w-10 h-10 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Acceso requerido</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+              Necesitas iniciar sesión para ver tus reservas
+            </p>
+            <Link href="/login" className="w-full">
+              <Button className="w-full py-3">Iniciar Sesión</Button>
             </Link>
           </CardContent>
         </Card>
@@ -113,100 +59,159 @@ export default function ReservasPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-64 dark:bg-gray-800"></div>
-          {[...Array(3)].map((_, i: number) => (
-            <div key={i} className="h-48 bg-gray-200 rounded dark:bg-gray-800"></div>
-          ))}
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="animate-pulse space-y-8">
+          <div className="flex justify-between items-center">
+            <div className="space-y-3">
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
+            </div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+          </div>
+          <div className="space-y-6">
+            {[...Array(3)].map((_, i: number) => (
+              <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+            ))}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Mis Reservas</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Tienes {reservas.length} reserva{reservas.length !== 1 ? "s" : ""}
-          </p>
-        </div>
-        <Link href="/canchas">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Nueva Reserva
-          </Button>
-        </Link>
-      </div>
-      {/* Lista de reservas */}
-      {reservas.length === 0 ? (
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-lg font-semibold mb-2">No tienes reservas</h3>
-            <p className="text-gray-600 mb-4 dark:text-gray-400">¡Haz tu primera reserva!</p>
-            <Link href="/canchas">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Buscar Canchas
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-6">
-          {reservas.map((reserva: Reserva) => (
-            <Card key={reserva.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="flex flex-col md:flex-row">
-                {/* Imagen */}
-                <div className="w-full md:w-48 h-48 md:h-auto bg-gray-100 dark:bg-gray-800">
-                  <img
-                    src={reserva.image || "/placeholder.svg"}
-                    alt={reserva.courtName}
-                    className="w-full h-full object-cover"
-                  />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* Header */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-lg">{data?.user?.email?.charAt(0).toUpperCase()}</span>
                 </div>
-                {/* Contenido */}
-                <div className="flex-1 p-6">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold">{reserva.courtName}</h3>
-                        {getStatusBadge(reserva.status)}
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 mb-1">{reserva.clubName}</p>
-                      <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-800 text-sm rounded-full dark:bg-gray-800 dark:text-gray-200">
-                        {reserva.sport}
-                      </span>
-                    </div>
-                    <div className="mt-4 md:mt-0 text-right">
-                      <div className="text-2xl font-bold text-green-600">${reserva.price.toLocaleString()}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {reserva.duration} hora{reserva.duration > 1 ? "s" : ""}
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center text-gray-600 dark:text-gray-400">
-                      <Calendar className="w-5 h-5 mr-3" />
-                      <span className="font-medium">{formatDate(reserva.date)}</span>
-                    </div>
-                    <div className="flex items-center text-gray-600 dark:text-gray-400">
-                      <Clock className="w-5 h-5 mr-3" />
-                      <span>
-                        {reserva.time} - {reserva.duration}h
-                      </span>
-                    </div>
-                  </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    ¡Hola {data?.user?.email?.split("@")[0]}!
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400">Bienvenido a tu panel de reservas</p>
                 </div>
               </div>
-            </Card>
-          ))}
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Mis Reservas</h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Tienes {reservas.length} reserva{reservas.length !== 1 ? "s" : ""} activa
+                  {reservas.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/canchas">
+                <Button size="lg" className="w-full sm:w-auto">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Nueva Reserva
+                </Button>
+              </Link>
+              <Button variant="outline" size="lg" onClick={handleLogout} className="w-full sm:w-auto bg-transparent">
+                Cerrar Sesión
+              </Button>
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* Lista de reservas */}
+        {reservas.length === 0 ? (
+          <Card className="shadow-lg">
+            <CardContent className="p-12 text-center">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                <Calendar className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">No tienes reservas</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
+                ¡Es hora de hacer tu primera reserva! Encuentra la cancha perfecta para tu próximo juego.
+              </p>
+              <Link href="/canchas">
+                <Button size="lg" className="px-8">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Buscar Canchas
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-6">
+            {reservas.map((reserva: ReservationResume) => (
+              <Card
+                key={reserva.id}
+                className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800"
+              >
+                <div className="flex flex-col lg:flex-row">
+                  {/* Imagen */}
+                  <div className="w-full lg:w-80 h-64 lg:h-auto relative overflow-hidden">
+                    <img
+                      src={reserva.image || "/placeholder.svg?height=300&width=400&query=cancha deportiva"}
+                      alt={reserva.courtName}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge variant={getStateVariant(reserva.state)}>{reserva.state}</Badge>
+                    </div>
+                  </div>
+
+                  {/* Contenido */}
+                  <div className="flex-1 p-6 lg:p-8">
+                    <div className="flex flex-col h-full">
+                      {/* Header de la reserva */}
+                      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between mb-6">
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{reserva.courtName}</h3>
+                          <p className="text-lg text-gray-600 dark:text-gray-400 mb-3">{reserva.clubName}</p>
+                          <div className="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full">
+                            {reserva.sport}
+                          </div>
+                        </div>
+                        <div className="mt-4 xl:mt-0 text-right">
+                          <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                            {formatDBPriceToCurrency(reserva.price)}
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {reserva.duration} hora{reserva.duration > 1 ? "s" : ""}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Información de fecha y hora */}
+                      <div className="space-y-4 mt-auto">
+                        <div className="flex items-center text-gray-700 dark:text-gray-300">
+                          <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mr-4">
+                            <Calendar className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-semibold">Fecha</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {formatISODateToHumanReadable(reserva.date)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center text-gray-700 dark:text-gray-300">
+                          <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mr-4">
+                            <Clock className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-semibold">Horario</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {reserva.time} - {reserva.duration}h de duración
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

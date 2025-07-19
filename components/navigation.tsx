@@ -50,7 +50,7 @@ export function Navigation() {
                 href="/reservas"
                 className="text-gray-600 hover:text-gray-900 transition-colors dark:text-gray-400 dark:hover:text-gray-100"
               >
-                Reservas
+                Mis Reservas
               </Link>
             )}
             <div>
@@ -96,7 +96,7 @@ export function Navigation() {
                 href="/reservas"
                 className="block py-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
               >
-                Reservas
+                Mis Reservas
               </Link>
             )}
           </div>

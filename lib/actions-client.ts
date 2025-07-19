@@ -10,7 +10,7 @@ import { CourtNameId, CourtCardData } from "@/types/court";
 import { UsersEmailId } from "@/types/users-email-id";
 import { formatDateToISO } from "@/lib/utils";
 import { prisma } from "@/prisma/prismaClientSingleton";
-import { ReservationCardData } from "@/types/reservation";
+import { ReservationCardData, ReservationResume } from "@/types/reservation";
 import { ITEMS_PER_PAGE } from "@/lib/definitions";
 
 export interface Filters {
@@ -245,4 +245,47 @@ export async function getAllReservationsCardData(currentPage: number): Promise<[
     courtAddress: reservation.court.address,
     clubLocation: reservation.court.club.location
   })), totalPages]
+}
+
+export async function getUserReservations(email: string | null): Promise<ReservationResume[]> {
+  if (!email) return [];
+  try {
+    const data = await prisma.reservation.findMany({
+      where: {
+        user: {
+          email,
+        },
+      },
+      include: {
+        court: {
+          select: {
+            name: true,
+            sport: true,
+            image: true,
+            club: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return data.map((data): ReservationResume => {
+      return {
+        id: data.id,
+        courtName: data.court.name,
+        clubName: data.court.club.name,
+        date: data.date,
+        time: data.timeSlot,
+        duration: 1,
+        price: data.price,
+        sport: data.court.sport,
+        state: data.state,
+        image: data.court.image || "",
+      };
+    })
+  } catch (_) {
+    return [];
+  }
 }
