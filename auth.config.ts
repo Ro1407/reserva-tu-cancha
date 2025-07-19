@@ -1,14 +1,22 @@
-import type { NextAuthConfig } from "next-auth";
+import type { NextAuthConfig, Session } from "next-auth";
+import { NextRequest } from "next/server";
+import { Role } from "@prisma/client"
 
 export const authConfig = {
   pages: {
     signIn: "/login",
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }): boolean {
-      const isLoggedIn: boolean = !!auth?.user;
+    async session({session}) {
+      return {
+        ...session,
+        role: Role.ADMIN
+      }
+    },
+    authorized({ request: { nextUrl}, auth }: {request: NextRequest, auth: Session | null}): boolean {
+      const isAdmin: boolean = !!auth?.user && auth.user.role === Role.ADMIN;
       const isOnDashboard: boolean = nextUrl.pathname.startsWith("/dashboard");
-      if (isOnDashboard) return isLoggedIn;
+      if (isOnDashboard) return isAdmin;
       else return true;
     },
   },
