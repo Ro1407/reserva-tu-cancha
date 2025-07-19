@@ -3,25 +3,8 @@ import { authConfig } from "@/auth.config";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-
-interface User {
-  id: string;
-  email: string;
-  password: string;
-}
-
-//TODO action para user
-async function getUser(email: string): Promise<User | null> {
-  return new Promise((resolve: (user: User) => void): void => {
-    setTimeout(async (): Promise<void> => {
-      resolve({
-        id: "1",
-        email: "admin@cs.uns.edu.ar",
-        password: await bcrypt.hash("1234567", 10),
-      });
-    });
-  });
-}
+import { getUserByEmail } from "@/lib/actions";
+import { User } from "@prisma/client";
 
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -33,8 +16,8 @@ export const { auth, signIn, signOut } = NextAuth({
           .safeParse(credentials);
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const user: User | null = await getUser(email);
-          if (user && (await bcrypt.compare(password, user.password))) return user;
+          const user: User | null = await getUserByEmail(email);
+          if (user && !!user.password && await bcrypt.compare(password, user.password)) return user;
         }
         return null;
       },

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, FormEvent, ChangeEvent } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { registerUser, existsUserByEmail } from "@/lib/actions";
 
 interface FormData {
   firstName: string;
@@ -63,16 +64,26 @@ export function RegisterForm() {
       return;
     }
 
+    if (await existsUserByEmail(formData.email)) {
+      toast.error("Existe un usuario registrado con ese email");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      setTimeout((): void => {
-        toast.error("TODO implementar el registro");
-        replace("/");
-      }, 1000);
+      await registerUser({
+        name: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+      });
+      toast.success("El usuario ha sido creado con éxito");
     } catch (error) {
       console.error("Error en el registro:", error);
-      toast.error("Error al crear la cuenta. Por favor, intenta nuevamente.");
+      toast.error("Error al crear la cuenta. Por favor, intenta nuevamente más tarde.");
     } finally {
       setIsLoading(false);
+      replace("/");
     }
   };
 
