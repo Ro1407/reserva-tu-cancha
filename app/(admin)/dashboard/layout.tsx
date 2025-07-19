@@ -20,13 +20,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     getUserByEmail(data?.user?.email || null).then((user: User | null): void => {
       setUser(user);
     });
-  }, [data]);
+  }, []);
 
   useEffect((): void => {
     if (user && user.role !== Role.ADMIN) replace("/unauthorized");
   }, [user]);
 
-  if (!user) {
+  if (!user || user.role !== Role.ADMIN) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
