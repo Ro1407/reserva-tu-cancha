@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { authenticate } from "@/lib/auth";
 import Link from "next/link";
@@ -9,11 +9,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl: string = searchParams.get("callbackUrl") || "/";
-  const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined);
+  const [state, formAction, isPending] = useActionState(authenticate, undefined);
+  const { status } = useSession();
+
+  useEffect((): void => {
+    if (state === "success") window.location.replace(callbackUrl);
+  }, [state]);
+
+  if (status === "authenticated") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
+        <div className="flex flex-col items-center space-y-4">
+          <CheckCircle className="h-16 w-16 text-green-500" />
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold text-foreground">¡Ya estás logeado!</h2>
+            <p className="text-muted-foreground">
+              Tu sesión está activa y puedes continuar navegando. Prueba refrescando la página si algo .
+            </p>
+          </div>
+        </div>
+        <Link href={callbackUrl}>
+          <Button size="lg" className="min-w-[200px]">
+            Volver atrás
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <Card className="shadow-lg">
@@ -63,10 +91,10 @@ export function LoginForm() {
                 ¿Olvidaste tu contraseña?
               </span>
             </div>
-            {errorMessage && (
+            {state && state !== "success" && (
               <div className="flex gap-1">
                 <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-                <p className="text-sm text-red-500">{errorMessage}</p>
+                <p className="text-sm text-red-500">{state}</p>
               </div>
             )}
           </div>
