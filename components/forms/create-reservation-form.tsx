@@ -22,12 +22,14 @@ import {
 } from "@/types/enumerates";
 import { formatTimeSlotToString } from "@/lib/utils";
 import { createReservation } from "@/lib/actions-CRUD";
+import { existsReservation } from "@/lib/actions";
 
 
 export default function CreateReservationForm() {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
   const [courts, setCourts] = useState<CourtNameId[]>([]);
   const [users, setUsers] = useState<UsersEmailId[]>([]);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const emptyReservation: ReservationData = {
     date: "",
@@ -79,6 +81,14 @@ export default function CreateReservationForm() {
   }, []);
 
   async function onSubmit(data: ReservationData) {
+
+    const exists = await existsReservation(data.courtId, data.date, data.timeSlot);
+    if (exists) {
+      setSubmitStatus("error");
+      setValidationError("Ya existe una reserva para esta cancha en la fecha y horario seleccionados.");
+      return;
+    }
+
     try {
       const result = await createReservation(data);
 
@@ -357,9 +367,14 @@ export default function CreateReservationForm() {
                 {submitStatus == "success" ? (
                   <FormMessage type={FormMessageType.success}>La reserva fue creada exitosamente</FormMessage>
                 ) : (
-                  <FormMessage type={FormMessageType.error}>
-                    Ocurrió un error creando la reserva, por favor intente nuevamente
-                  </FormMessage>
+                  validationError ? (
+                      <FormMessage type={FormMessageType.error}>
+                        {validationError}
+                      </FormMessage>
+                    ) :
+                    (<FormMessage type={FormMessageType.error}>
+                      Ocurrió un error creando la reserva, por favor intente nuevamente
+                    </FormMessage>)
                 )}
               </div>
             )}

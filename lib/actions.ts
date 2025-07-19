@@ -170,3 +170,16 @@ export async function registerUser(user: UserData): Promise<boolean> {
     return false;
   }
 }
+
+// Returns if there is a reservation for a court on a specific date and time
+export async function existsReservation(courtId: string, date: string, timeSlot: TimeSlotKey): Promise<boolean> {
+  const reservation = await prisma.reservation.findFirst({
+    where: {
+      courtId,
+      date,
+      timeSlot
+    }
+  });
+
+  return reservation !== null;
+}
