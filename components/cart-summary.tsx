@@ -12,7 +12,9 @@ import { CreditCard, Tag } from "lucide-react";
 import { processPreference } from "@/lib/payments";
 import { Coupon, coupons } from "@/lib/definitions";
 import { useSession } from "next-auth/react";
-import { logout } from "@/lib/auth"
+import { logout } from "@/lib/auth";
+import { DEFAULT_USER } from "@/lib/utils";
+
 
 export function CartSummary() {
   const { status, data } = useSession();
@@ -21,6 +23,7 @@ export function CartSummary() {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const email: string = data?.user?.email || DEFAULT_USER;
 
   const subtotal: number = state.total;
   const discountAmount: number = (subtotal * discount) / 100;
@@ -29,8 +32,8 @@ export function CartSummary() {
   const handleLogout: () => Promise<void> = async (): Promise<void> => {
     logout().then(async (): Promise<void> => {
       window.location.reload();
-    })
-  }
+    });
+  };
 
   const applyCoupon: () => void = (): void => {
     const coupon: Coupon | undefined = coupons.find(
@@ -47,7 +50,7 @@ export function CartSummary() {
 
   const handleCheckout: () => Promise<void> = async (): Promise<void> => {
     setIsProcessing(true);
-    processPreference(state)
+    processPreference(state, email)
       .then((initPoint: string): void => {
         replace(initPoint);
       })
