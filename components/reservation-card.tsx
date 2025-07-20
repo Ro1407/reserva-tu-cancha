@@ -4,30 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge, BadgeVariant } from "@/components/ui/badge";
 import { Calendar, Clock, CreditCard, MapPin, Star, User } from "lucide-react";
 import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString } from "@/lib/utils";
-import { ReservationStateKey } from "@/types/enumerates";
 import { ReservationCardData } from "@/types/reservation";
+import { getStateVariant } from "@/lib/utils"
 
 interface ReservationCardProps {
   reservation: ReservationCardData;
 }
 
 export function ReservationCard({ reservation }: ReservationCardProps) {
-
-  // Helper function to get state badge variant
-  function getStateVariant(state: ReservationStateKey): BadgeVariant {
-    switch (state) {
-      case "Confirmada":
-        return BadgeVariant.confirmada;
-      case "Pendiente":
-        return BadgeVariant.pendiente;
-      case "Cancelada":
-        return BadgeVariant.cancelada;
-      case "Mantenimiento":
-        return BadgeVariant.mantenimiento;
-    }
-    return BadgeVariant.default;
-  }
-
   const canCancel = reservation.state === "Pendiente" || reservation.state === "Confirmada";
 
 return (

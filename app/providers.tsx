@@ -10,7 +10,7 @@ import { Session } from "next-auth";
 export async function Providers({ children }: { children: React.ReactNode }) {
   const session: Session | null = await auth();
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchOnWindowFocus={false}>
       <CartProvider>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}

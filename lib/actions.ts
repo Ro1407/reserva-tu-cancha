@@ -145,9 +145,13 @@ export async function existsUserByEmail(email: string): Promise<boolean> {
 
 //Returns a user by its email
 export async function getUserByEmail(email: string | null): Promise<User | null> {
-  return email ? await prisma.user.findUnique({
-    where: { email }
-  }) : null;
+  try {
+    return email? await prisma.user.findUnique({
+      where: { email }
+    }) : null;
+  } catch (_) {
+    return null;
+  }
 }
 
 export async function registerUser(user: UserData): Promise<boolean> {

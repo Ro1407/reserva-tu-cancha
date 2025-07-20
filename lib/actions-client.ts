@@ -10,8 +10,9 @@ import { CourtNameId, CourtCardData } from "@/types/court";
 import { UsersEmailId } from "@/types/users-email-id";
 import { formatDateToISO } from "@/lib/utils";
 import { prisma } from "@/prisma/prismaClientSingleton";
-import { ReservationCardData } from "@/types/reservation";
+import { ReservationCardData, ReservationResume } from "@/types/reservation";
 import { ITEMS_PER_PAGE } from "@/lib/definitions";
+import { PushSubscription } from "web-push";
 
 export interface Filters {
     sports?: SportKey[],
@@ -245,4 +246,90 @@ export async function getAllReservationsCardData(currentPage: number): Promise<[
     courtAddress: reservation.court.address,
     clubLocation: reservation.court.club.location
   })), totalPages]
+}
+
+//ACTIONS FOR NOTIFICATIONS.TS (PUSH SUBSCRIPTION)
+
+//Creates a Push Subscription
+export async function createPushSubscription(subscription: PushSubscription): Promise<void> {
+  try {
+    await prisma.pushSubscription.create({
+      data: {
+        endpoint: subscription.endpoint,
+        expirationTime: subscription.expirationTime,
+        auth: subscription.keys.auth,
+        p256dh: subscription.keys.p256dh,
+      }
+    });
+  } catch (e){
+    console.error("Error creating push subscription:", e);
+  }
+}
+
+//Deletes a Push Subscription
+export async function deletePushSubscription(sub: PushSubscription): Promise<void> {
+  await prisma.pushSubscription.deleteMany({
+    where: {
+      endpoint: sub.endpoint,
+      auth: sub.keys.auth,
+      p256dh: sub.keys.p256dh,
+      expirationTime: sub.expirationTime,
+    }
+  });
+}
+
+//Returns all Push Subscriptions
+export async function getAllPushSubscriptions(): Promise<PushSubscription[]> {
+  const subscriptions = await prisma.pushSubscription.findMany();
+  return subscriptions.map((sub) => ({
+    endpoint: sub.endpoint,
+    expirationTime: sub.expirationTime,
+    keys: {
+      auth: sub.auth,
+      p256dh: sub.p256dh,
+    }
+  }));
+}
+
+export async function getUserReservations(email: string | null): Promise<ReservationResume[]> {
+  if (!email) return [];
+  try {
+    const data = await prisma.reservation.findMany({
+      where: {
+        user: {
+          email,
+        },
+      },
+      include: {
+        court: {
+          select: {
+            name: true,
+            sport: true,
+            image: true,
+            club: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return data.map((data): ReservationResume => {
+      return {
+        id: data.id,
+        courtName: data.court.name,
+        clubName: data.court.club.name,
+        date: data.date,
+        time: data.timeSlot,
+        duration: 1,
+        price: data.price,
+        sport: data.court.sport,
+        state: data.state,
+        image: data.court.image || "",
+      };
+    })
+  } catch (_) {
+    return [];
+  }
 }
