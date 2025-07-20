@@ -15,26 +15,34 @@ export function PushNotificationForm() {
 
   const sendPushNotification: () => Promise<void> = async (): Promise<void> => {
     setIsLoading(true);
-    sendNotification(title, message).finally((): void => setIsLoading(false));
+    sendNotification(title, message).finally(
+      (): void => {
+        setIsLoading(false);
+        setTitle("");
+        setMessage("");
+      }
+    );
   };
 
   return (
-    <Card className="w-full max-w-md h-fit">
+    <Card className="w-full max-w-md h-fit justify-self-center">
       <CardContent className="space-y-4">
         <strong>Enviar Notificación</strong>
         <div className="space-y-2">
-          <Label htmlFor="title">Título</Label>
+          <Label htmlFor="title">Título *</Label>
           <Input
             id="title"
+            name="title"
             placeholder="Título de la notificación"
             value={title}
             onChange={(e): void => setTitle(e.target.value)}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="message">Mensaje</Label>
+          <Label htmlFor="message">Mensaje *</Label>
           <Textarea
             id="message"
+            name="message"
             placeholder="Contenido del mensaje"
             value={message}
             onChange={(e): void => setMessage(e.target.value)}

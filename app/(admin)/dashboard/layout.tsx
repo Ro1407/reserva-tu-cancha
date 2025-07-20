@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { User, Role } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import { getUserByEmail } from "@/lib/actions";
-import { PushNotificationForm } from "@/components/forms/push-notification-form";
 import { AdminTabs } from "@/components/admin-tabs";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/auth";
@@ -43,13 +42,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             Cerrar Sesión
           </Button>
         </div>
-        <div className="flex gap-5">
-          <div className="flex-1">
-            <AdminTabs>{children}</AdminTabs>
-          </div>
-          <div className="w-1/8">
-            <PushNotificationForm />
-          </div>
+        <div className="flex-1 gap-5">
+          <AdminTabs>{children}</AdminTabs>
         </div>
       </div>
     );
