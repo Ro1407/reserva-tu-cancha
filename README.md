@@ -82,19 +82,42 @@ Cada comisión podrá proponer variaciones siempre que se mantenga la estructura
 
 - Código fuente del proyecto en un repositorio de GitHub cuyo nombre debe *incluir* la palabra `proyecto-nextjs`.
 - Link a la aplicación desplegada en Vercel. [Link a Vercel](https://proyecto-2-lagos-zentrigen-swart.vercel.app/)
-- **DATOS PARA TESTEAR:**
-      Mercado Pago:
-          Usuario del comprador: TESTUSER475575928
-          Contraseña del comprador: LdggOU9c4N
-          Usuario del vendedor: TESTUSER669812421
-          Contraseña del vendedor: mkj2gqlVfG
-      Log In (admin)
-          Usuario: admin@cs.uns.edu.ar
-          Contraseña: 1234567
-      Log In (user)
-          Usuario: juan.perez@email.com
-          Contraseña: 123456
 
+#### Mercado Pago
+
+Estas credenciales son para fines de prueba con la integración de Mercado Pago:
+
+*   **Usuario del Comprador:** `TESTUSER475575928`
+*   **Contraseña del Comprador:** `LdggOU9c4N`
+*   **Usuario del Vendedor:** `TESTUSER669812421`
+*   **Contraseña del Vendedor:** `mkj2gqlVfG`
+
+### Credenciales de Acceso a la Aplicación
+
+Utiliza las siguientes credenciales para iniciar sesión en la aplicación y probar sus diferentes roles:
+
+*   **Acceso de Administrador:**
+    *   **Usuario:** `admin@cs.uns.edu.ar`
+    *   **Contraseña:** `1234567`
+*   **Acceso de Usuario Estándar:**
+    *   **Usuario:** `juan.perez@email.com`
+    *   **Contraseña:** `123456`
+*   **Acceso de Usuario Genérico (Reservas Anónimas):**
+    *   **Usuario:** `user@domain.com`
+    *   **Contraseña:** `123456`
+
+#### Flujos de Usuario y Funcionalidades Específicas:
+
+*   **Reservas Anónimas:** Cuando un usuario realiza una reserva sin haber iniciado sesión, esta se asocia automáticamente al usuario genérico (`user@domain.com`).
+*   **Historial de Reservas Personalizado:** Para que un usuario final pueda guardar y acceder a su historial de reservas, tiene la opción de iniciar sesión o registrarse durante el proceso de pago en el carrito. Una vez completado el pago, el historial de sus reservas estará visible en la sección `Mis Reservas`.
+*   **Panel de Administración (`/dashboard`):**
+    *   Solo los usuarios con rol de administrador tienen acceso a la ruta `/dashboard`.
+    *   Si un usuario intenta acceder a `/dashboard` sin estar autenticado, será redirigido a la página de inicio de sesión.
+    *   Si un usuario autenticado, pero sin privilegios de administrador, intenta acceder a esta ruta, recibirá un error de autorización.
+*   **Sistema de Notificaciones (Panel de Administración):**
+    *   Dentro del panel `/dashboard`, la pestaña de "Notificaciones" permite al administrador enviar mensajes a todos los clientes.
+    *   Para que los clientes reciban estas notificaciones, deben haber activado la "campanita" (indicada en verde en la interfaz) y haber aceptado los permisos de notificaciones del navegador.
+    
 ### Comisiones:
 
 - El proyecto se realizará en comisiones de a 2 alumnos, las mismas que el proyecto anterior.
