@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, User, Plus } from "lucide-react";
-import { formatDBPriceToCurrency, formatISODateToHumanReadable } from "@/lib/utils";
+import { formatDBPriceToCurrency, formatISODateToHumanReadable, formatTimeSlotToString } from "@/lib/utils";
 import { logout } from "@/lib/auth";
 import { getUserReservations } from "@/lib/actions-client";
 import { ReservationResume } from "@/types/reservation";
@@ -199,7 +199,7 @@ export default function ReservasPage() {
                           <div>
                             <p className="font-semibold">Horario</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {reserva.time} - {reserva.duration}h de duración
+                              {formatTimeSlotToString(reserva.time)} - {reserva.duration}h de duración
                             </p>
                           </div>
                         </div>
