@@ -20,7 +20,7 @@ export default function ReservasPage() {
 
   const handleLogout: () => Promise<void> = async (): Promise<void> => {
     logout().then(async (): Promise<void> => {
-      window.location.reload();
+      window.location.replace("/");
     });
   };
 
