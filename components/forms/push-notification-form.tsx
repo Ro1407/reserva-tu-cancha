@@ -25,7 +25,7 @@ export function PushNotificationForm() {
   };
 
   return (
-    <Card className="w-full max-w-md h-fit">
+    <Card className="w-full max-w-md h-fit justify-self-center">
       <CardContent className="space-y-4">
         <strong>Enviar Notificación</strong>
         <div className="space-y-2">

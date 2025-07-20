@@ -8,6 +8,7 @@ const links = [
   { name: "Canchas", href: '/dashboard'},
   { name: "Clubes", href: '/dashboard/clubes'},
   { name: "Reservas", href: '/dashboard/reservas' },
+  { name: "Notificaciones", href: '/dashboard/notificaciones' },
 ];
 
 export function AdminTabs({ children }: { children: React.ReactNode }) {

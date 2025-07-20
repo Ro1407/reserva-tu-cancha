@@ -1,9 +1,9 @@
 "use client";
 
-import { PushNotificationForm } from "@/components/forms/push-notification-form";
 import { AdminTabs } from "@/components/admin-tabs";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/auth";
+import React from "react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,13 +17,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           Cerrar Sesión
         </Button>
       </div>
-      <div className="flex gap-5">
-        <div className="flex-1">
+      <div className="flex-1 gap-5">
           <AdminTabs>{children}</AdminTabs>
-        </div>
-        <div className="w-1/8">
-          <PushNotificationForm />
-        </div>
       </div>
     </div>
   );
