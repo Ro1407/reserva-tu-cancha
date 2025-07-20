@@ -48,6 +48,7 @@ export const getYearRange: (currentYear: number) => number[] = (currentYear: num
 export const formatDate: (dateString: string) => string = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString("es-ES", {
+    timeZone: "UTC",
     weekday: "long",
     year: "numeric",
     month: "long",
