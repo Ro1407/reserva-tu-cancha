@@ -10,11 +10,6 @@ import { convertTimeToTHHMM } from "@/lib/utils";
 import { TimeSlotKey } from "@/types/enumerates";
 import bcrypt from "bcrypt";
 
-interface PaginationAndQueryProps {
-  query?: string;
-  currentPage?: number;
-}
-
 //Returns a court by its ID
 export async function getCourtById(id: string): Promise<Court | null> {
   const court = await prisma.court.findUnique({
@@ -27,14 +22,17 @@ export async function getCourtById(id: string): Promise<Court | null> {
 }
 
 // Returns a club by its ID
-export async function getClubById(id: string): Promise<Club | null> {
-  const club = await prisma.club.findUnique({
-    where: { id }
-  });
+export async function getClubById(id: string | null): Promise<Club | null> {
+  if (id) {
+    const club = await prisma.club.findUnique({
+      where: { id }
+    });
 
-  if (!club) return null;
+    if (!club) return null;
 
-  return club;
+    return club;
+  }
+  return null;
 }
 
 // Returns a reservation by its ID
@@ -85,41 +83,6 @@ export async function getAllClubs(currentPage: number): Promise<[Club[], number]
   return [clubs, totalPages];
 }
 
-// Returns all courts, allows query and pagination
-export async function getAllCourts(currentPage: number): Promise<[Court[], number]> {
-  const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-  const [courts, totalCourts] = await Promise.all([
-    prisma.court.findMany(
-      {
-        skip: skip,
-        take: ITEMS_PER_PAGE
-      }
-    ),
-    prisma.court.count()
-  ]);
-
-  const totalPages = Math.ceil(totalCourts / ITEMS_PER_PAGE);
-
-  return [courts, totalPages];
-}
-
-// Returns all the courts for a given club
-export async function getCourtsByClubId(clubId: string): Promise<Court[]> {
-  return prisma.court.findMany({
-    where: { clubId }
-  });
-}
-
-// Returns all the reservations
-export async function getAllReservations(): Promise<Reservation[]> {
-  return prisma.reservation.findMany({
-    include: {
-      court: true,
-      user: true
-    }
-  });
-}
-
 // Checks if a court item is still available for reservation
 export async function isItemAvailable(item: CartItem): Promise<boolean> {
   const formattedTime: string = convertTimeToTHHMM(item.time.time);   //HH:MM a THHMM
@@ -163,7 +126,7 @@ export async function getMaxCourtPrice(): Promise<number> {
 export async function getAllCourtLocations(): Promise<string[]> {
   const locations = await prisma.club.findMany({
     select: { location: true },
-    distinct: ["location"],
+    distinct: ["location"]
   });
 
   return locations.map((club) => club.location);
@@ -210,4 +173,17 @@ export async function registerUser(user: UserData): Promise<boolean> {
   } catch (_) {
     return false;
   }
+}
+
+// Returns if there is a reservation for a court on a specific date and time
+export async function existsReservation(courtId: string, date: string, timeSlot: TimeSlotKey): Promise<boolean> {
+  const reservation = await prisma.reservation.findFirst({
+    where: {
+      courtId,
+      date,
+      timeSlot
+    }
+  });
+
+  return reservation !== null;
 }
