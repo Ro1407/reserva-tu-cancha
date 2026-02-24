@@ -31,7 +31,7 @@ export default async function CourtDetailPage(props: {
             <CourtDetails court={court} club={club}/>
             { location &&
             <div className="mt-8">
-              <WeatherWidget city={location} />
+              <WeatherWidget city={location.split(",")[1].trim()} />
             </div>
             }
           </div>
