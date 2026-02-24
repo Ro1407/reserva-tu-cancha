@@ -8,9 +8,8 @@ import { sendNotification } from "@/lib/notifications";
 import { createReservation } from "@/lib/actions-CRUD";
 import { ReservationData } from "@/types/reservation";
 import { TimeSlotKey } from "@/types/enumerates";
-import { ReservationState } from "@prisma/client";
+import { ReservationState, User } from "@/prisma/generated/client";
 import {getUserByEmail, isItemAvailable} from "@/lib/actions";
-import { User } from "@prisma/client";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
 const preference = new Preference(client);

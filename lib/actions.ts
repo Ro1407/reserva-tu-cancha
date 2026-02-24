@@ -1,6 +1,6 @@
 "use server";
 
-import { Court, Club, User, Role } from "@prisma/client";
+import { Court, Club, User, Role } from "@/prisma/generated/client";
 import { Reservation } from "@/types/reservation";
 import { UserData, NewUser } from "@/types/user";
 import { prisma } from "@/prisma/prismaClientSingleton";

@@ -1,4 +1,4 @@
-import { Role, Sport, Amenitie, ReservationState, TimeSlot, CourtState } from "@prisma/client"
+import { Role, Sport, Amenitie, ReservationState, TimeSlot, CourtState } from "@/prisma/generated/client"
 import { TimeSlotValues } from "@/types/enumerates";
 
 /**

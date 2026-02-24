@@ -87,10 +87,12 @@ Cada comisión podrá proponer variaciones siempre que se mantenga la estructura
 
 Estas credenciales son para fines de prueba con la integración de Mercado Pago:
 
-*   **Usuario del Comprador:** `TESTUSER475575928`
-*   **Contraseña del Comprador:** `LdggOU9c4N`
-*   **Usuario del Vendedor:** `TESTUSER669812421`
-*   **Contraseña del Vendedor:** `mkj2gqlVfG`
+*   **Usuario del Comprador:** `TESTUSER1020172834773572350`
+*   **Contraseña del Comprador:** `BXqhit3LEA`
+*   **Código de verificación del Comprador:** `530700`
+*   **Usuario del Vendedor:** `TESTUSER7554460217123294576`
+*   **Contraseña del Vendedor:** `Rh3hWzaZdO`
+*   **Código de verificación del Vendedor:** `530700`
 
 ### Credenciales de Acceso a la Aplicación
 
