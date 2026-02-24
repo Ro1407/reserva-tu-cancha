@@ -1,4 +1,4 @@
-import { TimeSlot, CourtState, Sport, Amenitie, ReservationState } from "@/prisma/generated/client";
+import { TimeSlot, CourtState, Sport, Amenitie, ReservationState } from "@/prisma/generated/browser";
 
 // Enum values and types
 export const TimeSlotValues = Object.values(TimeSlot);

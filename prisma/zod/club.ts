@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { Sport } from "@/prisma/generated/client"
+import { Sport } from "@/prisma/generated/browser"
 
 export const ClubSchema = z.object({
   id: z.string(),

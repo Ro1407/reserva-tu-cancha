@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ClubSchema } from "@/prisma/zod"
-import { Sport } from "@/prisma/generated/client";
+import { Sport } from "@/prisma/generated/browser";
 
 const ClubValidatingEnums = ClubSchema.omit({ sports: true }).extend({
   sports: z.array(z.nativeEnum(Sport)).min(1, {

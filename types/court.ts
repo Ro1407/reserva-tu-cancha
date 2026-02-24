@@ -1,6 +1,6 @@
 import { z } from "zod"
 import {CourtSchema} from "@/prisma/zod"
-import { Amenitie, CourtState, Sport, TimeSlot } from "@/prisma/generated/client";
+import { Amenitie, CourtState, Sport, TimeSlot } from "@/prisma/generated/browser";
 
 const CourtValidatingEnums = CourtSchema.omit({
   sport: true, amenities: true, state: true, timeSlots: true,
