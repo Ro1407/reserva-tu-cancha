@@ -1,7 +1,7 @@
 import { WeatherReport } from "@/types/weather-report";
 import { TimeSlot } from "@/types/time-slot";
 import { BadgeVariant } from "@/components/ui/badge";
-import { ReservationStateKey } from "@/types/enumerates";
+import { ReservationStateKey, SportKey } from "@/types/enumerates";
 
 export const DEFAULT_USER: string = "user@domain.com";
 
@@ -258,4 +258,21 @@ export function getStateVariant(state: ReservationStateKey): BadgeVariant {
       return BadgeVariant.mantenimiento;
   }
   return BadgeVariant.default;
+}
+
+export function getCourtImagePath(sport: SportKey): string {
+  switch (sport) {
+      case "Futbol":
+        return "/courts/football.jpg";
+      case "Basketball":
+        return "/courts/basketball.jpeg";
+      case "Tennis":
+        return "/courts/tennis.jpg";
+      case "Paddle":
+        return "/courts/paddle.jpg";
+      case "Hockey":
+        return "/courts/hockey.jpeg";
+      case "Volleyball":
+        return "/courts/volleyball.jpg";
+    }
 }

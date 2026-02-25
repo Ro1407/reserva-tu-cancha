@@ -5,6 +5,7 @@ import { ClubDataSchema } from "@/types/club";
 import { CourtDataSchema } from "@/types/court";
 import { EditableReservationSchema } from "@/types/reservation";
 import { UserSchema } from "@/prisma/zod";
+import bcrypt from "bcrypt";
 
 
 function validatePlaceholder(): boolean {
@@ -61,7 +62,14 @@ async function clearExistingData() {
 }
 
 async function createUsers(): Promise<User[]> {
-    const createdUsers = await prisma.user.createManyAndReturn({data: users})
+    const newUsers = users.map((user) =>
+      ({
+        ...user,
+        password: bcrypt.hashSync(user.password, 10)
+      }))
+    const createdUsers = await prisma.user.createManyAndReturn({
+      data: newUsers
+    })
     console.log("Created users")
     return createdUsers
 }

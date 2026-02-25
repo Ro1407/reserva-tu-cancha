@@ -82,7 +82,6 @@ export function ReservationsTable() {
                   <TableHead>Cancha</TableHead>
                   <TableHead>Cliente</TableHead>
                   <TableHead>Fecha y Hora</TableHead>
-                  <TableHead>Ubicación</TableHead>
                   <TableHead>Precio</TableHead>
                   <TableHead>Deporte</TableHead>
                   <TableHead>Estado</TableHead>
@@ -99,11 +98,10 @@ export function ReservationsTable() {
                       <span className="font-medium">{reservation.userEmail}</span>
                     </TableCell>
                     <TableCell>
+                      <div className="flex flex-wrap gap-1 whitespace-nowrap">
                       <span className="font-medium">{formatISODateToHumanReadable(reservation.date)}</span>
                       <span className="font-medium">{formatTimeSlotToString(reservation.timeSlot)}</span>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-medium">{reservation.clubLocation + " - " + reservation.courtAddress}</span>
+                      </div>
                     </TableCell>
                     <TableCell>
                       <span className="font-medium">{formatDBPriceToCurrency(reservation.price)}</span>

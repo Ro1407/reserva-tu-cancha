@@ -125,6 +125,7 @@ export async function getMaxCourtPrice(): Promise<number> {
 // Returns all the court's club locations
 export async function getAllCourtLocations(): Promise<string[]> {
   const locations = await prisma.club.findMany({
+    where: { courts: { some: {} } },
     select: { location: true },
     distinct: ["location"]
   });
