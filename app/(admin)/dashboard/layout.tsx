@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { User, Role } from "@prisma/client";
+import { User, Role } from "@/prisma/generated/browser";
 import { Loader2 } from "lucide-react";
 import { getUserByEmail } from "@/lib/actions";
 import { AdminTabs } from "@/components/admin-tabs";

@@ -1,14 +1,12 @@
-import { Club, Court, PrismaClient, Reservation, User } from "@prisma/client";
-
+import { Club, Court, Reservation, User } from "@/prisma/generated/client"
+import { prisma } from "@/prisma/prismaClientSingleton"
 import { clubs, courts, reservations, users } from "@/lib/data";
-
 import { ClubDataSchema } from "@/types/club";
 import { CourtDataSchema } from "@/types/court";
-import { ReservationValidatingSchema } from "@/types/reservation";
+import { EditableReservationSchema } from "@/types/reservation";
 import { UserSchema } from "@/prisma/zod";
+import bcrypt from "bcrypt";
 
-
-const prisma = new PrismaClient()
 
 function validatePlaceholder(): boolean {
     let clubValidation
@@ -41,7 +39,7 @@ function validatePlaceholder(): boolean {
 
     let reservationValidation
     reservations.forEach((reservation) => {
-        reservationValidation = ReservationValidatingSchema.safeParse(reservation)
+        reservationValidation = EditableReservationSchema.safeParse(reservation)
         if (!reservationValidation.success) {
             console.error("Reservation data validation failed:", reservationValidation.error)
             return false
@@ -64,7 +62,14 @@ async function clearExistingData() {
 }
 
 async function createUsers(): Promise<User[]> {
-    const createdUsers = await prisma.user.createManyAndReturn({data: users})
+    const newUsers = users.map((user) =>
+      ({
+        ...user,
+        password: bcrypt.hashSync(user.password, 10)
+      }))
+    const createdUsers = await prisma.user.createManyAndReturn({
+      data: newUsers
+    })
     console.log("Created users")
     return createdUsers
 }

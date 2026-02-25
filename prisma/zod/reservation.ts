@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { TimeSlot, ReservationState } from "@prisma/client"
+import { TimeSlot, ReservationState } from "@/prisma/generated/browser"
 
 export const ReservationSchema = z.object({
   id: z.string(),

@@ -1,6 +1,6 @@
 "use server";
 
-import webpush, { PushSubscription, SendResult } from "web-push";
+import webpush, { PushSubscription, WebPushError } from "web-push";
 import { createPushSubscription, deletePushSubscription, getAllPushSubscriptions } from "@/lib/actions-client";
 
 webpush.setVapidDetails(
@@ -17,10 +17,15 @@ export async function unsubscribeUser(subscription: PushSubscription): Promise<v
   await deletePushSubscription(subscription);
 }
 
-export async function sendNotification(title: string, message: string): Promise<void> {
+export interface SendNotificationResult {
+  sent: boolean;
+  noSubscriptions: boolean;
+}
+
+export async function sendNotification(title: string, message: string): Promise<SendNotificationResult> {
   const subscriptions: PushSubscription[] = await getAllPushSubscriptions();
 
-  if (subscriptions.length === 0) return;
+  if (subscriptions.length === 0) return { sent: false, noSubscriptions: true };
 
   const payload: string = JSON.stringify({
     title: title,
@@ -29,8 +34,17 @@ export async function sendNotification(title: string, message: string): Promise<
   });
 
   await Promise.all(
-    subscriptions.map(
-      (subscription: PushSubscription): Promise<SendResult> => webpush.sendNotification(subscription, payload),
-    ),
+    subscriptions.map(async (subscription: PushSubscription): Promise<void> => {
+      try {
+        await webpush.sendNotification(subscription, payload);
+      } catch (error) {
+        if (error instanceof WebPushError && (error.statusCode === 410 || error.statusCode === 404)) {
+          await deletePushSubscription(subscription);
+        }
+      }
+    }),
   );
+
+  return { sent: true, noSubscriptions: false };
 }
+

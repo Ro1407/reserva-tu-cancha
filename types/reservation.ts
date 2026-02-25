@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { ReservationSchema } from "@/prisma/zod"
 import { SportKey } from "@/types/enumerates";
-import { ReservationState, TimeSlot } from "@prisma/client";
+import { ReservationState, TimeSlot } from "@/prisma/generated/browser"
 
 export type Reservation = z.infer<typeof ReservationSchema>
 export const ReservationValidatingSchema = ReservationSchema.omit({

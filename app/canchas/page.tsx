@@ -14,11 +14,13 @@ export default async function CanchasPage(props: {
     amenities?: string;
     onlyAvailable?: string;
     page?: string;
+    club?: string;
   }>;
 }) {
   // Obtener los parámetros a partir de la URL
   const searchParams = await props.searchParams;
   const currentPage = Number(searchParams?.page) || 1;
+  const clubId = searchParams?.club ? searchParams.club : undefined
 
   const filters: Filters = {};
 
@@ -58,7 +60,7 @@ export default async function CanchasPage(props: {
     getMinCourtPrice(),
     getMaxCourtPrice(),
     getAllCourtLocations(),
-    getAllCourtsCardData({ currentPage: currentPage, filters: filters })
+    getAllCourtsCardData({ currentPage: currentPage, filters: filters, clubId: clubId })
   ]);
 
   return (
@@ -76,9 +78,9 @@ export default async function CanchasPage(props: {
             {totalCourts > 0 ?
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                  {courts.map((court: CourtCardData) => (
-                    <CourtCard key={court.id} court={court} />
-                  ))}
+                  {
+                    courts.map((court: CourtCardData) => (<CourtCard key={court.id} court={court} />))
+                  }
                 </div>
                 <div className="mt-5 flex w-full justify-center">
                   <Pagination totalPages={totalPages} />

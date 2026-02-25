@@ -97,7 +97,7 @@ export function ClubsTable() {
                       <span className="font-medium">{club.address}</span>
                     </TableCell>
                     <TableCell>
-                      <span className="font-medium">{formatPhoneNumber(club.phone)}</span>
+                      <span className="font-medium">{club.phone}</span>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">

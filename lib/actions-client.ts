@@ -141,7 +141,7 @@ export async function getAllClubsCardData(currentPage: number): Promise<[ClubCar
 }
 
 //Returns all the court's data to populate a card
-export async function getAllCourtsCardData({currentPage, filters }: PaginationAndFilterProps): Promise<[CourtCardData[], number, number]> {
+export async function getAllCourtsCardData({currentPage, filters, clubId}: PaginationAndFilterProps & {clubId?: string}): Promise<[CourtCardData[], number, number]> {
   const skip = (currentPage - 1) * ITEMS_PER_PAGE
 
   // Condiciones de filtros según parámetros
@@ -151,7 +151,8 @@ export async function getAllCourtsCardData({currentPage, filters }: PaginationAn
       filters?.maxPrice ? { price: { lte: filters.maxPrice } } : {},
       filters?.location ? { club: { location: filters.location } } : {},
       filters?.amenities ? { amenities: { hasEvery: filters.amenities } } : {},
-      filters?.onlyAvailable ? { state: "Activa" as CourtStateKey } : {}
+      filters?.onlyAvailable ? { state: "Activa" as CourtStateKey } : {},
+      clubId? { club: { id: clubId } } : {},
     ]
   }
 

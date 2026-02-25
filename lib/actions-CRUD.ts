@@ -5,6 +5,7 @@ import { prisma } from "@/prisma/prismaClientSingleton";
 import { revalidatePath } from "next/cache";
 import { CourtData, EditableCourtSchema } from "@/types/court";
 import { EditableReservationSchema, ReservationData } from "@/types/reservation";
+import { getCourtImagePath } from "@/lib/utils";
 
 export async function createClub(club: ClubData): Promise<boolean>{
   // Validate the club data against the schema on the server's side
@@ -19,7 +20,7 @@ export async function createClub(club: ClubData): Promise<boolean>{
       data: {
         ...parsedClub.data,
         rating: 0,
-        image: '', // Default image URL or path
+        image: "/clubs/club.jpg",
       }
     });
 
@@ -107,13 +108,13 @@ export async function createCourt(court: CourtData): Promise<boolean>{
 
   parsedCourt.data.price = parsedCourt.data.price * 100; // Convert price to cents for database storage
 
-  // Create the club in the database
+  // Create the court in the database
   try {
     await prisma.court.create({
       data: {
         ...parsedCourt.data,
         rating: 0,
-        image: '', // Default image URL or path
+        image: getCourtImagePath(parsedCourt.data.sport),
       }
     });
 
@@ -130,11 +131,14 @@ export async function createCourt(court: CourtData): Promise<boolean>{
 
 
 export async function updateCourt(court: CourtData, id:string): Promise<boolean> {
-  // Validate the club data against the schema on the server's side
+  // Validate the court data against the schema on the server's side
   const parsedCourt = EditableCourtSchema.safeParse(court);
   if (!parsedCourt.success) {
     return false;
   }
+
+  // Convert price to cents for database storage
+  parsedCourt.data.price = parsedCourt.data.price * 100;
 
   // Update the club in the database
   try {
@@ -142,6 +146,7 @@ export async function updateCourt(court: CourtData, id:string): Promise<boolean>
       where: { id: id },
       data: {
         ...parsedCourt.data,
+        image: getCourtImagePath(parsedCourt.data.sport),
       }
     });
 

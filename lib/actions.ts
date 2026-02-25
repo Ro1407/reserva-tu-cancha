@@ -1,6 +1,6 @@
 "use server";
 
-import { Court, Club, User, Role } from "@prisma/client";
+import { Court, Club, User, Role } from "@/prisma/generated/client";
 import { Reservation } from "@/types/reservation";
 import { UserData, NewUser } from "@/types/user";
 import { prisma } from "@/prisma/prismaClientSingleton";
@@ -125,6 +125,7 @@ export async function getMaxCourtPrice(): Promise<number> {
 // Returns all the court's club locations
 export async function getAllCourtLocations(): Promise<string[]> {
   const locations = await prisma.club.findMany({
+    where: { courts: { some: {} } },
     select: { location: true },
     distinct: ["location"]
   });

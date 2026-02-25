@@ -7,21 +7,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { sendNotification } from "@/lib/notifications";
+import { FormMessage, FormMessageType } from "@/components/ui/form-messages";
 
 export function PushNotificationForm() {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const sendPushNotification: () => Promise<void> = async (): Promise<void> => {
+    setError(null);
+    setSuccess(null);
     setIsLoading(true);
-    sendNotification(title, message).finally(
-      (): void => {
-        setIsLoading(false);
-        setTitle("");
-        setMessage("");
-      }
-    );
+
+    await sendNotification(title, message).then((result) => {
+      if (!result.sent && result.noSubscriptions) setError("No hay suscripciones push activas. Los usuarios deben activar las notificaciones.");
+      else setSuccess("Notificación enviada correctamente.");
+      setTitle("");
+      setMessage("");
+    })
+      .catch(() => { setError("Ocurrió un error al enviar la notificación. Intentá de nuevo."); })
+      .finally(() => { setIsLoading(false); })
   };
 
   return (
@@ -52,6 +59,8 @@ export function PushNotificationForm() {
         <Button onClick={sendPushNotification} disabled={!title || !message || isLoading} className="w-full">
           {isLoading ? "Enviando..." : "Enviar Notificación"}
         </Button>
+        {error && <FormMessage type={FormMessageType.error}>{error}</FormMessage>}
+        {success && <FormMessage type={FormMessageType.success}>{success}</FormMessage>}
       </CardContent>
     </Card>
   );
