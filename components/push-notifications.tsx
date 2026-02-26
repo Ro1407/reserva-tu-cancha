@@ -5,14 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Bell, BellOff, BellMinus, X } from "lucide-react";
 import { subscribeUser, unsubscribeUser } from "@/lib/notifications";
 import { urlBase64ToUint8Array } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+import type { PushSubscription as PushSubscriptionInterface } from "@/types/subscription";
 
 export function PushNotificationManager() {
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email;
+
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [pushError, setPushError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const toastTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Detectar si cuando el usuario se loguea, ya tenía suscripción activa
+  useEffect(() => {
+    if (session?.user?.email && subscription) subscribeToPush();
+  }, [session, subscription]);
 
   useEffect((): void => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
@@ -62,7 +72,7 @@ export function PushNotificationManager() {
         applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
       });
       const serializedSub = JSON.parse(JSON.stringify(sub));
-      await subscribeUser(serializedSub);
+      await subscribeUser({ ...serializedSub, subscriber: userEmail, } satisfies PushSubscriptionInterface);
       setSubscription(sub);
     } catch (error) {
       displayToast(getErrorMessage(error));
@@ -77,7 +87,7 @@ export function PushNotificationManager() {
     try {
       await subscription.unsubscribe();
       const serializedSub = JSON.parse(JSON.stringify(subscription));
-      await unsubscribeUser(serializedSub);
+      await unsubscribeUser({ ...serializedSub, subscriber: userEmail, } satisfies PushSubscriptionInterface);
       setSubscription(null);
     } catch (error) {
       displayToast(getErrorMessage(error));
@@ -144,3 +154,4 @@ function getErrorMessage(error: unknown): string {
   }
   return "No se pudieron activar las notificaciones push. Verificá la configuración de tu navegador e intentá de nuevo.";
 }
+

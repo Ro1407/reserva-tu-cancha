@@ -12,14 +12,14 @@ import { formatDateToISO } from "@/lib/utils";
 import { prisma } from "@/prisma/prismaClientSingleton";
 import { ReservationCardData, ReservationResume } from "@/types/reservation";
 import { ITEMS_PER_PAGE } from "@/lib/definitions";
-import { PushSubscription } from "web-push";
+import { PushSubscription } from "@/types/subscription";
 
 export interface Filters {
-    sports?: SportKey[],
-    maxPrice?: number,
-    location?: string,
-    amenities?: AmenitieKey[],
-    onlyAvailable?: boolean,
+  sports?: SportKey[],
+  maxPrice?: number,
+  location?: string,
+  amenities?: AmenitieKey[],
+  onlyAvailable?: boolean,
 }
 
 interface PaginationAndFilterProps {
@@ -105,19 +105,19 @@ export async function getAllClubsCardData(currentPage: number): Promise<[ClubCar
   const skip = (currentPage - 1) * ITEMS_PER_PAGE
   const [clubs, totalClubs] = await Promise.all([
     prisma.club.findMany({
-    include: {
-      courts: {
-        where: {
-          reservations: {
-            none: {}
-          }
-        },
-        select: { id: true }
-      }
-    },
-    skip: skip,
-    take: ITEMS_PER_PAGE
-  }),
+      include: {
+        courts: {
+          where: {
+            reservations: {
+              none: {}
+            }
+          },
+          select: { id: true }
+        }
+      },
+      skip: skip,
+      take: ITEMS_PER_PAGE
+    }),
     prisma.club.count(),
   ]);
 
@@ -200,30 +200,30 @@ export async function getAllReservationsCardData(currentPage: number): Promise<[
   const skip = (currentPage - 1) * ITEMS_PER_PAGE
   const [reservations, totalReservations] = await Promise.all([
     prisma.reservation.findMany({
-    include: {
-      court: {
-        select: {
-          name: true,
-          image: true,
-          sport: true,
-          rating: true,
-          address: true,
-          club: {
-            select: {
-              location: true
+      include: {
+        court: {
+          select: {
+            name: true,
+            image: true,
+            sport: true,
+            rating: true,
+            address: true,
+            club: {
+              select: {
+                location: true
+              }
             }
+          }
+        },
+        user: {
+          select: {
+            email: true
           }
         }
       },
-      user: {
-        select: {
-          email: true
-        }
-      }
-    },
-    skip: skip,
-    take: ITEMS_PER_PAGE
-  }),
+      skip: skip,
+      take: ITEMS_PER_PAGE
+    }),
     prisma.reservation.count(),
   ]);
 
@@ -252,14 +252,15 @@ export async function getAllReservationsCardData(currentPage: number): Promise<[
 //ACTIONS FOR NOTIFICATIONS.TS (PUSH SUBSCRIPTION)
 
 //Creates a Push Subscription
-export async function createPushSubscription(subscription: PushSubscription): Promise<void> {
+export async function createPushSubscription({endpoint, expirationTime, keys, subscriber}: PushSubscription): Promise<void> {
   try {
     await prisma.pushSubscription.create({
       data: {
-        endpoint: subscription.endpoint,
-        expirationTime: subscription.expirationTime,
-        auth: subscription.keys.auth,
-        p256dh: subscription.keys.p256dh,
+        endpoint: endpoint,
+        expirationTime: expirationTime,
+        auth: keys.auth,
+        p256dh: keys.p256dh,
+        subscriber: subscriber
       }
     });
   } catch (e){
@@ -268,13 +269,14 @@ export async function createPushSubscription(subscription: PushSubscription): Pr
 }
 
 //Deletes a Push Subscription
-export async function deletePushSubscription(sub: PushSubscription): Promise<void> {
+export async function deletePushSubscription({endpoint, expirationTime, keys, subscriber}: PushSubscription): Promise<void> {
   await prisma.pushSubscription.deleteMany({
     where: {
-      endpoint: sub.endpoint,
-      auth: sub.keys.auth,
-      p256dh: sub.keys.p256dh,
-      expirationTime: sub.expirationTime,
+      endpoint: endpoint,
+      auth: keys.auth,
+      p256dh: keys.p256dh,
+      expirationTime: expirationTime,
+      subscriber: subscriber,
     }
   });
 }
@@ -282,15 +284,33 @@ export async function deletePushSubscription(sub: PushSubscription): Promise<voi
 //Returns all Push Subscriptions
 export async function getAllPushSubscriptions(): Promise<PushSubscription[]> {
   const subscriptions = await prisma.pushSubscription.findMany();
+
   return subscriptions.map((sub) => ({
     endpoint: sub.endpoint,
     expirationTime: sub.expirationTime,
     keys: {
       auth: sub.auth,
       p256dh: sub.p256dh,
-    }
+    },
+    subscriber: sub.subscriber
   }));
 }
+
+//Returns true if exists a Push Subscription corresponding to the email
+export async function getPushSubscription(email: string): Promise<PushSubscription | null> {
+  const subscription = await prisma.pushSubscription.findFirst({ where: { subscriber: email } });
+  return subscription?
+    {
+      endpoint: subscription.endpoint,
+      expirationTime: subscription.expirationTime,
+      keys: {
+        auth: subscription.auth,
+        p256dh: subscription.p256dh,
+      },
+      subscriber: subscription.subscriber
+    } : null
+}
+
 
 export async function getUserReservations(email: string | null): Promise<ReservationResume[]> {
   if (!email) return [];

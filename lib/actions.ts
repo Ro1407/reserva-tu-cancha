@@ -155,6 +155,7 @@ export async function getUserByEmail(email: string | null): Promise<User | null>
   }
 }
 
+
 export async function registerUser(user: UserData): Promise<boolean> {
   if (user && user.password) user.password = bcrypt.hashSync(user.password, 10);
   // Validate the user data against the schema on the server's side

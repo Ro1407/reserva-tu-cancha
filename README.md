@@ -80,19 +80,15 @@ Cada comisión podrá proponer variaciones siempre que se mantenga la estructura
 
 ### **Entregables:**
 
-- Código fuente del proyecto en un repositorio de GitHub cuyo nombre debe *incluir* la palabra `proyecto-nextjs`.
 - Link a la aplicación desplegada en Vercel. [Link a Vercel](https://proyecto-2-lagos-zentrigen-swart.vercel.app/)
 
 #### Mercado Pago
 
-Estas credenciales son para fines de prueba con la integración de Mercado Pago:
+Estas credenciales son para fines de prueba con la integración de Mercado Pago en sandbox:
 
 *   **Usuario del Comprador:** `TESTUSER1020172834773572350`
-*   **Contraseña del Comprador:** `BXqhit3LEA`
+*   **Contraseña del Comprador:** `CED34731#0d5d#41a2#`
 *   **Código de verificación del Comprador:** `530700`
-*   **Usuario del Vendedor:** `TESTUSER7554460217123294576`
-*   **Contraseña del Vendedor:** `Rh3hWzaZdO`
-*   **Código de verificación del Vendedor:** `530700`
 
 ### Credenciales de Acceso a la Aplicación
 
@@ -110,15 +106,22 @@ Utiliza las siguientes credenciales para iniciar sesión en la aplicación y pro
 
 #### Flujos de Usuario y Funcionalidades Específicas:
 
-*   **Reservas Anónimas:** Cuando un usuario realiza una reserva sin haber iniciado sesión, esta se asocia automáticamente al usuario genérico (`user@domain.com`).
+*   **Reservas Anónimas:** 
+    *  Cuando un usuario realiza una reserva sin haber iniciado sesión, esta se asocia automáticamente al usuario genérico (`user@domain.com`).
+    *  Si se tiene activada la "campanita" (indicada en verde en la interfaz) y se aceptaron los permisos de notificaciones del navegador, se muestra una notificación indicando que su reserva fue concretada.
 *   **Historial de Reservas Personalizado:** Para que un usuario final pueda guardar y acceder a su historial de reservas, tiene la opción de iniciar sesión o registrarse durante el proceso de pago en el carrito. Una vez completado el pago, el historial de sus reservas estará visible en la sección `Mis Reservas`.
 *   **Panel de Administración (`/dashboard`):**
     *   Solo los usuarios con rol de administrador tienen acceso a la ruta `/dashboard`.
     *   Si un usuario intenta acceder a `/dashboard` sin estar autenticado, será redirigido a la página de inicio de sesión.
     *   Si un usuario autenticado, pero sin privilegios de administrador, intenta acceder a esta ruta, recibirá un error de autorización.
-*   **Sistema de Notificaciones (Panel de Administración):**
+*   **Sistema de Notificaciones Generales (Panel de Administración):**
     *   Dentro del panel `/dashboard`, la pestaña de "Notificaciones" permite al administrador enviar mensajes a todos los clientes.
     *   Para que los clientes reciban estas notificaciones, deben haber activado la "campanita" (indicada en verde en la interfaz) y haber aceptado los permisos de notificaciones del navegador.
+    *   Si no hay usuarios con las notificaciones activas se informa desde la pestaña de "Notificaciones" a modo de error y la notificación no es enviada.
+*   **Sistema de Notificaciones a un Usuario (Cancha Reservada):**
+    *   Para que los clientes reciban estas notificaciones, deben haber activado la "campanita" (indicada en verde en la interfaz) y haber aceptado los permisos de notificaciones del navegador.
+    *   Para que los clientes reciban estas notificaciones, deben tener una sesión activa. 
+    *   Si el usuario completó el pago de los items del carrito en forma exitosa, se muestra una notificación indicando que su reserva fue concretada.
     
 ### Comisiones:
 

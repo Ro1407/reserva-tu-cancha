@@ -4,6 +4,7 @@ import { BadgeVariant } from "@/components/ui/badge";
 import { ReservationStateKey, SportKey } from "@/types/enumerates";
 
 export const DEFAULT_USER: string = "user@domain.com";
+export const DEFAULT_USER_ID: string = "d8668c4d-a11e-4b05-be55-f17eff0042b0"
 
 /**
  * Gets the current date in the format YYYY-MM-DD.

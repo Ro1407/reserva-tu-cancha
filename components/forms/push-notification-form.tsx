@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { sendNotification } from "@/lib/notifications";
+import { sendBroadcastNotification } from "@/lib/notifications";
 import { FormMessage, FormMessageType } from "@/components/ui/form-messages";
 
 export function PushNotificationForm() {
@@ -21,7 +21,7 @@ export function PushNotificationForm() {
     setSuccess(null);
     setIsLoading(true);
 
-    await sendNotification(title, message).then((result) => {
+    await sendBroadcastNotification(title, message).then((result) => {
       if (!result.sent && result.noSubscriptions) setError("No hay suscripciones push activas. Los usuarios deben activar las notificaciones.");
       else setSuccess("Notificación enviada correctamente.");
       setTitle("");

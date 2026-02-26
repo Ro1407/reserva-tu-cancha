@@ -4,12 +4,13 @@ import { Preference, Payment, MercadoPagoConfig } from "mercadopago";
 import { PreferenceResponse } from "mercadopago/dist/clients/preference/commonTypes";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { CartState, CartItem } from "@/types/cart";
-import { sendNotification } from "@/lib/notifications";
+import { sendUnicastNotification } from "@/lib/notifications";
 import { createReservation } from "@/lib/actions-CRUD";
 import { ReservationData } from "@/types/reservation";
 import { TimeSlotKey } from "@/types/enumerates";
 import { ReservationState, User } from "@/prisma/generated/client";
 import { getUserByEmail, isItemAvailable } from "@/lib/actions";
+import { DEFAULT_USER_ID } from "@/lib/utils";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
 const preference = new Preference(client);
@@ -76,12 +77,13 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
             price: item.price,
             state: ReservationState.Confirmada,
             courtId: item.courtId,
-            userId: user?.id ?? "78c9b746-c08f-4995-9d73-9cf1b92e8aff",
+            userId: user?.id ?? DEFAULT_USER_ID,
           };
           await createReservation(reserva).then(async (): Promise<void> => {
-            await sendNotification(
-              "Se concretó tu reserva!",
+            await sendUnicastNotification(
+               "Se concretó tu reserva!",
               "Solo debes presentarte en el club el día y horario acordado para disfrutar de tu reserva.",
+              email
             );
           });
         } catch (error) {

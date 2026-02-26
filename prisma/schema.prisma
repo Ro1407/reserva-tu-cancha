@@ -1,5 +1,6 @@
 // Whenever there is a change in the schema, run the following commands to update the database and generate the Prisma client:
 // pnpx prisma generate
+// prisma migrate dev --create-only                (for comparing the sql files before applying)
 // pnpx prisma migrate dev --name <migration_name>
 // pnpx prisma migrate deploy
 
@@ -154,6 +155,7 @@ model PushSubscription {
   expirationTime Float?
   p256dh         String
   auth           String
+  subscriber     String @default("")
 
   @@map("push_subscription")
 }
