@@ -19,17 +19,20 @@ export function PushNotificationManager() {
   const [showToast, setShowToast] = useState(false);
   const toastTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Detectar si cuando el usuario se loguea, ya tenía suscripción activa
-  useEffect(() => {
-    if (session?.user?.email && subscription) subscribeToPush();
-  }, [session, subscription]);
 
-  useEffect((): void => {
-    if ("serviceWorker" in navigator && "PushManager" in window) {
+  useEffect(() => {
+    const setupPush = async () => {
+      if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+        setIsSupported(false);
+        return;
+      }
+
       setIsSupported(true);
-      registerServiceWorker();
-    }
-  }, []);
+      await registerServiceWorker();
+    };
+
+    setupPush();
+  }, [session?.user?.email]); // Solo depende del email, el resto es manejado internamente
 
   useEffect(() => {
     return () => {
