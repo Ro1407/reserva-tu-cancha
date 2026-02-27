@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Bell, BellOff, BellMinus, X } from "lucide-react";
 import { subscribeUser, unsubscribeUser } from "@/lib/notifications";
 import { urlBase64ToUint8Array } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import type { PushSubscription as PushSubscriptionInterface } from "@/types/subscription";
+import Modal from "@/components/ui/modal"
 
 export function PushNotificationManager() {
   const { data: session } = useSession();
@@ -128,33 +128,21 @@ export function PushNotificationManager() {
           )}
         </Button>
 
-        {showToast && pushError && createPortal(
-          <div className="fixed top-4 right-4 mt-2 w-72 bg-opacity-100 bg-background "
-               style={{
-                 top: pushError && bellRef.current
-                   ? `${bellRef.current.getBoundingClientRect().bottom + window.scrollY}px`
-                   : '4px',
-                 right: pushError && bellRef.current
-                   ? `${window.innerWidth - bellRef.current.getBoundingClientRect().right}px`
-                   : '4px',
-                 animation: "fadeSlideIn 0.2s ease-out"
-               }}
-          >
-            <style>{`@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-            <div className="rounded-lg border border-destructive/30 bg-destructive/10 dark:border-destructive/50 dark:bg-destructive/20 p-3 shadow-lg backdrop-blur-sm">
-              <div className="flex items-start gap-2">
-                <BellMinus className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-                <p className="text-sm text-destructive dark:text-red-400 flex-1">{pushError}</p>
-                <button
-                  onClick={dismissToast}
-                  className="text-destructive/60 hover:text-destructive shrink-0"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
-          , document.body)}
+        {showToast && pushError &&
+          <Modal
+          style={{
+            top: pushError && bellRef.current
+              ? `${bellRef.current.getBoundingClientRect().bottom + window.scrollY}px`
+              : '4px',
+            right: pushError && bellRef.current
+              ? `${window.innerWidth - bellRef.current.getBoundingClientRect().right}px`
+              : '4px',
+            animation: "fadeSlideIn 0.2s ease-out"
+          }}
+          text={pushError}
+          onClose={() => dismissToast()}>
+          </Modal>
+          }
       </div>
     );
 }
