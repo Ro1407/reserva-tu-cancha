@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="z-30 relative bg-gradient-to-br from-green-50 via-white to-blue-50 py-20 md:py-32 dark:from-green-950/20 dark:via-gray-950 dark:to-blue-950/20">
+    <section className="relative bg-gradient-to-br from-green-50 via-white to-blue-50 py-20 md:py-32 dark:from-green-950/20 dark:via-gray-950 dark:to-blue-950/20">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
           ReserváTuCancha

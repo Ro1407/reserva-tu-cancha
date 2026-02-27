@@ -6,7 +6,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-export function Button({ variant = "default", size = "md", className = "", children, ...props }: ButtonProps) {
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = "default", size = "md", className = "", children, ...props }, ref) => {
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
@@ -26,8 +27,8 @@ export function Button({ variant = "default", size = "md", className = "", child
   };
 
   return (
-    <button className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
+    <button ref={ref} className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
       {children}
     </button>
   );
-}
+});

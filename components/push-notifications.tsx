@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Bell, BellOff, BellMinus, X } from "lucide-react";
 import { subscribeUser, unsubscribeUser } from "@/lib/notifications";
@@ -104,6 +105,8 @@ export function PushNotificationManager() {
     else setPushError(null);
   }
 
+  const bellRef = useRef<HTMLButtonElement | null>(null);
+
   if (isSupported)
     return (
       <div className="relative">
@@ -111,6 +114,7 @@ export function PushNotificationManager() {
           onClick={pushError ? handleErrorClick : subscription ? unsubscribeFromPush : subscribeToPush}
           disabled={isLoading}
           variant={subscription ? "default" : "outline"}
+          ref={bellRef}
           size="sm"
         >
           {isLoading ? (
@@ -124,9 +128,18 @@ export function PushNotificationManager() {
           )}
         </Button>
 
-        {showToast && pushError && (
-          <div className="absolute top-full right-0 mt-2 z-50 w-72 bg-opacity-100 bg-background "
-            style={{ animation: "fadeSlideIn 0.2s ease-out" }}>
+        {showToast && pushError && createPortal(
+          <div className="fixed top-4 right-4 mt-2 w-72 bg-opacity-100 bg-background "
+               style={{
+                 top: pushError && bellRef.current
+                   ? `${bellRef.current.getBoundingClientRect().bottom + window.scrollY}px`
+                   : '4px',
+                 right: pushError && bellRef.current
+                   ? `${window.innerWidth - bellRef.current.getBoundingClientRect().right}px`
+                   : '4px',
+                 animation: "fadeSlideIn 0.2s ease-out"
+               }}
+          >
             <style>{`@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
             <div className="rounded-lg border border-destructive/30 bg-destructive/10 dark:border-destructive/50 dark:bg-destructive/20 p-3 shadow-lg backdrop-blur-sm">
               <div className="flex items-start gap-2">
@@ -141,7 +154,7 @@ export function PushNotificationManager() {
               </div>
             </div>
           </div>
-        )}
+          , document.body)}
       </div>
     );
 }
