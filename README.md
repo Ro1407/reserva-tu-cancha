@@ -80,7 +80,7 @@ Cada comisión podrá proponer variaciones siempre que se mantenga la estructura
 
 ### **Entregables:**
 
-- Link a la aplicación desplegada en Vercel. [Link a Vercel](https://proyecto-2-lagos-zentrigen-swart.vercel.app/)
+- Link a la aplicación desplegada en Vercel. [Link a Vercel](https://reservatucancha-ro1407.vercel.app/)
 
 #### Mercado Pago
 

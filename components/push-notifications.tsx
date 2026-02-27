@@ -125,13 +125,13 @@ export function PushNotificationManager() {
         </Button>
 
         {showToast && pushError && (
-          <div className="absolute top-full right-0 mt-2 z-50 w-72 bg-opacity-100 bg-background"
+          <div className="absolute top-full right-0 mt-2 z-50 w-72 bg-opacity-100 bg-background "
             style={{ animation: "fadeSlideIn 0.2s ease-out" }}>
             <style>{`@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 shadow-lg backdrop-blur-sm">
+            <div className="rounded-lg border border-destructive/30 bg-destructive/10 dark:border-destructive/50 dark:bg-destructive/20 p-3 shadow-lg backdrop-blur-sm">
               <div className="flex items-start gap-2">
                 <BellMinus className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-                <p className="text-sm text-destructive flex-1">{pushError}</p>
+                <p className="text-sm text-destructive dark:text-red-400 flex-1">{pushError}</p>
                 <button
                   onClick={dismissToast}
                   className="text-destructive/60 hover:text-destructive shrink-0"
