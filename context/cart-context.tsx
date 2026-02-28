@@ -67,7 +67,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [state, isLoading]);
 
   const addToCart: (item: Omit<CartItem, "id">) => void = (item: Omit<CartItem, "id">): void => {
-    const id = `${state.id}--${item.courtId}-${item.date}-${item.time}`;
+    const id = `${state.id}--${item.courtId}-${item.date}-${item.time.time}`;
     dispatch({ type: "ADD_ITEM", payload: { id, ...item } });
   };
 

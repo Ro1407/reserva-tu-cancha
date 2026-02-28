@@ -23,7 +23,7 @@ interface BookingFormProps {
 
 export function BookingForm({ court }: BookingFormProps) {
   const { replace } = useRouter();
-  const { addToCart } = useCart();
+  const { addToCart, state, getItemCount } = useCart();
   const { selectedDate, setSelectedDate } = useCalendar();
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
@@ -35,7 +35,7 @@ export function BookingForm({ court }: BookingFormProps) {
     getTimeSlots(selectedDate, court.id)
       .then((slots: TimeSlot[]): void => {
         setTimeSlots(slots);
-        setSelectedSlot(slots.find((timeSlot: TimeSlot): boolean => timeSlot.available) ?? null);
+        setSelectedSlot(slots.find((timeSlot: TimeSlot): boolean => (timeSlot.available && !isAlreadyAdded(timeSlot)) ) ?? null);
       })
       .finally((): void => {
         setIsLoadingTimeSlots(false);
@@ -65,17 +65,18 @@ export function BookingForm({ court }: BookingFormProps) {
       return;
     }
 
+    const cartItem: Omit<CartItem, "id"> = {
+      courtId: court.id,
+      courtName: court.name,
+      clubName: clubName,
+      date: formatDateToISO(selectedDate),
+      time: selectedSlot,
+      price: court.price / 100,
+      sport: court.sport,
+      image: court.image || "/placeholder.svg?height=200&width=300",
+    };
+
     try {
-      const cartItem: Omit<CartItem, "id"> = {
-        courtId: court.id,
-        courtName: court.name,
-        clubName: clubName,
-        date: formatDateToISO(selectedDate),
-        time: selectedSlot,
-        price: court.price / 100,
-        sport: court.sport,
-        image: court.image || "/placeholder.svg?height=200&width=300",
-      };
       addToCart(cartItem);
       toast.success("¡Reserva agregada al carrito!");
       replace("/");
@@ -86,6 +87,26 @@ export function BookingForm({ court }: BookingFormProps) {
       setIsAdding(false);
     }
   };
+
+  const isTimeSlotDisabled = (timeSlot:TimeSlot): boolean => {
+    return isLoadingTimeSlots || isAlreadyAdded(timeSlot) || !timeSlot.available
+  }
+
+  const isAlreadyAdded = (timeSlot:TimeSlot): boolean => (
+    selectedDate && getItemCount() > 0?
+      state.items.map(
+        (item: CartItem) => ({
+          courtId: item.courtId,
+          date: item.date,
+          time: item.time.time
+        } satisfies Pick<CartItem, "courtId" | "date"> & {time:string}))
+        .some(
+          (entry) =>
+            entry.courtId === court.id &&
+            entry.date === formatDateToISO(selectedDate) &&
+            entry.time === timeSlot.time
+        )
+      : false)
 
   return (
     <Card className="sticky top-4">
@@ -123,10 +144,10 @@ export function BookingForm({ court }: BookingFormProps) {
               timeSlots.map((slot: TimeSlot) => (
                 <Button
                   key={slot.time}
-                  variant={selectedSlot == slot ? "default" : slot.available ? "outline" : "secondary"}
+                  variant={selectedSlot == slot ? "default" : (slot.available) ? "outline" : "secondary"}
                   size="sm"
                   className="text-xs"
-                  disabled={!slot.available || isLoadingTimeSlots}
+                  disabled={isTimeSlotDisabled(slot)}
                   onClick={(): void => setSelectedSlot(slot)}
                 >
                   {formatTimeSlotToString(slot.time)}
