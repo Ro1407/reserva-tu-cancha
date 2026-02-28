@@ -6,7 +6,6 @@ import { Badge, BadgeVariant } from "@/components/ui/badge";
 import { MapPin, Star, Phone, MapIcon, Sparkles, Zap } from "lucide-react";
 import { Club } from "@/types/club";
 import { Court } from "@/types/court";
-import { generateCourtDescription } from "@/lib/descriptions";
 import { formatDBPriceToCurrency } from "@/lib/utils";
 
 interface CourtDetailsProps {
@@ -18,17 +17,38 @@ export function CourtDetails({ court, club }: CourtDetailsProps) {
   const [description, setDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const defaultDescription = court.description || "Excelente cancha deportiva con instalaciones de primera calidad."
+
   useEffect((): void => {
-    new Promise(async (): Promise<void> => {
+
+    const loadDescription = async () => {
       setIsLoading(true);
       try {
-        setDescription(await generateCourtDescription(court));
-      } catch (error) {
-        setDescription(court.description || "Excelente cancha deportiva con instalaciones de primera calidad.");
+        const response = await fetch("/api/ai-generated-description", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(court),
+        });
+
+        if(!response.ok) {
+          const errorText = await response.text();
+          console.error(`Error ${response.status}: ${errorText}`);
+    setDescription(defaultDescription)
+          return
+        }
+
+        const data = await response.json();
+        setDescription(data.description);
+
+      } catch (error){
+        setDescription(defaultDescription)
       } finally {
-        setIsLoading(false);
+          setIsLoading(false);
       }
-    });
+    }
+
+    loadDescription();
+
   }, [court]);
 
   return (
