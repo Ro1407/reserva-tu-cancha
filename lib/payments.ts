@@ -10,7 +10,7 @@ import { ReservationData } from "@/types/reservation";
 import { TimeSlotKey } from "@/types/enumerates";
 import { ReservationState, User } from "@/prisma/generated/client";
 import { getUserByEmail, isItemAvailable } from "@/lib/actions";
-import { DEFAULT_USER_ID } from "@/lib/utils";
+import { DEFAULT_USER_ID, formatDate } from "@/lib/utils";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
 const preference = new Preference(client);
@@ -22,12 +22,24 @@ interface PreferenceItem {
   unit_price: number;
 }
 
-export const processPreference: (cart: CartState, email: string) => Promise<string> = async (
-  cart: CartState, email: string
-): Promise<string> => {
-  return new Promise<string>((resolve: (value: string) => void, reject: (error: Error) => void): void => {
-    preference
-      .create({
+export const processPreference = async (cart: CartState, email: string): Promise<string> => {
+
+  // Verify if cart items are already reserved by someone else
+  for (const item of cart.items) {
+    const available = await isItemAvailable(item);
+
+    if (!available) {
+      throw new Error(
+        `Lo sentimos, la cancha "${item.courtName}" para la fecha "${formatDate(item.date)}" a las ${item.time.time} ya fue reservada por otro usuario. Por favor, elimínala del carrito.`
+      );
+    }
+  }
+
+  let response: PreferenceResponse
+
+  // Create the preference
+  try{
+    response = await preference.create({
         body: {
           auto_return: "all",
           back_urls: {
@@ -50,15 +62,15 @@ export const processPreference: (cart: CartState, email: string) => Promise<stri
           ],
         },
       })
-      .then((response: PreferenceResponse): void => {
-        if (response.init_point) resolve(response.init_point);
-        else reject(new Error("Failed to create Mercado Pago preference: init_point is undefined"));
-      })
-      .catch((error: Error): void => {
-        reject(error);
-      });
-  });
-};
+    } catch (error)  {
+      throw new Error("Error al conectar con Mercado Pago");
+    }
+
+    if (!response.init_point) throw new Error("Failed to create Mercado Pago preference: init_point is undefined");
+
+    return response.init_point;
+}
+
 
 export const processPayment: (id: string) => Promise<void> = async (id: string): Promise<void> => {
   const payment: PaymentResponse = await new Payment(client).get({ id });
@@ -88,6 +100,7 @@ export const processPayment: (id: string) => Promise<void> = async (id: string):
           });
         } catch (error) {
           console.error(`Error al crear la reserva para el item ${item.id}:`, error);
+          throw new Error("Ocurrió un error al procesar el pago. Intente nuevamente.")
         }
       }
     }

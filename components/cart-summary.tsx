@@ -54,8 +54,8 @@ export function CartSummary() {
       .then((initPoint: string): void => {
         replace(initPoint);
       })
-      .catch((_: Error): void => {
-        toast.error("Ocurrió un error al procesar el pago. Intente nuevamente.");
+      .catch((error: Error): void => {
+        toast.error(error.message);
       })
       .finally((): void => setIsProcessing(false));
   };

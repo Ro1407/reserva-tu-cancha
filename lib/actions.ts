@@ -1,6 +1,6 @@
 "use server";
 
-import { Court, Club, User, Role } from "@/prisma/generated/client";
+import { Court, Club, User, Role, TimeSlot } from "@/prisma/generated/client";
 import { Reservation } from "@/types/reservation";
 import { UserData, NewUser } from "@/types/user";
 import { prisma } from "@/prisma/prismaClientSingleton";
@@ -85,13 +85,13 @@ export async function getAllClubs(currentPage: number): Promise<[Club[], number]
 
 // Checks if a court item is still available for reservation
 export async function isItemAvailable(item: CartItem): Promise<boolean> {
-  const formattedTime: string = convertTimeToTHHMM(item.time.time);   //HH:MM a THHMM
+  const formattedTime: string = convertTimeToTHHMM(item.time.time);
 
   const reservation = await prisma.reservation.findFirst({
     where: {
       courtId: item.courtId,
       date: item.date,
-      timeSlot: formattedTime as TimeSlotKey
+      timeSlot: formattedTime as TimeSlot
     }
   });
 

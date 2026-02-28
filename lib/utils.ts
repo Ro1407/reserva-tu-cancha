@@ -204,7 +204,7 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
  * @param time
  */
 export const convertTimeToTHHMM = (time: string): string => {
-  return `T${time.replace(":", "")}`;
+  return `${time.replace(":", "").trim()}`;
 };
 
 
