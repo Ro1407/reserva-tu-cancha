@@ -1,6 +1,6 @@
 "use server";
 
-import { Court, Club, User, Role, TimeSlot } from "@/prisma/generated/client";
+import { Court, Club, User, Role, TimeSlot, ReservationState } from "@/prisma/generated/client";
 import { Reservation } from "@/types/reservation";
 import { UserData, NewUser } from "@/types/user";
 import { prisma } from "@/prisma/prismaClientSingleton";
@@ -91,7 +91,8 @@ export async function isItemAvailable(item: CartItem): Promise<boolean> {
     where: {
       courtId: item.courtId,
       date: item.date,
-      timeSlot: formattedTime as TimeSlot
+      timeSlot: formattedTime as TimeSlot,
+      state: ReservationState.Confirmada
     }
   });
 
