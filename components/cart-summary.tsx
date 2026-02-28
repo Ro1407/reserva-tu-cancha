@@ -48,16 +48,23 @@ export function CartSummary() {
     }
   };
 
-  const handleCheckout: () => Promise<void> = async (): Promise<void> => {
+  const handleCheckout =  async (): Promise<void> => {
     setIsProcessing(true);
-    processPreference(state, email)
-      .then((initPoint: string): void => {
-        replace(initPoint);
-      })
-      .catch((error: Error): void => {
-        toast.error(error.message);
-      })
-      .finally((): void => setIsProcessing(false));
+
+    try {
+      // Llamamos a la action y esperamos la respuesta
+      const response = await processPreference(state, email);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else if (response.initPoint) {
+        replace(response.initPoint);
+      }
+    } catch (error) {
+      toast.error("Ocurrió un error de conexión.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (

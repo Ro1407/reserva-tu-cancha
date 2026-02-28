@@ -10,7 +10,7 @@ import { ReservationData } from "@/types/reservation";
 import { TimeSlotKey } from "@/types/enumerates";
 import { ReservationState, User } from "@/prisma/generated/client";
 import { getUserByEmail, isItemAvailable } from "@/lib/actions";
-import { DEFAULT_USER_ID, formatDate } from "@/lib/utils";
+import { DEFAULT_USER_ID, formatDate, formatTimeSlotToString } from "@/lib/utils";
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "" });
 const preference = new Preference(client);
@@ -22,16 +22,16 @@ interface PreferenceItem {
   unit_price: number;
 }
 
-export const processPreference = async (cart: CartState, email: string): Promise<string> => {
+export const processPreference = async (cart: CartState, email: string): Promise<{ initPoint?: string; error?: string }> => {
 
   // Verify if cart items are already reserved by someone else
   for (const item of cart.items) {
     const available = await isItemAvailable(item);
 
     if (!available) {
-      throw new Error(
-        `Lo sentimos, la cancha "${item.courtName}" para la fecha "${formatDate(item.date)}" a las ${item.time.time} ya fue reservada por otro usuario. Por favor, elimínala del carrito.`
-      );
+      return {
+        error: `Lo sentimos, la cancha "${item.courtName}" para la fecha "${formatDate(item.date)}" a las ${formatTimeSlotToString(item.time.time)} ya fue reservada por otro usuario. Por favor, elimínala del carrito.`
+      }
     }
   }
 
@@ -63,12 +63,12 @@ export const processPreference = async (cart: CartState, email: string): Promise
         },
       })
     } catch (error)  {
-      throw new Error("Error al conectar con Mercado Pago");
+      return { error: "Error al conectar con Mercado Pago" };
     }
 
-    if (!response.init_point) throw new Error("Failed to create Mercado Pago preference: init_point is undefined");
+    if (!response.init_point) return { error: "Error creando la preferencia de Mercado Pago, init_point no está definido" }
 
-    return response.init_point;
+    return { initPoint: response.init_point };
 }
 
 
