@@ -83,7 +83,7 @@ export async function getAllClubs(currentPage: number): Promise<[Club[], number]
   return [clubs, totalPages];
 }
 
-// Checks if a court item is still available for reservation
+// Checks if a court item is still available for reservation (allows taking canceled reservations)
 export async function isItemAvailable(item: CartItem): Promise<boolean> {
   const formattedTime: string = convertTimeToTHHMM(item.time.time);
 
@@ -92,7 +92,9 @@ export async function isItemAvailable(item: CartItem): Promise<boolean> {
       courtId: item.courtId,
       date: item.date,
       timeSlot: formattedTime as TimeSlot,
-      state: ReservationState.Confirmada
+      state: {
+        in: [ReservationState.Confirmada, ReservationState.Pendiente, ReservationState.Mantenimiento],
+      },
     }
   });
 
